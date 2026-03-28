@@ -1793,7 +1793,7 @@ function selectAnswer(idx) {
       state[currentPlayer].bestStreak = state[currentPlayer].streak;
     }
     state[currentPlayer].totalCorrect++;
-    state[currentPlayer].subjects[currentSubject].correct++;
+    if (state[currentPlayer].subjects[currentSubject]) state[currentPlayer].subjects[currentSubject].correct++;
 
     if (reviewMode && q._wpId) reviewedCorrect(currentPlayer, q._wpId);
 
@@ -1819,7 +1819,9 @@ function selectAnswer(idx) {
     fb.className = 'q-feedback wrong show';
   }
 
-  state[currentPlayer].subjects[currentSubject].total++;
+  if (state[currentPlayer].subjects[currentSubject]) {
+    state[currentPlayer].subjects[currentSubject].total++;
+  }
   save();
   updatePlayerCards();
   document.getElementById('q-next').classList.add('show');
@@ -1839,7 +1841,7 @@ function finishQuiz() {
   document.getElementById('quiz-results').classList.add('active');
 
   const s = state[currentPlayer];
-  s.subjects[currentSubject].done++;
+  if (s.subjects[currentSubject]) s.subjects[currentSubject].done++;
   s.quizzesDone++;
 
   // Gaming time: earn 1 min per 20 quizzes completed (100 quizzes = 5 min)
