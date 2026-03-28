@@ -483,7 +483,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   <button class="nav-btn" id="nav-arena" onclick="showPage('arena')">Math Arena</button>
   <button class="nav-btn" onclick="showPage('battle')">⚔️ Battle!</button>
   <button class="nav-btn" onclick="showPage('tasks')">✅ Tasks</button>
-  <button class="nav-btn" onclick="showPage('schedule')">Weekend Plan</button>
+  <button class="nav-btn" onclick="showPage('schedule')">Weekly Plan</button>
   <button class="nav-btn" onclick="showPage('shop')">Reward Shop</button>
   <button class="nav-btn" onclick="showPage('progress')">Progress</button>
 </div>
@@ -960,253 +960,16 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   </div>
 </div>
 
-<!-- ===== WEEKEND SCHEDULE ===== -->
+<!-- ===== WEEKLY PLAN (Calendar-driven) ===== -->
 <div class="page" id="pg-schedule">
   <div class="header">
-    <h1>WEEKEND PLAN</h1>
-    <div class="sub">Balanced Schedule: Study + Fun + Family!</div>
+    <h1>WEEKLY PLAN</h1>
+    <div class="sub" id="sched-sub">Study + Activities + Family! (from Google Calendar)</div>
   </div>
 
-  <div class="tab-row">
-    <button class="tab-btn active" onclick="showSchedDay('sat')">Saturday 3/28</button>
-    <button class="tab-btn" onclick="showSchedDay('sun')">Sunday 3/29</button>
-  </div>
+  <div class="tab-row" id="sched-tabs"></div>
 
-  <!-- SATURDAY -->
-  <div class="tab-content active" id="sched-sat">
-    <div style="background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.2);border-radius:12px;padding:14px;margin-bottom:16px;text-align:center">
-      <div style="font-size:1.2em;font-weight:800;color:#ff4757">SATURDAY - COUNTDOWN TO 20:30 BEDTIME!</div>
-      <div style="font-size:.85em;color:#aaa;margin-top:4px">50 minutes left! Sprint mode: Study + Wind down</div>
-    </div>
-
-    <div class="sched-block study">
-      <div class="sched-time">19:40</div>
-      <div class="sched-content">
-        <h4>STUDY SPRINT: Quick Fire Quiz!</h4>
-        <p>START NOW! Each kid does 1 quiz (5 questions, ~8 min). This is your FIRST quest - earn coins for tomorrow's Reward Shop!</p>
-        <span class="sched-tag yuhi-t">Yuhi: Pick any subject</span>
-        <span class="sched-tag ryusei-t">Ryusei: Pick any subject</span>
-        <p style="color:#2ed573;margin-top:4px;font-size:.8em">Reward: Complete = coins + XP + gaming time banked for tomorrow morning!</p>
-      </div>
-    </div>
-
-    <div class="sched-block study">
-      <div class="sched-time">19:55</div>
-      <div class="sched-content">
-        <h4>BONUS ROUND (Optional): 2nd Quiz for Double Coins!</h4>
-        <p>If you finished fast, try a 2nd subject! DOUBLE COINS for tonight's bonus round.</p>
-        <span class="sched-tag yuhi-t">Yuhi: Different subject</span>
-        <span class="sched-tag ryusei-t">Ryusei: Different subject</span>
-      </div>
-    </div>
-
-    <div class="sched-block family">
-      <div class="sched-time">20:05</div>
-      <div class="sched-content">
-        <h4>Wind Down: Brush Teeth + Story/Reading</h4>
-        <p>Ryusei picks a book to read (or Papa reads to both). Yuhi can do a quick card shuffle practice. Calm the brain before sleep.</p>
-        <span class="sched-tag all-t">Whole Family</span>
-      </div>
-    </div>
-
-    <div class="sched-block" style="border-left-color:#9b59b6;background:rgba(155,89,182,.05)">
-      <div class="sched-time">20:30</div>
-      <div class="sched-content">
-        <h4>LIGHTS OUT - Kids Sleep</h4>
-        <p>8 hours 45 minutes of sleep = full brain recharge! Tomorrow you wake up at 5:15 as STUDY WARRIORS.</p>
-        <span class="sched-tag yuhi-t">Yuhi</span><span class="sched-tag ryusei-t">Ryusei</span>
-        <p style="color:#9b59b6;margin-top:4px;font-size:.8em">Sleep bonus: early bed = +10 bonus coins tomorrow morning!</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- SUNDAY -->
-  <div class="tab-content" id="sched-sun">
-
-    <div style="background:rgba(155,89,182,.08);border:1px solid rgba(155,89,182,.2);border-radius:12px;padding:14px;margin-bottom:16px">
-      <div style="font-size:.9em;color:#ccc;text-align:center">
-        <strong style="color:#9b59b6">Early Rise Schedule</strong><br>
-        Papa: 3:55 起床 | Kids: 5:15 起床 | Bedtime: 20:30<br>
-        <span style="color:#aaa;font-size:.8em">Sleep: 8h45m (kids) / ~7h25m (Papa) | 早起きは三文の徳!</span>
-      </div>
-    </div>
-
-    <!-- PAPA SOLO TIME -->
-    <div class="sched-block" style="border-left-color:#4ecdc4;background:rgba(78,205,196,.05)">
-      <div class="sched-time">3:55</div>
-      <div class="sched-content">
-        <h4>Papa Solo: Deep Work Time</h4>
-        <p>1 hour 20 min of uninterrupted focus before kids wake up. Meditation, planning, personal projects, market check.</p>
-        <span class="sched-tag" style="background:rgba(78,205,196,.2);color:#4ecdc4">Papa Only</span>
-      </div>
-    </div>
-
-    <!-- KIDS WAKE -->
-    <div class="sched-block family">
-      <div class="sched-time">5:15</div>
-      <div class="sched-content">
-        <h4>Kids Wake Up! Morning Routine</h4>
-        <p>Wash face, brush teeth, get dressed. Quick stretch with Papa. Early birds get +10 BONUS COINS!</p>
-        <span class="sched-tag yuhi-t">Yuhi</span><span class="sched-tag ryusei-t">Ryusei</span>
-        <p style="color:#ffd200;margin-top:4px;font-size:.8em">Early Bird Bonus: Awake by 5:15 = +10 coins each!</p>
-      </div>
-    </div>
-
-    <div class="sched-block study">
-      <div class="sched-time">5:30</div>
-      <div class="sched-content">
-        <h4>STUDY BLOCK 1: Golden Hour (Brain is freshest!)</h4>
-        <p>Research shows the brain works best right after sleep. 2 quizzes each = MEGA morning power-up!</p>
-        <span class="sched-tag yuhi-t">Yuhi: Math + Science</span>
-        <span class="sched-tag ryusei-t">Ryusei: Math + English</span>
-        <p style="color:#2ed573;margin-top:4px;font-size:.8em">Reward: 2 quizzes before breakfast = coins + XP!</p>
-      </div>
-    </div>
-
-    <div class="sched-block family">
-      <div class="sched-time">6:15</div>
-      <div class="sched-content">
-        <h4>Pancake Olympics + Family Breakfast</h4>
-        <p>Everyone makes a creative pancake shape! Mama judges. Card game during breakfast. Ryusei reads sports headlines.</p>
-        <span class="sched-tag all-t">Whole Family</span>
-      </div>
-    </div>
-
-    <div class="sched-block study">
-      <div class="sched-time">7:00</div>
-      <div class="sched-content">
-        <h4>STUDY BLOCK 2: Post-Breakfast Focus</h4>
-        <p>1 quiz each - pick a different subject from Block 1. Full stomach = better concentration!</p>
-        <span class="sched-tag yuhi-t">Yuhi: English or Chinese</span>
-        <span class="sched-tag ryusei-t">Ryusei: Science or Chinese</span>
-        <p style="color:#2ed573;margin-top:4px;font-size:.8em">Reward: Complete = unlock gaming time before SKC!</p>
-      </div>
-    </div>
-
-    <div class="sched-block free">
-      <div class="sched-time">7:30</div>
-      <div class="sched-content">
-        <h4>EARNED GAMING TIME! (Morning Reward)</h4>
-        <p>You earned it! Use your banked gaming minutes. Co-op game = +5 bonus minutes. Or: card game / board game / reading.</p>
-        <span class="sched-tag yuhi-t">Yuhi</span><span class="sched-tag ryusei-t">Ryusei</span>
-      </div>
-    </div>
-
-    <div class="sched-block family">
-      <div class="sched-time">8:15</div>
-      <div class="sched-content">
-        <h4>Get Ready for SKC + Travel</h4>
-        <p>Pack bags, change into karate gear. Head out!</p>
-        <span class="sched-tag all-t">Whole Family</span>
-      </div>
-    </div>
-
-    <div class="sched-block family">
-      <div class="sched-time">9:00</div>
-      <div class="sched-content">
-        <h4>Family Free Time (No SKC today)</h4>
-        <p>No karate today! Papa + Mama + Kids - family time. Board game, card game, or go out together.</p>
-        <span class="sched-tag all-t">Whole Family</span>
-      </div>
-    </div>
-
-    <div class="sched-block study">
-      <div class="sched-time">10:00</div>
-      <div class="sched-content">
-        <h4>STUDY BLOCK 3: Mid-Morning Focus</h4>
-        <p>1 quiz each. Almost done with daily tasks! Check which subjects are left.</p>
-        <span class="sched-tag yuhi-t">Yuhi: Remaining subject</span>
-        <span class="sched-tag ryusei-t">Ryusei: Remaining subject</span>
-        <p style="color:#ffd200;margin-top:4px;font-size:.8em">Keep going! 20 quizzes = +1 min gaming!</p>
-      </div>
-    </div>
-
-    <div class="sched-block family">
-      <div class="sched-time">11:00</div>
-      <div class="sched-content">
-        <h4>Family Lunch + Board Game Tournament</h4>
-        <p>Eat together, then Yuhi picks a card/board game for the family. Papa joins this time!</p>
-        <span class="sched-tag all-t">Whole Family</span>
-      </div>
-    </div>
-
-    <div class="sched-block activity">
-      <div class="sched-time">13:00</div>
-      <div class="sched-content">
-        <h4>Kids: Kendo | Papa + Mama: Free Time</h4>
-        <p>Kids go to kendo (13:00-14:35). Papa and Mama enjoy couple time!</p>
-        <span class="sched-tag yuhi-t">Yuhi (Kendo)</span><span class="sched-tag ryusei-t">Ryusei (Kendo)</span>
-        <span class="sched-tag" style="background:rgba(78,205,196,.2);color:#4ecdc4">Papa + Mama (Free!)</span>
-      </div>
-    </div>
-
-    <div class="sched-block family">
-      <div class="sched-time">14:35</div>
-      <div class="sched-content">
-        <h4>MEGA: Family Adventure Time!</h4>
-        <p>Golden window! All free! Choose: Nemoto Olympics / Board Game Cafe at Home / Park Trip / Creative Build</p>
-        <span class="sched-tag all-t">Whole Family</span>
-      </div>
-    </div>
-
-    <div class="sched-block study">
-      <div class="sched-time">16:00</div>
-      <div class="sched-content">
-        <h4>STUDY BLOCK 4: Final Push</h4>
-        <p>Last study block of the weekend! Complete any remaining subjects for daily completion.</p>
-        <span class="sched-tag yuhi-t">Yuhi: Remaining subjects</span>
-        <span class="sched-tag ryusei-t">Ryusei: Remaining subjects</span>
-        <p style="color:#ffd200;margin-top:4px;font-size:.8em">Finish all 4 = 10 min banked! Save up for a big gaming session!</p>
-      </div>
-    </div>
-
-    <div class="sched-block activity">
-      <div class="sched-time">16:30</div>
-      <div class="sched-content">
-        <h4>Kids: Kendo 2 | Papa + Mama: Chill / Baking</h4>
-        <p>Kids at kendo again (16:30-18:30). Papa + Mama relax or prep the Awards Dinner.</p>
-        <span class="sched-tag yuhi-t">Yuhi (Kendo)</span><span class="sched-tag ryusei-t">Ryusei (Kendo)</span>
-        <span class="sched-tag" style="background:rgba(78,205,196,.2);color:#4ecdc4">Papa + Mama</span>
-      </div>
-    </div>
-
-    <div class="sched-block family">
-      <div class="sched-time">18:00</div>
-      <div class="sched-content">
-        <h4>Family Dinner + Weekend Awards Ceremony</h4>
-        <p>Cook together, then: count total coins, announce levels, give family awards! "Best Moment" / "MVP" / "Most Improved"</p>
-        <span class="sched-tag all-t">Whole Family</span>
-      </div>
-    </div>
-
-    <div class="sched-block family">
-      <div class="sched-time">19:00</div>
-      <div class="sched-content">
-        <h4>Family Chill: Movie or Board Game</h4>
-        <p>Highest scorer picks! Wind down together as a family. Enjoy your last evening activity.</p>
-        <span class="sched-tag all-t">Whole Family</span>
-      </div>
-    </div>
-
-    <div class="sched-block family">
-      <div class="sched-time">20:00</div>
-      <div class="sched-content">
-        <h4>Wind Down: Brush Teeth + Story</h4>
-        <p>Get ready for bed. Ryusei reads or Papa reads to both. Calm the mind for sleep.</p>
-        <span class="sched-tag yuhi-t">Yuhi</span><span class="sched-tag ryusei-t">Ryusei</span>
-      </div>
-    </div>
-
-    <div class="sched-block" style="border-left-color:#9b59b6;background:rgba(155,89,182,.05)">
-      <div class="sched-time">20:30</div>
-      <div class="sched-content">
-        <h4>LIGHTS OUT - Great Weekend Complete!</h4>
-        <p>8h45m of sleep ahead. Tomorrow: wake at 5:15, start the week strong! Early risers conquer the world.</p>
-        <span class="sched-tag yuhi-t">Yuhi</span><span class="sched-tag ryusei-t">Ryusei</span>
-        <p style="color:#9b59b6;margin-top:4px;font-size:.8em">早起きは三文の徳! Early to bed, early to rise!</p>
-      </div>
-    </div>
-  </div>
+  <div id="sched-content"></div>
 </div>
 
 <!-- ===== REWARD SHOP ===== -->
@@ -1923,7 +1686,7 @@ function showPage(id) {
         (id==='arena'&&b.textContent.includes('Math'))||
         (id==='battle'&&b.textContent.includes('Battle'))||
         (id==='tasks'&&b.textContent.includes('Tasks'))||
-        (id==='schedule'&&b.textContent.includes('Weekend'))||
+        (id==='schedule'&&b.textContent.includes('Weekly'))||
         (id==='shop'&&b.textContent.includes('Shop'))||
         (id==='progress'&&b.textContent==='Progress')) b.classList.add('active');
   });
@@ -2532,14 +2295,251 @@ function buyItem(item) {
   alert(`${shopPlayer === 'yuhi' ? 'Yuhi' : 'Ryusei'} bought: ${item.name}! 🎉`);
 }
 
-// ============ SCHEDULE TABS ============
-function showSchedDay(day) {
-  document.querySelectorAll('#pg-schedule .tab-content').forEach(t => t.classList.remove('active'));
-  document.getElementById('sched-'+day).classList.add('active');
-  document.querySelectorAll('#pg-schedule .tab-btn').forEach((b,i) => {
-    b.classList.toggle('active', (i===0 && day==='sat') || (i===1 && day==='sun'));
-  });
+// ============ WEEKLY PLAN (Calendar-driven) ============
+// Calendar data — auto-updated by /update-plan command
+const CALENDAR_EVENTS = [
+  // Sun 3/29
+  {date:'2026-03-29',start:'13:00',end:'14:30',title:'Kids Kendo Class',who:'both',type:'activity'},
+  {date:'2026-03-29',start:'16:10',end:'18:00',title:'Brainfit',who:'yuhi',type:'activity'},
+  // Mon 3/30
+  {date:'2026-03-30',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-03-30',start:'14:00',end:'17:30',title:'CCA',who:'ryusei',type:'activity'},
+  {date:'2026-03-30',start:'17:15',end:'19:15',title:'Writers at Work',who:'yuhi',type:'activity'},
+  // Tue 3/31
+  {date:'2026-03-31',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-03-31',start:'14:00',end:'17:30',title:'CCA',who:'yuhi',type:'activity'},
+  {date:'2026-03-31',start:'17:30',end:'19:00',title:'Kids Kendo Class',who:'both',type:'activity'},
+  // Wed 4/1
+  {date:'2026-04-01',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-01',start:'16:00',end:'19:00',title:'Berries',who:'yuhi',type:'activity'},
+  {date:'2026-04-01',start:'17:00',end:'18:45',title:'TLL Science',who:'ryusei',type:'activity'},
+  // Thu 4/2
+  {date:'2026-04-02',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-02',start:'14:30',end:'17:00',title:'Berries',who:'ryusei',type:'activity'},
+  {date:'2026-04-02',start:'15:00',end:'16:00',title:'Writers at Work',who:'yuhi',type:'activity'},
+  // Fri 4/3
+  {date:'2026-04-03',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  // Sat 4/4
+  {date:'2026-04-04',start:'08:00',end:'09:00',title:'Keppel Golf',who:'both',type:'activity'},
+  {date:'2026-04-04',start:'10:00',end:'11:00',title:'SICC GAT Class',who:'both',type:'activity'},
+  {date:'2026-04-04',start:'14:00',end:'16:00',title:'Learning Lab Math',who:'yuhi',type:'activity'},
+  {date:'2026-04-04',start:'14:00',end:'15:45',title:'Math TLL',who:'ryusei',type:'activity'},
+  {date:'2026-04-04',start:'16:00',end:'18:00',title:'TLL Science',who:'yuhi',type:'activity'},
+  // Sun 4/5
+  {date:'2026-04-05',start:'09:00',end:'11:00',title:'SKC Kendo',who:'both',type:'activity'},
+  {date:'2026-04-05',start:'09:00',end:'10:50',title:'Brainfit',who:'yuhi',type:'activity'},
+  {date:'2026-04-05',start:'11:00',end:'12:30',title:'Pup SKC Kendo',who:'both',type:'activity'},
+  {date:'2026-04-05',start:'13:00',end:'14:30',title:'Kids Kendo Class',who:'both',type:'activity'},
+];
+// Last calendar sync timestamp
+const CALENDAR_LAST_SYNC = '2026-03-29T16:00:00+08:00';
+
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const DAY_NAMES_JP = ['日','月','火','水','木','金','土'];
+
+function getWeekDates() {
+  const today = new Date();
+  const dow = today.getDay(); // 0=Sun
+  const mon = new Date(today);
+  mon.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1)); // Start from Monday
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(mon);
+    d.setDate(mon.getDate() + i);
+    dates.push(d);
+  }
+  return dates;
 }
+
+function fmtDate(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function fmtTime(t) { return t; } // already HH:MM
+function timeToMin(t) { const [h,m]=t.split(':').map(Number); return h*60+m; }
+
+function buildDaySchedule(dateStr, events) {
+  const dayDate = new Date(dateStr+'T00:00:00');
+  const dow = dayDate.getDay();
+  const isWeekday = dow >= 1 && dow <= 5;
+  const blocks = [];
+
+  // Sort events by start time
+  const sorted = events.sort((a,b) => timeToMin(a.start) - timeToMin(b.start));
+
+  if (isWeekday) {
+    // Weekday: 7:00-14:00 school, study before school, study after activities
+    blocks.push({time:'06:30', title:'Morning Routine + Quick Study', desc:'Wake up, get ready. Try 1-2 quizzes before school!', type:'study',
+      tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
+
+    // School block
+    blocks.push({time:'07:00', title:'School', desc:'Focus at school! Learn as much as you can.', type:'school',
+      tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
+
+    // After school (14:00+), find gaps between activities for study
+    const afterSchool = sorted.filter(e => e.type !== 'school');
+    let cursor = 14*60; // 14:00
+
+    if (afterSchool.length > 0) {
+      // Snack + study before first activity if gap
+      const firstStart = timeToMin(afterSchool[0].start);
+      if (firstStart - cursor >= 30) {
+        blocks.push({time:'14:00', title:'After School: Snack + Study', desc:'Quick snack then quizzes! Earn coins before activities.', type:'study',
+          tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
+      }
+      // Add each activity with study gaps
+      afterSchool.forEach((e, i) => {
+        const eStart = timeToMin(e.start);
+        if (i > 0 && eStart - cursor >= 45) {
+          const h = Math.floor(cursor/60), m = cursor%60;
+          blocks.push({time:String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),
+            title:'Study / Free Time', desc:'Quiz time or free play! Earn coins.', type:'study',
+            tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
+        }
+        const whoTag = e.who === 'both' ? [{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}] :
+                       e.who === 'yuhi' ? [{text:'Yuhi',cls:'yuhi-t'}] : [{text:'Ryusei',cls:'ryusei-t'}];
+        blocks.push({time:e.start, title:e.title, desc:`${e.start} - ${e.end}`, type:'activity', tags:whoTag});
+        cursor = timeToMin(e.end);
+      });
+      // Evening study if gap after last activity
+      if (cursor < 18.5*60) {
+        const h = Math.floor(cursor/60), m = cursor%60;
+        blocks.push({time:String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),
+          title:'Evening Study + Quiz Time', desc:'Last chance to earn coins today! Do quizzes and keep your streak going.', type:'study',
+          tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
+      }
+    } else {
+      // No activities — structured study afternoon
+      blocks.push({time:'14:00', title:'After School: Snack + Study', desc:'Quick snack then quizzes! Earn coins.', type:'study',
+        tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
+      blocks.push({time:'16:00', title:'Free Time / Play', desc:'Take a break! You earned it.', type:'free',
+        tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
+      blocks.push({time:'17:30', title:'Evening Study + Quiz Time', desc:'Last chance to earn coins today! Keep your streak going.', type:'study',
+        tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
+    }
+  } else {
+    // Weekend: study blocks around activities
+    const evts = sorted.filter(e => e.type !== 'school');
+    let cursor = 7*60; // Start 7:00
+
+    blocks.push({time:'07:00', title:'Morning Routine + Breakfast', desc:'Wake up, eat breakfast. Get ready for the day!', type:'family',
+      tags:[{text:'Whole Family',cls:'all-t'}]});
+
+    if (evts.length === 0 || timeToMin(evts[0].start) - 7.5*60 >= 30) {
+      blocks.push({time:'07:30', title:'Morning Study Block', desc:'Brain is freshest in the morning! Do 2-3 quizzes.', type:'study',
+        tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
+      cursor = 8.5*60;
+    }
+
+    evts.forEach((e, i) => {
+      const eStart = timeToMin(e.start);
+      // Study block before activity if gap >= 45 min
+      if (eStart - cursor >= 45) {
+        const h = Math.floor(cursor/60), m = cursor%60;
+        blocks.push({time:String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),
+          title:'Study / Free Time', desc:'Quiz time or free play! Earn coins.', type:'study',
+          tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
+      }
+
+      const whoTag = e.who === 'both' ? [{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}] :
+                     e.who === 'yuhi' ? [{text:'Yuhi',cls:'yuhi-t'}] : [{text:'Ryusei',cls:'ryusei-t'}];
+      blocks.push({time:e.start, title:e.title, desc:`${e.start} - ${e.end}`, type:'activity', tags:whoTag});
+      cursor = Math.max(cursor, timeToMin(e.end));
+    });
+
+    // Afternoon free/study if before 18:00
+    if (cursor < 18*60) {
+      const h = Math.floor(cursor/60), m = cursor%60;
+      blocks.push({time:String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),
+        title:'Free Time + Study', desc:'Family time or more quizzes! Keep that streak going.', type:'free',
+        tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
+    }
+  }
+
+  // Always end with dinner and bedtime
+  blocks.push({time:'19:00', title:'Dinner + Family Time', desc:'Eat together. Board game or movie if time!', type:'family',
+    tags:[{text:'Whole Family',cls:'all-t'}]});
+  blocks.push({time:'20:00', title:'Wind Down: Brush Teeth + Story', desc:'Get ready for bed. Reading time.', type:'family',
+    tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
+  blocks.push({time:'20:30', title:'LIGHTS OUT', desc:'8+ hours sleep = full brain recharge!', type:'bedtime',
+    tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
+
+  return blocks;
+}
+
+function renderWeeklyPlan() {
+  const dates = getWeekDates();
+  const today = fmtDate(new Date());
+  const tabsEl = document.getElementById('sched-tabs');
+  const contentEl = document.getElementById('sched-content');
+  if (!tabsEl || !contentEl) return;
+
+  // Build tabs
+  let tabsHtml = '';
+  dates.forEach((d, i) => {
+    const ds = fmtDate(d);
+    const isToday = ds === today;
+    const dow = d.getDay();
+    const label = DAY_NAMES_JP[dow] + ' ' + (d.getMonth()+1) + '/' + d.getDate();
+    tabsHtml += `<button class="tab-btn${isToday?' active':''}" onclick="showWeekDay(${i})">${isToday?'TODAY ':''}<span>${label}</span></button>`;
+  });
+  tabsEl.innerHTML = tabsHtml;
+
+  // Build content for each day
+  let html = '';
+  dates.forEach((d, i) => {
+    const ds = fmtDate(d);
+    const isToday = ds === today;
+    const dow = d.getDay();
+    const dayEvents = CALENDAR_EVENTS.filter(e => e.date === ds);
+    const blocks = buildDaySchedule(ds, dayEvents);
+    const isWeekday = dow >= 1 && dow <= 5;
+
+    html += `<div class="tab-content${isToday?' active':''}" id="sched-day-${i}">`;
+    html += `<div style="background:rgba(${isWeekday?'69,183,209':'247,151,30'},.08);border:1px solid rgba(${isWeekday?'69,183,209':'247,151,30'},.2);border-radius:12px;padding:14px;margin-bottom:16px;text-align:center">`;
+    html += `<div style="font-size:1.1em;font-weight:800;color:${isWeekday?'#45b7d1':'#f7971e'}">${DAY_NAMES[dow]} ${d.getMonth()+1}/${d.getDate()} ${isToday?'(TODAY!)':''}</div>`;
+
+    // Show activities summary
+    const acts = dayEvents.filter(e => e.type !== 'school');
+    if (acts.length > 0) {
+      html += `<div style="font-size:.8em;color:#aaa;margin-top:4px">${acts.map(a => a.title + ' ' + a.start).join(' | ')}</div>`;
+    } else if (isWeekday) {
+      html += `<div style="font-size:.8em;color:#2ed573;margin-top:4px">No activities after school — extra study time!</div>`;
+    }
+    html += '</div>';
+
+    // Render blocks
+    blocks.forEach(b => {
+      const typeClass = b.type==='study'?'study':b.type==='activity'?'activity':b.type==='free'?'free':b.type==='bedtime'?'':'family';
+      const borderStyle = b.type==='bedtime'?'border-left-color:#9b59b6;background:rgba(155,89,182,.05)':'';
+      html += `<div class="sched-block ${typeClass}" ${borderStyle?'style="'+borderStyle+'"':''}>`;
+      html += `<div class="sched-time">${b.time}</div>`;
+      html += `<div class="sched-content"><h4>${b.title}</h4><p>${b.desc}</p>`;
+      b.tags.forEach(t => { html += `<span class="sched-tag ${t.cls}">${t.text}</span>`; });
+      html += '</div></div>';
+    });
+
+    html += '</div>';
+  });
+
+  contentEl.innerHTML = html;
+}
+
+function showWeekDay(idx) {
+  document.querySelectorAll('#pg-schedule .tab-content').forEach(t => t.classList.remove('active'));
+  const el = document.getElementById('sched-day-'+idx);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('#pg-schedule .tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+}
+
+// Show "last synced" info
+function updateSchedSub() {
+  const el = document.getElementById('sched-sub');
+  if (el && CALENDAR_LAST_SYNC) {
+    const d = new Date(CALENDAR_LAST_SYNC);
+    el.textContent = 'Study + Activities + Family! (synced: ' + d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) + ')';
+  }
+}
+
+// Init on page load
+setTimeout(() => { renderWeeklyPlan(); updateSchedSub(); }, 100);
 
 // ============ PROGRESS ============
 function showProgPlayer(p) {
@@ -4490,7 +4490,16 @@ function renderTasksSummary() {
 // 4. Paste the config object below, replacing null
 // 5. Run output\update_game_online.bat to deploy
 
-const FIREBASE_CONFIG = null;
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCscfsquTLoq08IBo6UxeyV8NIp2J3zM28",
+  authDomain: "nemoto-family-game.firebaseapp.com",
+  databaseURL: "https://nemoto-family-game-default-rtdb.firebaseio.com",
+  projectId: "nemoto-family-game",
+  storageBucket: "nemoto-family-game.firebasestorage.app",
+  messagingSenderId: "413797273945",
+  appId: "1:413797273945:web:4174cee3c40de94627fc48",
+  measurementId: "G-56FN5HT55P"
+};
 // Example after setup:
 // const FIREBASE_CONFIG = {
 //   apiKey: "AIzaSy...",
