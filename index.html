@@ -331,7 +331,111 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
 .q-type-badge.comprehension{background:rgba(79,172,254,.2);color:#4facfe}
 .q-type-badge.synthesis{background:rgba(255,165,0,.2);color:#ffa502}
 .wp-badge{background:rgba(255,210,0,.2);color:#ffd200;border-radius:12px;padding:2px 10px;font-size:.7em;font-weight:700}
+/* ========= DAILY TASKS ========= */
+.task-item {
+  display:flex; align-items:center; gap:12px;
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px; padding:12px 14px; margin:6px 0;
+  cursor:pointer; transition:all 0.2s; user-select:none;
+}
+.task-item:hover { background:rgba(255,255,255,0.09); }
+.task-item.done { background:rgba(46,213,115,0.1); border-color:rgba(46,213,115,0.35); }
+.task-item.done .task-name { text-decoration:line-through; opacity:0.7; }
+.task-check { font-size:1.4em; min-width:30px; }
+.task-info { flex:1; }
+.task-name { font-weight:600; font-size:.95em; }
+.task-detail { color:#aaa; font-size:.82em; font-weight:normal; }
+.task-meta { color:#888; font-size:.78em; margin-top:2px; }
+.task-reward { text-align:right; min-width:60px; }
+.task-coins { color:#4facfe; font-size:.82em; display:block; }
+.task-xp { color:#ffd200; font-size:.82em; display:block; }
+.task-category-label {
+  color:#aaa; font-size:.75em; font-weight:700;
+  text-transform:uppercase; letter-spacing:1px; margin:14px 0 4px;
+}
+.task-time-section {
+  background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px; padding:14px; margin:10px 0;
+}
+.task-section-title { font-weight:700; font-size:.95em; margin-bottom:10px; }
+.task-time-row { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.task-time-target { color:#aaa; font-size:.88em; }
+.task-time-input {
+  padding:7px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.2);
+  background:rgba(0,0,0,0.3); color:white; font-size:.9em; width:100px;
+}
+.task-time-btn {
+  padding:7px 16px; border-radius:8px; border:none;
+  background:linear-gradient(135deg,#4facfe,#00f2fe);
+  color:white; font-weight:700; cursor:pointer; font-size:.88em;
+}
+.task-time-result { margin-top:8px; font-weight:600; font-size:.88em; min-height:18px; }
+.task-summary {
+  margin:14px 0; padding:14px;
+  background:rgba(255,255,255,0.05); border-radius:12px;
+}
+.ts-bar-wrap {
+  background:rgba(255,255,255,0.1); border-radius:10px;
+  height:10px; margin-bottom:8px; overflow:hidden;
+}
+.ts-bar { height:100%; background:linear-gradient(90deg,#2ed573,#ffd200); border-radius:10px; transition:width 0.4s; }
+.ts-counts { font-size:.82em; color:#aaa; }
+.ts-msg { font-weight:700; margin-top:6px; color:#ffd200; font-size:.95em; }
+.task-pts-badge {
+  display:inline-block; background:rgba(255,210,0,0.15); color:#ffd200;
+  border-radius:6px; padding:2px 8px; font-size:.8em; font-weight:700; margin-left:6px;
+}
+/* ===== SYNC / RIVAL VIEW ===== */
+#sync-badge {
+  display:none; position:fixed; top:10px; right:12px;
+  background:rgba(46,213,115,0.85); color:white;
+  font-size:.68em; font-weight:800; padding:4px 10px;
+  border-radius:20px; z-index:9999; letter-spacing:.5px;
+  box-shadow:0 2px 8px rgba(0,0,0,.4); transition:all .3s;
+}
+.rival-section-title {
+  font-size:.78em; font-weight:700; color:#888;
+  text-transform:uppercase; letter-spacing:1px; margin:18px 0 8px;
+}
+.rival-card {
+  background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.1);
+  border-radius:12px; padding:13px 15px; margin:7px 0;
+  transition:border-color .3s;
+}
+.rival-card.self  { border-color:rgba(79,172,254,.4); }
+.rival-card.other { border-color:rgba(255,210,0,.35); }
+.rival-card-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.rival-name { font-weight:700; font-size:.95em; }
+.rival-lv { background:rgba(255,210,0,.2); color:#ffd200; border-radius:5px; padding:1px 7px; font-size:.72em; font-weight:700; margin-left:7px; }
+.rival-online-dot { color:#2ed573; font-size:.75em; margin-left:8px; }
+.rival-last-seen { font-size:.72em; color:#666; }
+.rival-stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:4px 14px; font-size:.82em; color:#ccc; }
+.rival-task-bar-wrap { background:rgba(255,255,255,.1); border-radius:6px; height:7px; overflow:hidden; margin-top:8px; }
+.rival-task-bar { height:100%; border-radius:6px; transition:width .5s; }
+.rival-task-label { font-size:.75em; color:#999; margin-bottom:3px; margin-top:7px; }
+/* Device select modal */
+#device-modal {
+  display:none; position:fixed; inset:0; background:rgba(0,0,0,.85);
+  z-index:10000; display:flex; align-items:center; justify-content:center;
+}
+#device-modal-box {
+  background:#1a1a2e; border:1px solid rgba(255,255,255,.15);
+  border-radius:18px; padding:32px 28px; text-align:center; max-width:340px; width:90%;
+}
+#device-modal h2 { margin:0 0 8px; font-size:1.3em; }
+#device-modal p  { color:#aaa; font-size:.9em; margin:0 0 24px; }
+.device-btn {
+  display:block; width:100%; padding:14px; border-radius:12px; border:2px solid rgba(255,255,255,.15);
+  background:rgba(255,255,255,.06); color:white; font-size:1.1em; font-weight:700;
+  cursor:pointer; margin:10px 0; transition:all .2s;
+}
+.device-btn:hover { background:rgba(255,255,255,.12); border-color:rgba(79,172,254,.6); }
+.device-btn.yuhi-btn  { border-color:rgba(79,172,254,.4); }
+.device-btn.ryusei-btn { border-color:rgba(255,210,0,.4); }
 </style>
+  <!-- Firebase Realtime Database (cross-device sync) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
@@ -342,6 +446,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   <button class="nav-btn" onclick="showPage('oral')">Oral Quest</button>
   <button class="nav-btn" onclick="showPage('arena')">Math Arena</button>
   <button class="nav-btn" onclick="showPage('battle')">⚔️ Battle!</button>
+  <button class="nav-btn" onclick="showPage('tasks')">✅ Tasks</button>
   <button class="nav-btn" onclick="showPage('schedule')">Weekend Plan</button>
   <button class="nav-btn" onclick="showPage('shop')">Reward Shop</button>
   <button class="nav-btn" onclick="showPage('progress')">Progress</button>
@@ -518,6 +623,12 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       </div>
     </div>
   </div>
+
+    <!-- Live Family Board -->
+    <div class="rival-section-title">⚡ LIVE — Family Board</div>
+    <div id="rival-view">
+      <div style="color:#555;font-size:.85em;text-align:center;padding:14px">Sync not configured — see setup instructions</div>
+    </div>
 </div>
 
 <!-- ===== STUDY QUEST ===== -->
@@ -1232,14 +1343,70 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   </div>
 </div>
 
+<!-- DAILY TASKS PAGE -->
+<div class="page" id="pg-tasks">
+  <div style="text-align:center;padding:16px 0 8px">
+    <h1 style="margin:0">📋 Daily Tasks</h1>
+    <div id="tasks-date" style="color:#aaa;font-size:.85em;margin-top:4px"></div>
+  </div>
+
+  <!-- Player tabs -->
+  <div style="display:flex;justify-content:center;gap:12px;margin:8px 0 12px">
+    <button id="task-tab-yuhi" class="sq-player-btn active" onclick="switchTaskTab('yuhi')">📚 Yuhi</button>
+    <button id="task-tab-ryusei" class="sq-player-btn" onclick="switchTaskTab('ryusei')">⚽ Ryusei</button>
+  </div>
+
+  <!-- Wake time -->
+  <div class="task-time-section">
+    <div class="task-section-title">⏰ Wake-up Time <span id="task-wake-pts" class="task-pts-badge"></span></div>
+    <div class="task-time-row">
+      <div class="task-time-target">Target: <strong id="task-wake-target">05:15</strong></div>
+      <input type="time" id="task-wake-input" class="task-time-input">
+      <button class="task-time-btn" onclick="applyTaskTime('wake')">Apply</button>
+    </div>
+    <div class="task-time-result" id="task-wake-result"></div>
+    <div style="color:#777;font-size:.75em;margin-top:6px">Early: +2 coins +3 XP per min &nbsp;|&nbsp; Late: −3 coins −5 XP per min</div>
+  </div>
+
+  <!-- Task list -->
+  <div id="task-list"></div>
+
+  <!-- Bedtime -->
+  <div class="task-time-section">
+    <div class="task-section-title">🌙 Bedtime <span id="task-bed-pts" class="task-pts-badge"></span></div>
+    <div class="task-time-row">
+      <div class="task-time-target">Target: <strong>20:30</strong></div>
+      <input type="time" id="task-bed-input" class="task-time-input">
+      <button class="task-time-btn" onclick="applyTaskTime('bed')">Apply</button>
+    </div>
+    <div class="task-time-result" id="task-bed-result"></div>
+    <div style="color:#777;font-size:.75em;margin-top:6px">Early: +1 coin +2 XP per min &nbsp;|&nbsp; Late: −2 coins −3 XP per min</div>
+  </div>
+
+  <!-- Summary -->
+  <div class="task-summary" id="task-summary"></div>
+</div>
+
+<!-- Device identity modal (shown once per device) -->
+<div id="device-modal" style="display:none">
+  <div id="device-modal-box">
+    <h2>👋 Who's using this device?</h2>
+    <p>This helps sync your progress with the family.<br>You can change this in Settings.</p>
+    <button class="device-btn yuhi-btn"  onclick="setDevicePlayer('yuhi')">📚 Yuhi (Nathaniel)</button>
+    <button class="device-btn ryusei-btn" onclick="setDevicePlayer('ryusei')">⚽ Ryusei (Skye)</button>
+    <button style="margin-top:8px;background:none;border:none;color:#666;font-size:.8em;cursor:pointer" onclick="setDevicePlayer('shared')">Use as shared device</button>
+  </div>
+</div>
+<span id="sync-badge">🟢 LIVE</span>
+
 <script>
 // ============ STATE ============
 const defaultState = () => ({
-  yuhi: { xp:0, coins:0, streak:0, bestStreak:0, gameBank:0, gameUsed:0, totalCorrect:0, totalWrong:0, quizzesDone:0,
+  yuhi: { xp:344, coins:155, streak:1, bestStreak:1, gameBank:2, gameUsed:0, totalCorrect:0, totalWrong:0, quizzesDone:0,
     subjects:{ math:{done:0,correct:0,total:0}, science:{done:0,correct:0,total:0}, english:{done:0,correct:0,total:0}, chinese:{done:0,correct:0,total:0} },
     dailyComplete:[], perfectBonuses:0, purchases:[]
   },
-  ryusei: { xp:0, coins:0, streak:0, bestStreak:0, gameBank:0, gameUsed:0, totalCorrect:0, totalWrong:0, quizzesDone:0,
+  ryusei: { xp:342, coins:143, streak:5, bestStreak:5, gameBank:1, gameUsed:0, totalCorrect:0, totalWrong:0, quizzesDone:0,
     subjects:{ math:{done:0,correct:0,total:0}, science:{done:0,correct:0,total:0}, english:{done:0,correct:0,total:0}, chinese:{done:0,correct:0,total:0} },
     dailyComplete:[], perfectBonuses:0, purchases:[]
   }
@@ -1247,7 +1414,38 @@ const defaultState = () => ({
 
 let state;
 try { state = JSON.parse(localStorage.getItem('nemoto-study-v2')) || defaultState(); } catch(e) { state = defaultState(); }
-function save() { localStorage.setItem('nemoto-study-v2', JSON.stringify(state)); }
+
+// Ensure new fields exist on old saves (forward-migration)
+['yuhi','ryusei'].forEach(p => {
+  if (!state[p].purchases) state[p].purchases = [];
+  if (!state[p].dailyComplete) state[p].dailyComplete = [];
+  if (state[p].perfectBonuses === undefined) state[p].perfectBonuses = 0;
+  if (state[p].gameBank === undefined) state[p].gameBank = 0;
+  if (state[p].gameUsed === undefined) state[p].gameUsed = 0;
+});
+
+// Seed baseline points (2026-03-28) — applies once per device if XP is below baseline
+(function applySeedBaseline() {
+  if (localStorage.getItem('nemoto-seed-20260328')) return;
+  if ((state.yuhi.xp || 0) < 344) {
+    state.yuhi.xp        = 344;
+    state.yuhi.coins     = Math.max(state.yuhi.coins     || 0, 155);
+    state.yuhi.streak    = Math.max(state.yuhi.streak    || 0, 1);
+    state.yuhi.bestStreak= Math.max(state.yuhi.bestStreak|| 0, 1);
+    state.yuhi.gameBank  = Math.max(state.yuhi.gameBank  || 0, 2);
+  }
+  if ((state.ryusei.xp || 0) < 342) {
+    state.ryusei.xp        = 342;
+    state.ryusei.coins     = Math.max(state.ryusei.coins     || 0, 143);
+    state.ryusei.streak    = Math.max(state.ryusei.streak    || 0, 5);
+    state.ryusei.bestStreak= Math.max(state.ryusei.bestStreak|| 0, 5);
+    state.ryusei.gameBank  = Math.max(state.ryusei.gameBank  || 0, 1);
+  }
+  localStorage.setItem('nemoto-seed-20260328', '1');
+  localStorage.setItem('nemoto-study-v2', JSON.stringify(state));
+})();
+
+function save() { localStorage.setItem('nemoto-study-v2', JSON.stringify(state)); pushToFirebase(); }
 
 // WEAK POINTS (Treasure Chest)
 let wpState = {};
@@ -1618,13 +1816,12 @@ const questions = {
 
 // ============ SHOP ITEMS ============
 const shopItems = [
-  {id:'game5',emoji:'\u{1F3AE}',name:'5 Min Gaming',desc:'Quick 5 minutes of video games!',cost:20},
-  {id:'game10',emoji:'\u{1F579}',name:'10 Min Gaming',desc:'10 minute gaming session!',cost:40},
-  {id:'movie',emoji:'\u{1F3AC}',name:'Movie Pick',desc:'YOU choose the family movie!',cost:40},
-  {id:'snack',emoji:'\u{1F36D}',name:'Snack of Choice',desc:'Pick any snack from the store!',cost:20},
-  {id:'noChore',emoji:'\u{1F9F9}',name:'Skip 1 Chore',desc:'Skip one chore this weekend!',cost:35},
-  {id:'dessert',emoji:'\u{1F370}',name:'Special Dessert',desc:'Mama makes your favorite dessert!',cost:60},
-  {id:'outing',emoji:'\u{1F3E0}',name:'Choose Family Outing',desc:'Pick where the family goes next!',cost:80},
+  {id:'game5', emoji:'🎮', name:'5 Min Gaming',        desc:'Quick 5 minutes of video games!',      cost:100, gameMins:5},
+  {id:'game10',emoji:'🕹️', name:'10 Min Gaming',       desc:'10 minute gaming session!',            cost:180, gameMins:10},
+  {id:'movie', emoji:'🎬', name:'Movie Pick',           desc:'YOU choose the family movie!',         cost:120},
+  {id:'snack', emoji:'🍭', name:'Snack of Choice',      desc:'Pick any snack from the store!',       cost:60},
+  {id:'dessert',emoji:'🎂',name:'Special Dessert',      desc:'Mama makes your favorite dessert!',    cost:150},
+  {id:'outing',emoji:'🏖️', name:'Choose Family Outing', desc:'Pick where the family goes next!',    cost:250},
 ];
 
 // ============ NAVIGATION ============
@@ -1638,6 +1835,7 @@ function showPage(id) {
         (id==='oral'&&b.textContent.includes('Oral'))||
         (id==='arena'&&b.textContent.includes('Math'))||
         (id==='battle'&&b.textContent.includes('Battle'))||
+        (id==='tasks'&&b.textContent.includes('Tasks'))||
         (id==='schedule'&&b.textContent.includes('Weekend'))||
         (id==='shop'&&b.textContent.includes('Shop'))||
         (id==='progress'&&b.textContent==='Progress')) b.classList.add('active');
@@ -1648,6 +1846,7 @@ function showPage(id) {
   if (id==='oral') initOralQuest();
   if (id==='arena') initArena();
   if (id==='battle') initBattle();
+  if (id==='tasks') initTasks();
 }
 
 // ============ PLAYER SELECTION ============
@@ -1998,6 +2197,7 @@ function updateDashboard() {
     const el = document.getElementById('dash-prog-'+subj);
     if(el) el.textContent = done + ' quizzes done';
   });
+  renderRivalView();
 }
 
 // ============ SHOP ============
@@ -2013,31 +2213,63 @@ function renderShop() {
   document.getElementById('shop-coins-ryusei').textContent = state.ryusei.coins;
   const cont = document.getElementById('shop-items');
   cont.innerHTML = '';
+
+  const s = state[shopPlayer];
+  const today = new Date().toDateString();
+  const shopGameToday = (s.shopGameDate === today) ? (s.shopGameToday || 0) : 0;
+  const gameCapLeft = Math.max(0, 10 - shopGameToday);
+
+  if (shopGameToday > 0) {
+    const capEl = document.createElement('div');
+    capEl.style.cssText = 'text-align:center;font-size:.82em;padding:8px 12px;margin-bottom:10px;background:rgba(255,255,255,.06);border-radius:10px;color:#aaa';
+    capEl.textContent = gameCapLeft === 0
+      ? `🎮 Gaming today: ${shopGameToday}/10 min — Daily limit reached!`
+      : `🎮 Gaming purchased today: ${shopGameToday}/10 min  (${gameCapLeft} min left)`;
+    cont.appendChild(capEl);
+  }
+
   shopItems.forEach(item => {
-    const canAfford = state[shopPlayer].coins >= item.cost;
+    const gameCapped = item.gameMins && gameCapLeft < item.gameMins;
+    const cantAfford = s.coins < item.cost;
+    const disabled = cantAfford || gameCapped;
     const div = document.createElement('div');
-    div.className = 'shop-item' + (canAfford ? '' : ' sold-out');
-    div.innerHTML = `<div class="shop-emoji">${item.emoji}</div><h4>${item.name}</h4><p>${item.desc}</p><div class="price">${item.cost} coins</div>`;
-    if (canAfford) {
-      div.onclick = () => buyItem(item);
-    }
+    div.className = 'shop-item' + (disabled ? ' sold-out' : '');
+    const extra = gameCapped ? `<div style="color:#ff6b6b;font-size:.75em;margin-top:4px">Daily limit reached</div>` : '';
+    div.innerHTML = `<div class="shop-emoji">${item.emoji}</div><h4>${item.name}</h4><p>${item.desc}</p><div class="price">${item.cost} coins</div>${extra}`;
+    if (!disabled) div.onclick = () => buyItem(item);
     cont.appendChild(div);
   });
 }
 
 function buyItem(item) {
-  if (state[shopPlayer].coins < item.cost) return;
-  if (!confirm(`${shopPlayer === 'yuhi' ? 'Yuhi' : 'Ryusei'}: Buy "${item.name}" for ${item.cost} coins?`)) return;
-  state[shopPlayer].coins -= item.cost;
-  state[shopPlayer].purchases.push({id:item.id, name:item.name, date:new Date().toISOString()});
-  if (item.id.includes('game')) {
-    const mins = parseInt(item.name);
-    state[shopPlayer].gameBank = (state[shopPlayer].gameBank||0) + mins;
+  const s = state[shopPlayer];
+  if (s.coins < item.cost) return;
+
+  // Enforce daily 10-min gaming cap
+  if (item.gameMins) {
+    const today = new Date().toDateString();
+    const shopGameToday = (s.shopGameDate === today) ? (s.shopGameToday || 0) : 0;
+    if (shopGameToday + item.gameMins > 10) {
+      alert(`Daily gaming purchase limit is 10 min/day.\nAlready bought: ${shopGameToday} min — only ${10 - shopGameToday} min left today.`);
+      return;
+    }
   }
+
+  if (!confirm(`${shopPlayer === 'yuhi' ? 'Yuhi' : 'Ryusei'}: Buy "${item.name}" for ${item.cost} coins?`)) return;
+  s.coins -= item.cost;
+  s.purchases.push({id:item.id, name:item.name, date:new Date().toISOString()});
+
+  if (item.gameMins) {
+    const today = new Date().toDateString();
+    s.gameBank = (s.gameBank || 0) + item.gameMins;
+    s.shopGameToday = ((s.shopGameDate === today ? s.shopGameToday : 0) || 0) + item.gameMins;
+    s.shopGameDate = today;
+  }
+
   save();
   updatePlayerCards();
   renderShop();
-  alert(`${shopPlayer === 'yuhi' ? 'Yuhi' : 'Ryusei'} bought: ${item.name}!`);
+  alert(`${shopPlayer === 'yuhi' ? 'Yuhi' : 'Ryusei'} bought: ${item.name}! 🎉`);
 }
 
 // ============ SCHEDULE TABS ============
@@ -3298,6 +3530,423 @@ function coopEndBattle(won) {
 }
 
 initBattle();
+
+// ========= DAILY TASKS =========
+const yuhiTaskDefs = [
+  {id:'grammar_mcq',  name:'Grammar MCQ',                     detail:'1 page',  time:10, coins:15, xp:30,  cat:'📝 English', gameMin:0},
+  {id:'vocab_mcq',    name:'Vocab MCQ',                        detail:'1 page',  time:15, coins:20, xp:40,  cat:'📝 English', gameMin:0},
+  {id:'spelling',     name:'Spelling',                         detail:'3 words', time:10, coins:15, xp:25,  cat:'📝 English', gameMin:0},
+  {id:'oral_comp',    name:'Oral / Comprehension / Composition',detail:'',       time:20, coins:30, xp:60,  cat:'📝 English', gameMin:0},
+  {id:'chinese_1000', name:'Chinese 1000+ Practice',           detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
+  {id:'berries',      name:'Berries 靠靠自己',                  detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
+  {id:'ch_oral',      name:'Chinese Oral / Comprehension / Composition', detail:'', time:20, coins:25, xp:50, cat:'🈶 Chinese', gameMin:0},
+  {id:'ch_words',     name:'Recognize Chinese Words',          detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
+  {id:'tll',          name:'TLL Math / Science',               detail:'',        time:10, coins:15, xp:30,  cat:'🔬 Academic', gameMin:0},
+  {id:'kendo',        name:'Kendo',                            detail:'',        time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
+  {id:'golf',         name:'Golf',                             detail:'',        time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
+  {id:'hiit',         name:'HIIT',                             detail:'',        time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
+];
+
+const ryuseiTaskDefs = [
+  {id:'dd_english',   name:'Daily Dose English',  detail:'',  time:15, coins:20, xp:35,  cat:'📝 English', gameMin:0},
+  {id:'dd_math',      name:'Daily Dose Math',      detail:'',  time:20, coins:25, xp:45,  cat:'🔢 Math',    gameMin:0},
+  {id:'kendo',        name:'Kendo',                detail:'',  time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
+  {id:'golf',         name:'Golf',                 detail:'',  time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
+  {id:'hiit',         name:'HIIT',                 detail:'',  time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
+  {id:'berries_ch',   name:'Berries Chinese',      detail:'',  time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
+  {id:'learning_lab', name:'Learning Lab',         detail:'',  time:20, coins:20, xp:40,  cat:'🔬 Academic', gameMin:0},
+];
+
+// Wake targets in minutes from midnight
+const WAKE_TARGETS = {yuhi: 5*60+15, ryusei: 6*60};
+const BED_TARGET = 20*60+30;
+
+let tasksState = {};
+try { tasksState = JSON.parse(localStorage.getItem('nemoto-tasks-v1')) || {}; } catch(e) {}
+if (!tasksState.yuhi) tasksState.yuhi = {};
+if (!tasksState.ryusei) tasksState.ryusei = {};
+function saveTasks() { localStorage.setItem('nemoto-tasks-v1', JSON.stringify(tasksState)); }
+
+let currentTaskPlayer = 'yuhi';
+
+function getTodayTaskKey() { return new Date().toISOString().slice(0,10); }
+
+function getTodayTaskData(player) {
+  const key = getTodayTaskKey();
+  if (!tasksState[player][key]) {
+    tasksState[player][key] = {done:[], wake:null, bed:null, wakeCoins:0, wakeXP:0, bedCoins:0, bedXP:0};
+  }
+  return tasksState[player][key];
+}
+
+function initTasks() {
+  const opts = {weekday:'long', year:'numeric', month:'long', day:'numeric'};
+  document.getElementById('tasks-date').textContent = new Date().toLocaleDateString('en-SG', opts);
+  renderTasksPage();
+}
+
+function switchTaskTab(player) {
+  currentTaskPlayer = player;
+  document.getElementById('task-tab-yuhi').classList.toggle('active', player==='yuhi');
+  document.getElementById('task-tab-ryusei').classList.toggle('active', player==='ryusei');
+  renderTasksPage();
+}
+
+function renderTasksPage() {
+  const player = currentTaskPlayer;
+  const today = getTodayTaskData(player);
+  const tasks = player === 'yuhi' ? yuhiTaskDefs : ryuseiTaskDefs;
+  const wakeTarget = WAKE_TARGETS[player];
+  const wh = Math.floor(wakeTarget/60), wm = wakeTarget%60;
+
+  document.getElementById('task-wake-target').textContent =
+    String(wh).padStart(2,'0') + ':' + String(wm).padStart(2,'0');
+
+  document.getElementById('task-wake-input').value = today.wake || '';
+  document.getElementById('task-bed-input').value  = today.bed  || '';
+  renderTaskTimeResult('wake');
+  renderTaskTimeResult('bed');
+
+  // Group by category
+  const cats = [...new Set(tasks.map(t => t.cat))];
+  let html = '';
+  cats.forEach(cat => {
+    html += `<div class="task-category-label">${cat}</div>`;
+    tasks.filter(t => t.cat === cat).forEach(task => {
+      const done = today.done.includes(task.id);
+      const gameTag = task.gameMin > 0 ? `<span style="color:#2ed573;font-size:.75em"> +${task.gameMin}m game</span>` : '';
+      html += `
+        <div class="task-item ${done?'done':''}" onclick="toggleDailyTask('${task.id}')">
+          <div class="task-check">${done?'✅':'⬜'}</div>
+          <div class="task-info">
+            <div class="task-name">${task.name}${task.detail?` <span class="task-detail">(${task.detail})</span>`:''}</div>
+            <div class="task-meta">${task.time} min${gameTag}</div>
+          </div>
+          <div class="task-reward">
+            <span class="task-coins">+${task.coins}c</span>
+            <span class="task-xp">+${task.xp} XP</span>
+          </div>
+        </div>`;
+    });
+  });
+  document.getElementById('task-list').innerHTML = html;
+  renderTasksSummary();
+}
+
+function toggleDailyTask(taskId) {
+  const player = currentTaskPlayer;
+  const today = getTodayTaskData(player);
+  const tasks = player === 'yuhi' ? yuhiTaskDefs : ryuseiTaskDefs;
+  const task = tasks.find(t => t.id === taskId);
+  if (!task) return;
+
+  const idx = today.done.indexOf(taskId);
+  if (idx === -1) {
+    today.done.push(taskId);
+    state[player].coins += task.coins;
+    state[player].xp    += task.xp;
+    if (task.gameMin > 0) {
+      const banked = state[player].todayBanked || 0;
+      if (banked < 10) {
+        state[player].gameBank = (state[player].gameBank||0) + task.gameMin;
+        state[player].todayBanked = banked + task.gameMin;
+      }
+    }
+  } else {
+    today.done.splice(idx, 1);
+    state[player].coins = Math.max(0, state[player].coins - task.coins);
+    state[player].xp    = Math.max(0, state[player].xp    - task.xp);
+    if (task.gameMin > 0) {
+      state[player].gameBank = Math.max(0, (state[player].gameBank||0) - task.gameMin);
+    }
+  }
+
+  save(); saveTasks(); updatePlayerCards();
+  renderTasksPage();
+}
+
+function applyTaskTime(type) {
+  const player = currentTaskPlayer;
+  const today = getTodayTaskData(player);
+  const input = document.getElementById('task-' + type + '-input').value;
+  if (!input) return;
+
+  // Reverse previous bonus
+  if (type === 'wake' && today.wake) {
+    state[player].coins = Math.max(0, state[player].coins - today.wakeCoins);
+    state[player].xp    = Math.max(0, state[player].xp    - today.wakeXP);
+  }
+  if (type === 'bed' && today.bed) {
+    state[player].coins = Math.max(0, state[player].coins - today.bedCoins);
+    state[player].xp    = Math.max(0, state[player].xp    - today.bedXP);
+  }
+
+  const [h, m] = input.split(':').map(Number);
+  const actualMins = h * 60 + m;
+  const targetMins = type === 'wake' ? WAKE_TARGETS[player] : BED_TARGET;
+  const diff = targetMins - actualMins; // positive = early, negative = late
+
+  let coins = 0, xp = 0;
+  if (diff > 0) {
+    const mins = type === 'wake' ? Math.min(diff, 45) : Math.min(diff, 45);
+    coins = type === 'wake' ? mins * 2 : mins * 1;
+    xp    = type === 'wake' ? mins * 3 : mins * 2;
+  } else if (diff < 0) {
+    const mins = Math.abs(diff);
+    coins = type === 'wake' ? -(mins * 3) : -(mins * 2);
+    xp    = type === 'wake' ? -(mins * 5) : -(mins * 3);
+  }
+
+  if (type === 'wake') { today.wake = input; today.wakeCoins = coins; today.wakeXP = xp; }
+  else                  { today.bed  = input; today.bedCoins  = coins; today.bedXP  = xp; }
+
+  state[player].coins = Math.max(0, state[player].coins + coins);
+  state[player].xp    = Math.max(0, state[player].xp    + xp);
+
+  save(); saveTasks(); updatePlayerCards();
+  renderTaskTimeResult(type);
+  renderTasksSummary();
+}
+
+function renderTaskTimeResult(type) {
+  const player = currentTaskPlayer;
+  const today = getTodayTaskData(player);
+  const el = document.getElementById('task-' + type + '-result');
+  const stored = type === 'wake' ? today.wake : today.bed;
+  if (!stored) { el.textContent = ''; return; }
+
+  const [h, m] = stored.split(':').map(Number);
+  const actualMins = h * 60 + m;
+  const targetMins = type === 'wake' ? WAKE_TARGETS[player] : BED_TARGET;
+  const diff = targetMins - actualMins;
+  const coins = type === 'wake' ? today.wakeCoins : today.bedCoins;
+  const xp    = type === 'wake' ? today.wakeXP    : today.bedXP;
+  const icon  = type === 'wake' ? '⏰' : '🌙';
+
+  if (diff > 0) {
+    el.textContent = `${icon} ${diff} min early! +${coins} coins +${xp} XP`;
+    el.style.color = '#2ed573';
+  } else if (diff < 0) {
+    el.textContent = `${icon} ${Math.abs(diff)} min late. ${coins} coins ${xp} XP`;
+    el.style.color = '#ff6b6b';
+  } else {
+    el.textContent = `${icon} Perfect timing! On time!`;
+    el.style.color = '#ffd200';
+  }
+
+  // Update badge
+  const badge = document.getElementById('task-' + type + '-pts');
+  if (badge) {
+    badge.textContent = coins >= 0 ? `+${coins}c` : `${coins}c`;
+    badge.style.background = coins >= 0 ? 'rgba(46,213,115,.2)' : 'rgba(255,107,107,.2)';
+    badge.style.color = coins >= 0 ? '#2ed573' : '#ff6b6b';
+  }
+}
+
+function renderTasksSummary() {
+  const player = currentTaskPlayer;
+  const today = getTodayTaskData(player);
+  const tasks = player === 'yuhi' ? yuhiTaskDefs : ryuseiTaskDefs;
+
+  const doneCount = today.done.length;
+  const total     = tasks.length;
+  const pct       = Math.round(doneCount / total * 100);
+  const earnedC   = today.done.reduce((s,id) => s + (tasks.find(t=>t.id===id)?.coins||0), 0);
+  const earnedXP  = today.done.reduce((s,id) => s + (tasks.find(t=>t.id===id)?.xp||0),    0);
+
+  let msg = doneCount===total ? '🎉 ALL DONE! Incredible day!' :
+            pct>=75 ? '🔥 Almost there! Just a bit more!' :
+            pct>=50 ? '💪 Halfway! Keep the momentum!' :
+            pct>=25 ? '⚡ Good start! Keep going!' : '📋 Ready to start?';
+
+  document.getElementById('task-summary').innerHTML = `
+    <div class="ts-bar-wrap"><div class="ts-bar" style="width:${pct}%"></div></div>
+    <div class="ts-counts">${doneCount} / ${total} tasks &nbsp;·&nbsp; +${earnedC} coins &nbsp;·&nbsp; +${earnedXP} XP earned today</div>
+    <div class="ts-msg">${msg}</div>`;
+}
+
+// ========= FIREBASE SYNC =========
+// SETUP INSTRUCTIONS:
+// 1. Go to https://console.firebase.google.com → Create project (free)
+// 2. Build → Realtime Database → Create database → Start in TEST MODE
+// 3. Project Settings ⚙️ → Your apps → </> Add web app → Register → Copy firebaseConfig
+// 4. Paste the config object below, replacing null
+// 5. Run output\update_game_online.bat to deploy
+
+const FIREBASE_CONFIG = null;
+// Example after setup:
+// const FIREBASE_CONFIG = {
+//   apiKey: "AIzaSy...",
+//   authDomain: "your-project.firebaseapp.com",
+//   databaseURL: "https://your-project-default-rtdb.firebaseio.com",
+//   projectId: "your-project",
+//   storageBucket: "your-project.appspot.com",
+//   messagingSenderId: "...",
+//   appId: "...",
+// };
+
+let fbDb = null;
+let syncReady = false;
+let remoteData = { yuhi: null, ryusei: null };
+let localDevicePlayer = localStorage.getItem('nemoto-device-player') || null;
+
+function setDevicePlayer(p) {
+  localDevicePlayer = p;
+  localStorage.setItem('nemoto-device-player', p);
+  const modal = document.getElementById('device-modal');
+  if (modal) modal.style.display = 'none';
+  if (syncReady) pushToFirebase();
+  renderRivalView();
+}
+
+function initSync() {
+  if (!FIREBASE_CONFIG || !window.firebase) return;
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    fbDb = firebase.database();
+    syncReady = true;
+
+    ['yuhi', 'ryusei'].forEach(p => {
+      fbDb.ref('nemoto-family/' + p).on('value', snap => {
+        const data = snap.val();
+        if (!data) return;
+        remoteData[p] = data;
+        flashSyncBadge();
+        renderRivalView();
+        updatePlayerCards();
+      });
+    });
+
+    const badge = document.getElementById('sync-badge');
+    if (badge) badge.style.display = 'inline-block';
+    pushToFirebase();
+  } catch(e) {
+    console.warn('Sync init error:', e.message);
+  }
+}
+
+function flashSyncBadge() {
+  const b = document.getElementById('sync-badge');
+  if (!b) return;
+  b.textContent = '🔴 LIVE'; b.style.background = 'rgba(255,50,50,0.85)';
+  setTimeout(() => { b.textContent = '🟢 LIVE'; b.style.background = 'rgba(46,213,115,0.85)'; }, 600);
+}
+
+function pushToFirebase() {
+  if (!syncReady || !fbDb) return;
+  const pushPlayer = localDevicePlayer === 'shared' ? null : localDevicePlayer;
+  const targets = pushPlayer ? [pushPlayer] : ['yuhi', 'ryusei'];
+
+  targets.forEach(p => {
+    const s = state[p];
+    let tasksDone = 0, tasksTotal = 1;
+    try {
+      const tod = getTodayTaskData(p);
+      const defs = p === 'yuhi' ? yuhiTaskDefs : ryuseiTaskDefs;
+      tasksDone = tod.done.length;
+      tasksTotal = defs.length;
+    } catch(e) {}
+
+    fbDb.ref('nemoto-family/' + p).set({
+      xp: s.xp || 0,
+      coins: s.coins || 0,
+      gameBank: Math.max(0, (s.gameBank||0) - (s.gameUsed||0)),
+      quizzesDone: s.quizzesDone || 0,
+      totalCorrect: s.totalCorrect || 0,
+      bestStreak: s.bestStreak || 0,
+      arenaWins: (typeof arenaState !== 'undefined' ? (arenaState.wins||0) : 0),
+      tasksDone, tasksTotal,
+      ts: Date.now()
+    });
+  });
+}
+
+function renderRivalView() {
+  const el = document.getElementById('rival-view');
+  if (!el) return;
+
+  // Use remoteData if available, else fall back to local state
+  const players = [
+    { key: 'yuhi',   label: '📚 Yuhi',   color: '#4facfe' },
+    { key: 'ryusei', label: '⚽ Ryusei', color: '#ffd200' },
+  ];
+
+  let html = '';
+  players.forEach(({ key, label, color }) => {
+    const remote = remoteData[key];
+    const local  = state[key];
+    const isSelf = localDevicePlayer === key;
+
+    // Use remote if available, else local
+    const xp       = remote ? remote.xp       : (local.xp || 0);
+    const coins     = remote ? remote.coins     : (local.coins || 0);
+    const gameBank  = remote ? remote.gameBank  : Math.max(0,(local.gameBank||0)-(local.gameUsed||0));
+    const wins      = remote ? remote.arenaWins : (typeof arenaState!=='undefined'?arenaState.wins:0);
+    const tasksDone = remote ? remote.tasksDone : 0;
+    const tasksTotal= remote ? remote.tasksTotal : 1;
+    const since     = remote && remote.ts ? Math.round((Date.now() - remote.ts) / 1000) : null;
+    const online    = since !== null && since < 180;
+    const level     = getLevel(xp);
+    const taskPct   = Math.min(100, Math.round(tasksDone / Math.max(1, tasksTotal) * 100));
+
+    let sinceText = '';
+    if (since === null) sinceText = 'no data';
+    else if (since < 60)  sinceText = since + 's ago';
+    else if (since < 3600) sinceText = Math.round(since/60) + 'm ago';
+    else sinceText = 'offline';
+
+    // Competition nudge
+    let nudge = '';
+    if (!isSelf && remote) {
+      const myXp = state[localDevicePlayer==='yuhi'?'yuhi':'ryusei']?.xp || 0;
+      const diff = xp - myXp;
+      if (diff > 50)       nudge = `<div style="color:#ff6b6b;font-size:.75em;margin-top:6px">🔥 ${Math.abs(diff)} XP ahead! Catch up!</div>`;
+      else if (diff < -50) nudge = `<div style="color:#2ed573;font-size:.75em;margin-top:6px">⭐ You're ${Math.abs(diff)} XP ahead! Keep it up!</div>`;
+      else                 nudge = `<div style="color:#ffd200;font-size:.75em;margin-top:6px">⚡ Neck and neck! Who wins today?</div>`;
+    }
+
+    html += `
+      <div class="rival-card ${isSelf?'self':'other'}">
+        <div class="rival-card-top">
+          <div class="rival-name">${label}
+            <span class="rival-lv">Lv.${level}</span>
+            ${online ? '<span class="rival-online-dot">● ONLINE</span>' : ''}
+            ${isSelf ? '<span style="color:#4facfe;font-size:.7em;margin-left:6px">(you)</span>' : ''}
+          </div>
+          <div class="rival-last-seen">${sinceText}</div>
+        </div>
+        <div class="rival-stats-grid">
+          <div>✨ ${xp} XP</div>
+          <div>🪙 ${coins} coins</div>
+          <div>🎮 ${gameBank}m free</div>
+          <div>🏆 ${wins} arena wins</div>
+        </div>
+        <div class="rival-task-label">Daily Tasks: ${tasksDone}/${tasksTotal}</div>
+        <div class="rival-task-bar-wrap">
+          <div class="rival-task-bar" style="width:${taskPct}%;background:${color}"></div>
+        </div>
+        ${nudge}
+      </div>`;
+  });
+
+  if (!html) html = '<div style="color:#555;font-size:.85em;text-align:center;padding:14px">Connecting...</div>';
+  el.innerHTML = html;
+}
+
+// Device identity check on startup
+function checkDeviceIdentity() {
+  if (!localDevicePlayer) {
+    const modal = document.getElementById('device-modal');
+    if (modal) modal.style.display = 'flex';
+  }
+}
+
+// Run sync after all inits
+setTimeout(() => {
+  checkDeviceIdentity();
+  initSync();
+  renderRivalView();
+}, 200);
 </script>
 </body>
 </html>
