@@ -764,6 +764,17 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       </ul>
     </div>
 
+    <div class="oq-hints" style="border-color:rgba(69,183,209,.3)">
+      <h4>📸 Triple-I Photo Method — Describe ANY photo!</h4>
+      <ul>
+        <li><strong>I — Identify:</strong> What do you see? (main people, actions, setting)</li>
+        <li><strong>I — Interpret:</strong> How do they feel? Why? (emotions, reasons)</li>
+        <li><strong>I — Integrate:</strong> Connect to Singapore / your life / values</li>
+      </ul>
+      <div id="oq-triple-i" style="margin-top:8px;padding:8px;background:rgba(69,183,209,.1);border-radius:8px;font-size:.85em;color:#aaa;display:none"></div>
+      <button onclick="toggleTripleI()" class="btn btn-secondary" style="margin-top:8px;padding:6px 16px;font-size:.8em">👁️ Show Triple-I Hint</button>
+    </div>
+
     <div class="oq-response">
       <textarea id="oq-answer" placeholder="Nathaniel talks, Dad types here...&#10;&#10;Try using PEEL:&#10;Point: I think...&#10;Example: In the photo, I can see...&#10;Experience: This reminds me of...&#10;Link: Overall, I believe..."></textarea>
     </div>
@@ -790,6 +801,14 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div class="card" style="border:1px solid rgba(255,165,2,.3);margin-top:12px" id="oq-upgrade-box">
       <h3 style="color:#ffa502">⬆️ Level-Up Example</h3>
       <p style="color:#ccc;font-size:.9em;line-height:1.7" id="oq-upgrade-text"></p>
+    </div>
+
+    <div class="card" style="border:1px solid rgba(46,213,115,.3);margin-top:12px;display:none" id="oq-model-box">
+      <h3 style="color:#2ed573">📖 Model PEEL Answer</h3>
+      <div id="oq-model-text" style="color:#ccc;font-size:.9em;line-height:1.7"></div>
+    </div>
+    <div style="text-align:center;margin-top:8px">
+      <button onclick="toggleModelAnswer()" class="btn btn-secondary" style="padding:8px 20px;font-size:.85em" id="oq-model-btn">📖 Show Model Answer</button>
     </div>
 
     <div style="text-align:center;margin-top:16px">
@@ -1199,10 +1218,9 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div id="chal-setup">
       <div class="card" style="text-align:center">
         <h2 style="color:#4facfe">⚡ Challenge Mode</h2>
-        <p style="color:#aaa;margin:8px 0">Pick a topic. Both brothers answer the SAME 3 questions. Who scores more — faster?</p>
+        <p style="color:#aaa;margin:8px 0">Grade-matched questions! Yuhi gets P6, Ryusei gets P4. Winner's difficulty goes up!</p>
       </div>
-      <div style="text-align:center;margin:12px 0;font-weight:700;color:#ffd200">Select Battle Topic:</div>
-      <div class="chal-stage-grid" id="chal-stage-grid"><!-- JS fills --></div>
+      <div id="chal-stage-grid"><!-- JS fills --></div>
     </div>
     <!-- 2: P1 ready -->
     <div id="chal-p1-ready" style="display:none">
@@ -1242,7 +1260,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       <div class="chal-player-banner p2-banner">
         <div style="font-size:3em">⚽</div>
         <h2 style="color:#45b7d1;margin:8px 0">Ryusei's Turn!</h2>
-        <p style="color:#aaa;margin-bottom:14px">Same questions! Can you beat Yuhi's score?</p>
+        <p style="color:#aaa;margin-bottom:14px">P4 questions! Can you beat Yuhi's score?</p>
         <button class="btn" style="background:#45b7d1;color:#000;font-weight:900;font-size:1.1em;padding:12px 32px" onclick="chalStartQuiz(2)">🚀 GO!</button>
       </div>
     </div>
@@ -2197,7 +2215,7 @@ function updateDashboard() {
     const el = document.getElementById('dash-prog-'+subj);
     if(el) el.textContent = done + ' quizzes done';
   });
-  renderRivalView();
+  try { renderRivalView(); } catch(e) {}
 }
 
 // ============ SHOP ============
@@ -2401,74 +2419,338 @@ updateDailyProgress();
 
 // ============ ORAL QUEST SYSTEM ============
 const oralScenarios = [
-  // HAWKER
-  {id:'hk1',theme:'Hawker Centre',icon:'🍜',
+  // HAWKER CULTURE
+  {id:'hk1',theme:'Hawker Culture',icon:'🍜',
    title:'The Busy Hawker Centre',
    desc:'Imagine a photo showing a crowded hawker centre at lunchtime. An elderly uncle is cooking noodles at his stall while a long queue of office workers waits patiently. A young boy is helping his grandmother carry a tray of food to a table. In the background, you can see signs showing affordable prices — $3.50 for chicken rice.',
    question:'What do you think makes hawker centres special to Singaporeans? Why should we protect hawker culture?',
-   upgrade:'Not just a place to eat cheap food, but a living classroom where different races share tables, where grandparents pass down recipes like treasures, and where the kampung spirit of helping each other — like that boy carrying his grandmother\'s tray — still lives on.'},
-  {id:'hk2',theme:'Hawker Centre',icon:'🧑‍🍳',
+   upgrade:'Not just a place to eat cheap food, but a living classroom where different races share tables, where grandparents pass down recipes like treasures, and where the kampung spirit of helping each other — like that boy carrying his grandmother\'s tray — still lives on.',
+   peelModel: {
+     p: 'I think hawker centres are a special part of Singapore because they bring people of all backgrounds together over affordable, delicious food.',
+     e: 'In the photo, we can see an elderly uncle cooking noodles while office workers queue patiently, and a young boy helps his grandmother carry food to a table.',
+     ex: 'This reminds me of when my family visits a hawker centre on weekends — we always share a table with strangers and sometimes end up chatting about the best dishes to order.',
+     l: 'Overall, hawker centres are not just about affordable food but about preserving the kampung spirit and community bonds that make Singapore truly unique.'
+   },
+   tripleI: {
+     identify: 'A crowded hawker centre at lunchtime with an elderly hawker cooking noodles, queuing office workers, and a boy helping his grandmother carry food.',
+     interpret: 'The people look busy but content. The boy seems caring and responsible, helping his grandmother without being asked. The hawker uncle looks determined and proud of his work.',
+     integrate: 'This connects to Singapore\'s hawker culture being recognised as UNESCO heritage and the value of community bonding over food.'
+   }},
+  {id:'hk2',theme:'Hawker Culture',icon:'🧑‍🍳',
    title:'The Last Recipe',
    desc:'A photo shows an old hawker aunty, about 75 years old, standing alone at her traditional kueh stall. Her hands are covered in flour. A "Hiring Help" sign has been hanging on her stall for months. Beside her is a faded photo of her late husband who started the stall 40 years ago. Only 2 customers are in line.',
    question:'What would you say to encourage young Singaporeans to learn traditional hawker skills? How can we preserve these food traditions?',
-   upgrade:'Not just about keeping old recipes alive, but about showing resilience in the face of change — understanding that every dish carries a family\'s story, and that preserving these traditions means we are being civic-minded about our shared cultural heritage.'},
-  // HDB
-  {id:'hd1',theme:'HDB Life',icon:'🏢',
+   upgrade:'Not just about keeping old recipes alive, but about showing resilience in the face of change — understanding that every dish carries a family\'s story, and that preserving these traditions means we are being civic-minded about our shared cultural heritage.',
+   peelModel: {
+     p: 'I believe we should encourage young Singaporeans to learn traditional hawker skills because these recipes carry our cultural heritage and family stories.',
+     e: 'In the photo, the elderly aunty has been running her kueh stall for 40 years, yet she struggles to find help. Her flour-covered hands show her perseverance, but the faded "Hiring Help" sign is heartbreaking.',
+     ex: 'This reminds me of a traditional popiah stall near my school that closed down last year because the uncle retired and nobody wanted to take over.',
+     l: 'Therefore, I think it is our civic responsibility to preserve these food traditions, because once a recipe is lost, a piece of Singapore\'s soul disappears forever.'
+   },
+   tripleI: {
+     identify: 'An elderly aunty at her kueh stall, hands covered in flour, a "Hiring Help" sign, a faded photo of her late husband, and very few customers.',
+     interpret: 'The aunty looks nostalgic and determined to keep the stall going despite the difficulties. She seems lonely but resilient, continuing her husband\'s legacy.',
+     integrate: 'This connects to the real challenge of hawker succession in Singapore and the importance of preserving our intangible cultural heritage for future generations.'
+   }},
+  // ICE CREAM CARTS
+  {id:'ic1',theme:'Ice Cream Carts',icon:'🍦',
+   title:'The Ice Cream Uncle',
+   desc:'A photo shows a cheerful uncle pushing his colourful ice cream cart near a primary school just as the bell rings. Children in school uniforms rush out excitedly, pointing at the different flavours displayed on the cart. Some choose bread slices, others pick wafer biscuits. The hot afternoon sun beats down, and the uncle wipes sweat from his forehead while scooping ice cream with a big smile.',
+   question:'What can we learn from the ice cream uncle? Why do you think traditional ice cream carts are still popular in Singapore despite modern ice cream shops?',
+   upgrade:'Not just about selling cheap ice cream, but about the perseverance and resilience of everyday heroes who work under the hot sun to bring simple joy — the ice cream uncle represents a living piece of Singapore\'s heritage that no fancy shop can replace.',
+   peelModel: {
+     p: 'I think we can learn a lot about perseverance and gratitude from the ice cream uncle, and traditional ice cream carts remain popular because they carry a nostalgic charm that modern shops cannot replace.',
+     e: 'In the photo, we can see the uncle smiling warmly at the children despite the hot sun. He wipes sweat from his forehead but keeps scooping happily, showing his determination to bring joy to others.',
+     ex: 'This reminds me of an ice cream uncle near my school who has been there for years — my parents told me they used to buy from the same uncle when they were young, which made me feel grateful.',
+     l: 'Overall, ice cream carts are not just about the food but about preserving a simple, heartwarming tradition that connects generations of Singaporeans.'
+   },
+   tripleI: {
+     identify: 'A smiling ice cream uncle pushing his colourful cart near a school, excited children in uniforms choosing flavours, hot afternoon weather.',
+     interpret: 'The uncle looks determined and happy despite the heat. The children seem exhilarated and nostalgic for this simple treat. There is a warm, joyful atmosphere.',
+     integrate: 'This connects to Singapore\'s street food heritage and the resilience of traditional hawkers who persevere despite competition from modern shops.'
+   }},
+  {id:'ic2',theme:'Ice Cream Carts',icon:'🍦',
+   title:'Rainy Day Treat',
+   desc:'A photo shows a rainy afternoon at a void deck. An ice cream uncle has parked his cart and is waiting patiently for customers. An elderly grandmother approaches with her two young grandchildren, who are jumping with excitement. She carefully counts coins from a small purse. The uncle gives the children extra-large scoops and waves away the few extra cents. Puddles of rainwater reflect the colourful cart.',
+   question:'What does this scene tell us about kindness and community? How do small acts of generosity make our society better?',
+   upgrade:'Not just a small act of giving extra ice cream, but a powerful example of compassion and community spirit — the uncle\'s quiet generosity and the grandmother\'s love for her grandchildren show that true wealth is measured in kindness, not money.',
+   peelModel: {
+     p: 'I feel that this scene shows us how small acts of kindness and generosity can create a strong sense of community and warmth in our society.',
+     e: 'In the photo, the ice cream uncle gives extra-large scoops and waves away the extra cents when the grandmother is counting her coins carefully. His compassionate gesture makes the children jump with excitement.',
+     ex: 'This reminds me of when a kopitiam uncle once gave me a free drink when I forgot my wallet — that small act of kindness made my whole week better and inspired me to be generous too.',
+     l: 'In conclusion, acts of generosity like the ice cream uncle\'s remind us that compassion and community spirit are what truly make Singapore a wonderful place to live.'
+   },
+   tripleI: {
+     identify: 'A rainy void deck, an ice cream uncle waiting with his cart, an elderly grandmother with two excited grandchildren, the grandmother counting coins.',
+     interpret: 'The uncle looks patient and compassionate, giving extra scoops. The grandmother seems grateful and loving. The children are ecstatic and innocent.',
+     integrate: 'This connects to the kampung spirit in Singapore — neighbours helping one another — and the value of generosity across generations.'
+   }},
+  // HDB LIVING
+  {id:'hd1',theme:'HDB Living',icon:'🏢',
    title:'The Void Deck Party',
    desc:'A photo shows a void deck of an HDB block decorated with colourful lights. A Malay family is celebrating Hari Raya, and they have invited their Chinese and Indian neighbours to join. Children of different races are playing together, while the adults share ketupat, curry puffs, and mooncakes. An elderly resident in a wheelchair is smiling, watching the children.',
    question:'Why is it important for neighbours of different backgrounds to celebrate together? What does this tell us about Singapore?',
-   upgrade:'Not just neighbours being friendly, but a powerful example of inclusivity — where celebrating each other\'s festivals builds empathy and understanding, making our community more resilient against the forces that try to divide people around the world.'},
-  {id:'hd2',theme:'HDB Life',icon:'🏠',
+   upgrade:'Not just neighbours being friendly, but a powerful example of inclusivity — where celebrating each other\'s festivals builds empathy and understanding, making our community more resilient against the forces that try to divide people around the world.',
+   peelModel: {
+     p: 'I believe it is very important for neighbours of different backgrounds to celebrate together because it builds genuine understanding and harmony in our community.',
+     e: 'In the photo, we can see a Malay family sharing Hari Raya with their Chinese and Indian neighbours, and children of all races are playing together happily while an elderly resident watches with a warm smile.',
+     ex: 'This reminds me of how my family was once invited to our Malay neighbour\'s house during Hari Raya — we ate delicious rendang and learned about their traditions, which made me feel grateful for our diverse community.',
+     l: 'Overall, celebrating together shows that Singapore\'s strength lies in our inclusivity and the way we embrace each other\'s cultures with compassion and respect.'
+   },
+   tripleI: {
+     identify: 'A decorated void deck with colourful lights. A Malay family hosting Hari Raya, Chinese and Indian neighbours joining, children of different races playing, an elderly resident in a wheelchair smiling.',
+     interpret: 'Everyone looks joyful and comfortable together. The elderly resident seems heartwarmed by the unity. The children are carefree, showing that harmony comes naturally when we are inclusive.',
+     integrate: 'This connects to Singapore\'s multiracial identity and our national value of racial harmony — celebrating each other\'s festivals strengthens the social fabric.'
+   }},
+  {id:'hd2',theme:'HDB Living',icon:'🏠',
    title:'The Corridor Garden',
    desc:'A photo shows an HDB corridor where one resident has created a small garden with potted plants and herbs. A handwritten sign says "Feel free to take some basil!" Neighbours stop to chat while watering the plants together. A child is drawing a butterfly that has landed on one of the flowers.',
    question:'What can we learn from this resident who shares their garden with neighbours? Why is community spirit important?',
-   upgrade:'Not just about sharing plants, but about cultivating compassion and civic-mindedness — when one person\'s generosity inspires others to contribute, it creates a ripple effect that transforms an ordinary corridor into a thriving community space.'},
-  // MRT
+   upgrade:'Not just about sharing plants, but about cultivating compassion and civic-mindedness — when one person\'s generosity inspires others to contribute, it creates a ripple effect that transforms an ordinary corridor into a thriving community space.',
+   peelModel: {
+     p: 'I think this resident teaches us that small acts of generosity can build a strong community spirit and make our HDB living environment much warmer.',
+     e: 'In the photo, the resident has put up a sign saying "Feel free to take some basil!" and neighbours have stopped to chat while watering the plants together, creating a friendly atmosphere.',
+     ex: 'This reminds me of my own HDB block where an uncle on the fifth floor grows chilli plants and shares them with everyone — it always makes me feel grateful to have such a thoughtful neighbour.',
+     l: 'Therefore, community spirit is important because when one person shows civic-mindedness and generosity, it inspires others to do the same, turning our HDB blocks into caring homes.'
+   },
+   tripleI: {
+     identify: 'An HDB corridor with potted plants and herbs, a handwritten "Feel free to take some basil!" sign, neighbours chatting and watering plants, a child drawing a butterfly.',
+     interpret: 'The neighbours look happy and connected. The resident who created the garden seems generous and civic-minded. The child is curious and delighted by nature.',
+     integrate: 'This connects to community living in Singapore\'s HDB estates and the importance of the kampung spirit in building a caring, inclusive neighbourhood.'
+   }},
+  // PARKS & NATURE
+  {id:'pn1',theme:'Parks & Nature',icon:'🌳',
+   title:'East Coast Park Weekend',
+   desc:'A photo shows East Coast Park on a sunny Saturday morning. Families are cycling along the path, a group of friends is having a picnic under the casuarina trees, and two children are excitedly pointing at a large monitor lizard crossing the grass. In the distance, a father is teaching his young daughter to fly a kite. A sign reads "Keep Our Parks Clean — Take Your Litter Home."',
+   question:'Why are parks and green spaces important for Singaporeans? What responsibilities do we have when enjoying nature?',
+   upgrade:'Not just a place to play and relax, but a reminder that sustainability requires civic-mindedness from every visitor — when children feel the wonder of spotting a wild monitor lizard, they learn to be grateful for our green spaces and determined to protect them for future generations.',
+   peelModel: {
+     p: 'I think parks and green spaces are extremely important for Singaporeans because they allow families to bond, enjoy nature, and learn about responsibility towards our environment.',
+     e: 'In the photo, families are cycling, having picnics, and two children are excitedly pointing at a monitor lizard — showing how parks bring us close to wildlife. A sign reminds visitors to take their litter home.',
+     ex: 'This reminds me of when my family went cycling at East Coast Park and we spotted an otter family by the waterway — I felt so grateful that Singapore has preserved these green spaces in our busy city.',
+     l: 'Overall, parks teach us that sustainability and civic-mindedness are everyone\'s responsibility, and we must be determined to keep these spaces clean so future generations can enjoy them too.'
+   },
+   tripleI: {
+     identify: 'East Coast Park on a sunny morning — families cycling, friends picnicking, children pointing at a monitor lizard, a father flying a kite with his daughter, a "Keep Parks Clean" sign.',
+     interpret: 'The families look relaxed and grateful for the green space. The children are exhilarated to see wildlife. The atmosphere is joyful and peaceful.',
+     integrate: 'This connects to Singapore\'s "City in a Garden" vision and the importance of sustainability — balancing development with nature conservation.'
+   }},
+  {id:'pn2',theme:'Parks & Nature',icon:'🌳',
+   title:'Nature Trail Discovery',
+   desc:'A photo shows a group of primary school students on a nature trail at the Singapore Botanic Gardens. Their teacher is pointing at a tall heritage rain tree while students sketch the plants in their notebooks. In the pond nearby, a family of smooth-coated otters is playing in the water, and some visitors are taking photos with delight. One student is carefully picking up a plastic bottle from the path.',
+   question:'How can spending time in nature help us become better people? What does the student picking up the bottle teach us?',
+   upgrade:'Not just a fun school outing, but a lesson in responsibility and compassion for our environment — when a student picks up litter without being asked, it shows the kind of civic-mindedness and determination that Singapore needs to remain a green and clean city.',
+   peelModel: {
+     p: 'I believe spending time in nature helps us become more responsible, compassionate people, and the student picking up the bottle teaches us about civic-mindedness.',
+     e: 'In the photo, students are sketching plants and learning from their teacher, while one student voluntarily picks up a plastic bottle from the path without being told to do so.',
+     ex: 'This reminds me of a school trip where I saw a classmate picking up rubbish along the trail — it inspired me to do the same, and I felt proud that we left the place cleaner than we found it.',
+     l: 'In conclusion, nature teaches us gratitude for the beauty around us and the responsibility to protect it — small actions like picking up litter show the perseverance needed to keep Singapore green.'
+   },
+   tripleI: {
+     identify: 'Primary school students on a nature trail at Botanic Gardens, a teacher showing a heritage tree, students sketching, otters in a pond, one student picking up a plastic bottle.',
+     interpret: 'The students look curious and inspired. The student picking up litter seems responsible and civic-minded without needing to be told. Visitors watching the otters seem delighted.',
+     integrate: 'This connects to Singapore\'s commitment to environmental education and the Botanic Gardens as a UNESCO World Heritage Site — teaching young people to be stewards of nature.'
+   }},
+  // PUBLIC TRANSPORT
   {id:'mr1',theme:'Public Transport',icon:'🚇',
    title:'Rush Hour Kindness',
    desc:'A photo shows a crowded MRT train during morning rush hour. A young student stands up to give his seat to a pregnant lady. An elderly man with a walking stick is holding onto the handrail. A group of schoolchildren are standing quietly, looking at their phones. One commuter drops some papers and a stranger helps pick them up.',
    question:'What does the student\'s action teach us about being a good citizen? How can small acts of kindness make a difference in public spaces?',
-   upgrade:'Not just a polite gesture, but an act of empathy that shows the student understands responsibility beyond himself — recognising that true civic-mindedness means being apprehensive about others\' comfort, even when it means personal sacrifice during a tiring commute.'},
+   upgrade:'Not just a polite gesture, but an act of empathy that shows the student understands responsibility beyond himself — recognising that true civic-mindedness means being apprehensive about others\' comfort, even when it means personal sacrifice during a tiring commute.',
+   peelModel: {
+     p: 'I think the student\'s action teaches us that being a good citizen means being empathetic and willing to make small sacrifices for others, even when it is inconvenient.',
+     e: 'In the photo, the student gives up his seat for a pregnant lady during rush hour, and another commuter helps a stranger pick up dropped papers — both are examples of quiet kindness.',
+     ex: 'This reminds me of a time when I was feeling tired on the MRT but still stood up for an elderly auntie — she smiled and thanked me, and that small moment made me feel grateful and proud.',
+     l: 'Overall, small acts of civic-mindedness like these create a ripple effect of kindness that makes public spaces more comfortable and our society more compassionate.'
+   },
+   tripleI: {
+     identify: 'A crowded MRT during rush hour — a student giving his seat to a pregnant lady, an elderly man holding a handrail, schoolchildren on phones, a stranger helping pick up dropped papers.',
+     interpret: 'The student looks determined and compassionate. The pregnant lady seems grateful. The stranger helping with papers shows spontaneous kindness. Some passengers seem absorbed in their own world.',
+     integrate: 'This connects to Singapore\'s campaign for gracious behaviour on public transport and the value of civic-mindedness in a densely populated city.'
+   }},
   {id:'mr2',theme:'Public Transport',icon:'🚌',
    title:'The Bus Uncle\'s Story',
    desc:'A photo shows a friendly bus driver who has put a small sign near his seat: "Have a great day!" A student is thanking the bus driver as she taps her EZ-Link card. Through the window, you can see it\'s raining heavily outside, but inside the bus is warm and dry. Some passengers are asleep after a long day.',
    question:'Why should we be grateful to people like bus drivers who serve our community? How can we show our appreciation?',
-   upgrade:'Not just saying thank you, but feeling genuinely grateful for the perseverance of workers who wake up at 4am every day — showing that gratitude is not just a word but a value that, when practised daily, transforms how we see the world around us.'},
-  // SCHOOL
+   upgrade:'Not just saying thank you, but feeling genuinely grateful for the perseverance of workers who wake up at 4am every day — showing that gratitude is not just a word but a value that, when practised daily, transforms how we see the world around us.',
+   peelModel: {
+     p: 'I feel that we should be deeply grateful to bus drivers and other essential workers because their perseverance and dedication keep our daily lives running smoothly.',
+     e: 'In the photo, the bus driver has placed a "Have a great day!" sign near his seat, showing his warm personality. A student thanks him as she taps her card, and the bus is a warm shelter from the heavy rain.',
+     ex: 'This reminds me of my school bus driver who always greets us with a cheerful "Good morning!" no matter how early it is — his kindness brightens my day and I make sure to thank him every time.',
+     l: 'Therefore, we should show gratitude not just with words but with genuine appreciation — a simple "thank you" or a smile can remind essential workers that their perseverance is valued by our community.'
+   },
+   tripleI: {
+     identify: 'A friendly bus driver with a "Have a great day!" sign, a student thanking him, heavy rain outside the window, passengers resting after a long day.',
+     interpret: 'The bus driver looks proud and caring. The student seems grateful and polite. The sleeping passengers show how tiring daily commutes can be. The warm bus contrasts with the cold rain.',
+     integrate: 'This connects to appreciating essential workers in Singapore and the value of gratitude — recognising the perseverance of people who serve our community every day.'
+   }},
+  // LOCAL MARKETS & SHOPS
+  {id:'lm1',theme:'Local Markets & Shops',icon:'🏪',
+   title:'Morning at the Wet Market',
+   desc:'A photo shows a bustling wet market early in the morning. Fishmongers are arranging fresh fish on ice, while an experienced auntie carefully selects vegetables, bargaining cheerfully with the stallholder. A young mother with a toddler in a stroller is buying eggs. In the corner, a notice reads "Neighbourhood Provision Shop — Closing After 45 Years." An elderly shop owner stands at the doorway, looking at the busy market with a bittersweet expression.',
+   question:'Why are traditional wet markets and neighbourhood shops important? What happens to our community when these shops close down?',
+   upgrade:'Not just places to buy groceries, but the beating heart of a neighbourhood — where the auntie who bargains with the fishmonger has known him for 30 years, and where the closing provision shop means losing a piece of our community\'s memory and resilience.',
+   peelModel: {
+     p: 'I think traditional wet markets and neighbourhood shops are extremely important because they are the heart of our community and carry decades of relationships and memories.',
+     e: 'In the photo, the auntie bargains cheerfully with the stallholder — they clearly know each other well. But the provision shop closing after 45 years is heartbreaking, and the elderly owner looks nostalgic standing at his doorway.',
+     ex: 'This reminds me of a mama shop near my grandmother\'s HDB block that closed last year — my grandmother was so sad because the uncle there always saved her favourite biscuits, and no supermarket could replace that personal touch.',
+     l: 'Overall, when neighbourhood shops close, we lose more than just a store — we lose the compassion, community bonds, and cultural heritage that make our neighbourhoods feel like home.'
+   },
+   tripleI: {
+     identify: 'A bustling wet market at dawn — fishmongers with fresh fish, an auntie bargaining for vegetables, a young mother with a toddler, a notice about a provision shop closing after 45 years, the elderly owner at the doorway.',
+     interpret: 'The auntie and stallholder seem to have a warm, long-standing relationship. The elderly shop owner looks nostalgic and bittersweet. The market is vibrant but there is a sense of change and loss.',
+     integrate: 'This connects to the disappearance of traditional provision shops in Singapore and the importance of preserving community spaces that foster resilience and neighbourhood bonds.'
+   }},
+  {id:'lm2',theme:'Local Markets & Shops',icon:'🏪',
+   title:'The Mama Shop',
+   desc:'A photo shows a small provision shop (mama shop) squeezed between modern convenience stores in an HDB estate. The elderly shopkeeper, wearing reading glasses, is patiently helping a young boy count coins to buy a packet of sweets. Beside them, a mother is buying bread and chatting with the shopkeeper about her child\'s exam results. The shelves are packed with familiar local snacks — haw flakes, White Rabbit candy, and mamee noodles.',
+   question:'What makes the mama shop different from a modern convenience store? Why do you think some people prefer shopping there?',
+   upgrade:'Not just a small old shop, but a place where the shopkeeper knows your name, remembers your favourite snacks, and cares about your family — showing that resilience and compassion in business create bonds that no self-checkout machine can ever build.',
+   peelModel: {
+     p: 'I believe the mama shop is different from a modern convenience store because it offers something money cannot buy — personal connection, warmth, and a sense of community.',
+     e: 'In the photo, the elderly shopkeeper patiently helps a boy count his coins and chats with a mother about her child\'s exams — this kind of compassion and care is not found in big chain stores.',
+     ex: 'This reminds me of a mama shop near my block where the auntie always asks about my school and sometimes gives me an extra sweet — her kindness makes me feel grateful every time I visit.',
+     l: 'In conclusion, mama shops remind us that resilience and personal relationships are more valuable than convenience, and we should appreciate these community treasures before they disappear.'
+   },
+   tripleI: {
+     identify: 'A small mama shop between modern stores, an elderly shopkeeper helping a boy count coins, a mother chatting with the shopkeeper, shelves packed with traditional local snacks.',
+     interpret: 'The shopkeeper looks patient, kind, and genuinely interested in his customers. The boy seems focused and the mother is comfortable sharing personal news. The atmosphere is warm and familiar.',
+     integrate: 'This connects to the decline of traditional provision shops in Singapore and the value of community bonds — personal service versus modern efficiency.'
+   }},
+  // FESTIVALS & CELEBRATIONS
+  {id:'fc1',theme:'Festivals & Celebrations',icon:'🎊',
+   title:'Chinese New Year at HDB',
+   desc:'A photo shows an HDB void deck transformed for Chinese New Year celebrations. A lion dance troupe performs energetically while children cover their ears from the firecrackers, laughing excitedly. Red decorations hang everywhere. A Chinese grandmother hands out ang pao to neighbourhood children, including her Indian neighbour\'s son, who bows politely. A banner reads "Happy CNY from Block 123!"',
+   question:'Why do you think it is meaningful when neighbours of different races join in each other\'s celebrations? What does this tell us about Singapore\'s values?',
+   upgrade:'Not just a festive day off, but a living example of inclusivity and harmony — when the grandmother gives ang pao to her Indian neighbour\'s child, she is teaching the next generation that celebrating each other\'s cultures with gratitude and compassion is what makes Singapore extraordinary.',
+   peelModel: {
+     p: 'I think it is very meaningful when neighbours of different races join each other\'s celebrations because it shows genuine inclusivity and strengthens our bonds as one community.',
+     e: 'In the photo, the Chinese grandmother gives ang pao to her Indian neighbour\'s son, who bows politely. The lion dance attracts children from all backgrounds, and the banner "Happy CNY from Block 123" shows the whole block celebrates together.',
+     ex: 'This reminds me of when my Chinese neighbour invited us to watch the lion dance during Chinese New Year — I felt so happy and grateful to be included, and it taught me to appreciate different cultures.',
+     l: 'Overall, sharing festivals across races demonstrates that Singapore\'s harmony is not just a policy but a heartfelt value — showing compassion and inclusivity towards one another makes our society truly special.'
+   },
+   tripleI: {
+     identify: 'An HDB void deck decorated for CNY — a lion dance troupe performing, children laughing, a grandmother giving ang pao to an Indian neighbour\'s child, red decorations, a block banner.',
+     interpret: 'The children look exhilarated and the grandmother seems generous and warm. The Indian boy\'s polite bow shows respect and gratitude. Everyone appears united in celebration regardless of race.',
+     integrate: 'This connects to Singapore\'s commitment to racial and religious harmony and the tradition of sharing festivals across cultures in our HDB communities.'
+   }},
+  {id:'fc2',theme:'Festivals & Celebrations',icon:'🎊',
+   title:'Hari Raya Open House',
+   desc:'A photo shows a Malay family hosting a Hari Raya open house in their HDB flat. The table is filled with rendang, ketupat, kueh lapis, and other traditional dishes. Their Chinese neighbours are tasting the food with delight, and an Indian colleague from work is learning how to wrap ketupat. The children are dressed in new baju kurung and baju melayu, and they are teaching their friends Malay greetings. Everyone is laughing and taking photos together.',
+   question:'What makes open house celebrations special in Singapore? How do such traditions help build a harmonious society?',
+   upgrade:'Not just sharing food, but opening hearts — when a Chinese friend learns to wrap ketupat and children teach each other greetings in different languages, they are practising empathy and cultural curiosity that builds the kind of deep, resilient harmony no law alone can create.',
+   peelModel: {
+     p: 'I believe open house celebrations are special because they go beyond just sharing food — they open hearts and build genuine understanding between people of different backgrounds.',
+     e: 'In the photo, the Malay family welcomes their Chinese and Indian friends warmly. An Indian colleague is enthusiastically learning to wrap ketupat, and the children are teaching their friends Malay greetings with big smiles.',
+     ex: 'This reminds me of when I attended a Hari Raya open house and tried rendang for the first time — my friend\'s mother was so delighted that I loved the food, and I felt grateful to experience her culture firsthand.',
+     l: 'Therefore, open house traditions build a harmonious society by helping us practise empathy and inclusivity — when we share meals and learn about each other\'s cultures, we create bonds of compassion that make our diverse nation stronger.'
+   },
+   tripleI: {
+     identify: 'A Malay family\'s Hari Raya open house — a table full of traditional dishes, Chinese neighbours tasting food, an Indian colleague learning to wrap ketupat, children in festive clothes teaching Malay greetings.',
+     interpret: 'Everyone looks happy and comfortable. The family seems proud and generous. The Indian colleague looks enthusiastic and curious. The children are confident and inclusive, bridging cultures naturally.',
+     integrate: 'This connects to Singapore\'s unique open house tradition during major festivals and the national values of racial harmony, inclusivity, and mutual respect.'
+   }},
+  // SCHOOL LIFE
   {id:'sc1',theme:'School Life',icon:'🏫',
    title:'The Group Project',
    desc:'A photo shows a group of Primary 6 students working on a Science project. One student is in a wheelchair but is enthusiastically leading the discussion, pointing at a diagram. Another student who usually struggles with English is bravely presenting their part to the teacher. Their classmates are listening attentively and clapping after the presentation.',
    question:'What makes a good team? How does including everyone make the project better?',
-   upgrade:'Not just about finishing the assignment, but about demonstrating that inclusivity makes teams stronger — when we are empathetic enough to see each person\'s unique strengths, even those who seem different can become the most inspiring leaders.'},
+   upgrade:'Not just about finishing the assignment, but about demonstrating that inclusivity makes teams stronger — when we are empathetic enough to see each person\'s unique strengths, even those who seem different can become the most inspiring leaders.',
+   peelModel: {
+     p: 'I think a good team is one where everyone\'s strengths are valued and every member is included, because diversity of ideas makes the project richer and better.',
+     e: 'In the photo, a student in a wheelchair is confidently leading the discussion, and a classmate who struggles with English is bravely presenting. Their classmates listen attentively and clap, showing genuine support.',
+     ex: 'This reminds me of a group project where my quietest teammate surprised us all with an amazing idea — I learned that inclusivity means giving everyone a chance to shine, not just the loudest voices.',
+     l: 'Overall, including everyone makes teams stronger because it takes empathy and compassion to see each person\'s unique gifts, and that is what builds true resilience and success.'
+   },
+   tripleI: {
+     identify: 'P6 students working on a Science project — a student in a wheelchair leading the discussion, another student presenting bravely, classmates listening and clapping.',
+     interpret: 'The wheelchair student looks confident and enthusiastic as a leader. The presenting student looks nervous but determined. The classmates appear supportive and respectful.',
+     integrate: 'This connects to the value of inclusivity in Singapore\'s education system and the belief that everyone has unique strengths to contribute to a team.'
+   }},
   {id:'sc2',theme:'School Life',icon:'📝',
    title:'Exam Results Day',
    desc:'A photo shows a student looking at his exam results with a disappointed face — he scored lower than expected. His best friend puts an arm around his shoulder. In the background, some students are celebrating their good results. A teacher is sitting with another student who also did poorly, showing her a study plan for improvement.',
    question:'How should we handle disappointment? What would you say to encourage a friend who didn\'t do well?',
-   upgrade:'Not just comforting words, but showing true resilience — understanding that failure is not the opposite of success but part of the journey, and that a friend who stands by you during disappointment demonstrates the kind of loyalty and compassion that matters more than any grade.'},
+   upgrade:'Not just comforting words, but showing true resilience — understanding that failure is not the opposite of success but part of the journey, and that a friend who stands by you during disappointment demonstrates the kind of loyalty and compassion that matters more than any grade.',
+   peelModel: {
+     p: 'I believe we should handle disappointment with resilience and the understanding that setbacks are part of learning, not the end of the road.',
+     e: 'In the photo, the student\'s best friend puts an arm around his shoulder, and a caring teacher shows another student a study plan — both are examples of compassion during difficult moments.',
+     ex: 'This reminds me of when I did badly on a test and my friend told me "One exam doesn\'t define you" — those words gave me the determination to study harder, and I improved the next time.',
+     l: 'Therefore, what matters most is not the grade but the resilience to try again and the compassion of friends who stand by us — these are the qualities that truly define a person\'s character.'
+   },
+   tripleI: {
+     identify: 'A disappointed student looking at exam results, his friend comforting him with an arm around his shoulder, other students celebrating, a teacher showing a study plan to another student.',
+     interpret: 'The student looks disheartened but his friend seems loyal and empathetic. The teacher looks patient and encouraging. There is a contrast between celebration and disappointment.',
+     integrate: 'This connects to handling academic pressure in Singapore and the importance of resilience, mental wellness, and the support systems that help students bounce back.'
+   }},
   // ENVIRONMENT
   {id:'ev1',theme:'Environment',icon:'🌿',
    title:'The Beach Clean-Up',
    desc:'A photo shows a group of volunteers cleaning up East Coast Park beach on a Saturday morning. Among them are families with young children, elderly residents, and foreign workers. Together they have already filled 15 large bags of rubbish. A young girl holds up a sea turtle toy and looks at the plastic waste with a worried face.',
    question:'Why is it important to take care of our environment? What can young people do to make a difference?',
-   upgrade:'Not just picking up trash, but being overwhelmed by the realisation that our daily choices affect future generations — showing civic-mindedness by understanding that environmental responsibility is not someone else\'s job, but a duty that requires perseverance and determination from every citizen.'},
+   upgrade:'Not just picking up trash, but being overwhelmed by the realisation that our daily choices affect future generations — showing civic-mindedness by understanding that environmental responsibility is not someone else\'s job, but a duty that requires perseverance and determination from every citizen.',
+   peelModel: {
+     p: 'I think it is extremely important to take care of our environment because the choices we make today directly affect the world future generations will live in.',
+     e: 'In the photo, volunteers of all ages — families, elderly, and foreign workers — work together to clean the beach. The young girl holding a sea turtle toy while looking at the plastic waste appears deeply worried.',
+     ex: 'This reminds me of a beach clean-up I joined with my school where we collected bags of plastic — I felt overwhelmed seeing how much rubbish people left behind, but also determined to reduce my own plastic use.',
+     l: 'Overall, environmental protection requires perseverance and civic-mindedness from every citizen, and young people can make a difference by starting with small changes like using reusable bottles and picking up litter whenever they see it.'
+   },
+   tripleI: {
+     identify: 'Volunteers cleaning East Coast Park beach — families, elderly, foreign workers filling rubbish bags, a young girl holding a sea turtle toy, looking worried at plastic waste.',
+     interpret: 'The volunteers look determined and united. The young girl seems apprehensive and concerned for marine life. There is a sense of community and shared responsibility.',
+     integrate: 'This connects to Singapore\'s sustainability efforts and the value of civic-mindedness — everyone has a role in protecting our environment for future generations.'
+   }},
   // TECHNOLOGY
   {id:'tc1',theme:'Technology',icon:'📱',
    title:'Screen Time Dilemma',
    desc:'A photo shows a family at a restaurant. The two children are staring at their tablets, not talking to anyone. The parents look frustrated. At the next table, another family is laughing together, playing a card game while waiting for their food — no phones in sight.',
    question:'Do you think technology brings families closer together or pushes them apart? How can we use technology wisely?',
-   upgrade:'Not just a matter of screen time rules, but about being determined to find balance — recognising that technology should be a tool that connects us, not a wall that isolates us, and that true family bonding requires the resilience to put down our devices and be present with each other.'},
-  // ELDERLY
+   upgrade:'Not just a matter of screen time rules, but about being determined to find balance — recognising that technology should be a tool that connects us, not a wall that isolates us, and that true family bonding requires the resilience to put down our devices and be present with each other.',
+   peelModel: {
+     p: 'I believe technology can both connect and disconnect families, and it is up to us to use it wisely so it brings us closer together rather than pushing us apart.',
+     e: 'In the photo, one family is completely absorbed in their tablets with frustrated parents, while the other family is laughing and bonding over a card game — the contrast shows how our choices about technology matter.',
+     ex: 'This reminds me of when my family started a "no phones at dinner" rule — at first I was resistant, but now I actually enjoy our conversations and feel more connected to my parents.',
+     l: 'In conclusion, using technology wisely requires resilience and determination to put down our devices, because the most meaningful moments in life happen when we are fully present with the people we love.'
+   },
+   tripleI: {
+     identify: 'Two families at a restaurant — one with children on tablets and frustrated parents, the other laughing and playing a card game with no phones.',
+     interpret: 'The first family looks disconnected and the parents seem frustrated and helpless. The second family looks joyful, close, and present. The contrast is striking.',
+     integrate: 'This connects to the growing concern about screen addiction among young people in Singapore and the importance of balance and self-discipline with technology.'
+   }},
+  // CARING FOR ELDERLY
   {id:'el1',theme:'Caring for Elderly',icon:'👴',
    title:'The Lonely Grandpa',
    desc:'A photo shows an elderly man sitting alone on a bench at a void deck. His children live overseas and he only sees them once a year. A neighbour\'s child brings him a plate of food and sits beside him to chat. On the wall behind them is a community notice board with a sign: "Visit a Senior Neighbour Today."',
    question:'What can young people do to help elderly residents who live alone? Why is this important for our society?',
-   upgrade:'Not just visiting out of pity, but developing genuine empathy and compassion — understanding that elderly residents carry decades of wisdom and stories, and that showing gratitude for their contributions to building our nation is a form of civic-mindedness we should all practise.'},
-  // DIVERSITY
+   upgrade:'Not just visiting out of pity, but developing genuine empathy and compassion — understanding that elderly residents carry decades of wisdom and stories, and that showing gratitude for their contributions to building our nation is a form of civic-mindedness we should all practise.',
+   peelModel: {
+     p: 'I think young people can and should help elderly residents who live alone because it builds empathy in us and ensures no one in our community feels forgotten or invisible.',
+     e: 'In the photo, a neighbour\'s child brings food and sits with the elderly man, and the "Visit a Senior Neighbour Today" sign shows the community is aware of lonely seniors. The old man\'s smile says everything.',
+     ex: 'This reminds me of an elderly auntie living alone on my floor — I started saying hello every morning and sometimes helping her carry groceries, and she now tells me stories about old Singapore that I find fascinating.',
+     l: 'Overall, caring for our elderly is not just about compassion but about gratitude — they built the Singapore we enjoy today, and showing them respect and kindness is our civic responsibility.'
+   },
+   tripleI: {
+     identify: 'An elderly man sitting alone on a void deck bench, a child bringing him food and chatting, a community notice board with "Visit a Senior Neighbour Today."',
+     interpret: 'The elderly man looks lonely but his face lights up with gratitude when the child arrives. The child seems compassionate and genuinely interested. There is a bittersweet mood.',
+     integrate: 'This connects to Singapore\'s ageing population challenge and the importance of intergenerational care, community support, and respecting our elderly.'
+   }},
+  // CULTURAL DIVERSITY
   {id:'dv1',theme:'Cultural Diversity',icon:'🎭',
    title:'Racial Harmony Day',
    desc:'A photo shows a school celebrating Racial Harmony Day. Students are wearing traditional costumes from different cultures — baju kurung, cheongsam, saree, and punjabi suit. A Malay student is teaching her Chinese friend how to tie a headscarf. An Indian student is sharing murukku (snacks) with everyone. A banner reads "We are different, but we are one."',
    question:'Why is Racial Harmony Day important for Singapore? How can students promote understanding between different cultures?',
-   upgrade:'Not just wearing costumes for one day, but being determined to practise inclusivity every day — understanding that true harmony means being genuinely curious about each other\'s cultures, not just tolerating differences but celebrating them with gratitude and compassion.'},
+   upgrade:'Not just wearing costumes for one day, but being determined to practise inclusivity every day — understanding that true harmony means being genuinely curious about each other\'s cultures, not just tolerating differences but celebrating them with gratitude and compassion.',
+   peelModel: {
+     p: 'I believe Racial Harmony Day is important for Singapore because it reminds us that our diversity is our greatest strength, and we must actively promote understanding every day.',
+     e: 'In the photo, a Malay student teaches her Chinese friend to tie a headscarf, and an Indian student shares murukku with everyone. The banner "We are different, but we are one" captures the spirit perfectly.',
+     ex: 'This reminds me of when my Indian friend taught me how to make a rangoli pattern during Deepavali — learning about her culture made me feel grateful for Singapore\'s diversity and inspired me to share my own traditions too.',
+     l: 'Overall, true harmony is not just about tolerating differences but celebrating them with genuine curiosity and compassion — when students learn from each other, they build the inclusive society Singapore needs.'
+   },
+   tripleI: {
+     identify: 'Students celebrating Racial Harmony Day — wearing baju kurung, cheongsam, saree, punjabi suit. A Malay student teaching headscarf tying, an Indian student sharing murukku, a "We are different, but we are one" banner.',
+     interpret: 'The students look enthusiastic and genuinely curious about each other\'s cultures. The Malay student seems patient and proud. Everyone appears happy and united despite their different backgrounds.',
+     integrate: 'This connects to Singapore\'s founding principle of multiracialism and the annual Racial Harmony Day, which commemorates the 1964 racial riots and reminds us why inclusivity matters.'
+   }},
 ];
 
 // Emotion words dictionary
@@ -2565,6 +2847,9 @@ function startOralScenario(scenario) {
 
   // Reset weapon indicators
   ['w-peel','w-emotion','w-values'].forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById('oq-triple-i').style.display = 'none';
+  document.getElementById('oq-model-box').style.display = 'none';
+  document.getElementById('oq-model-btn').textContent = '📖 Show Model Answer';
 }
 
 function showOralStages() {
@@ -2676,6 +2961,8 @@ function scoreOralResponse() {
 
   // Upgrade example
   document.getElementById('oq-upgrade-text').innerHTML = `<em>"${currentOralScenario.upgrade}"</em>`;
+  document.getElementById('oq-model-box').style.display = 'none';
+  document.getElementById('oq-model-btn').textContent = '📖 Show Model Answer';
 
   // Show score area, hide quest
   document.getElementById('oq-quest-area').style.display = 'none';
@@ -2702,6 +2989,37 @@ function renderOralHistory() {
   });
   html += '</div>';
   document.getElementById('oq-history').innerHTML = html;
+}
+
+function toggleTripleI() {
+  const el = document.getElementById('oq-triple-i');
+  if (!currentOralScenario || !currentOralScenario.tripleI) return;
+  const t = currentOralScenario.tripleI;
+  if (el.style.display === 'none') {
+    el.innerHTML = `<strong>Identify:</strong> ${t.identify}<br><strong>Interpret:</strong> ${t.interpret}<br><strong>Integrate:</strong> ${t.integrate}`;
+    el.style.display = 'block';
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+function toggleModelAnswer() {
+  const box = document.getElementById('oq-model-box');
+  const btn = document.getElementById('oq-model-btn');
+  if (!currentOralScenario || !currentOralScenario.peelModel) return;
+  if (box.style.display === 'none') {
+    const m = currentOralScenario.peelModel;
+    document.getElementById('oq-model-text').innerHTML =
+      `<div style="margin-bottom:8px"><span style="color:#ffa502;font-weight:700">P (Point):</span> ${m.p}</div>` +
+      `<div style="margin-bottom:8px"><span style="color:#45b7d1;font-weight:700">E (Example):</span> ${m.e}</div>` +
+      `<div style="margin-bottom:8px"><span style="color:#2ed573;font-weight:700">E (Experience):</span> ${m.ex}</div>` +
+      `<div><span style="color:#e94560;font-weight:700">L (Link):</span> ${m.l}</div>`;
+    box.style.display = 'block';
+    btn.textContent = '📖 Hide Model Answer';
+  } else {
+    box.style.display = 'none';
+    btn.textContent = '📖 Show Model Answer';
+  }
 }
 
 initOralQuest();
@@ -2777,6 +3095,126 @@ const maQuestions = {
   ],
   boss: [] // filled dynamically from all stages
 };
+
+// ---- GRADE-SPECIFIC QUESTION BANKS FOR CHALLENGE MODE ----
+// P4 (Ryusei) — PSLE Standard foundations: times tables, basic fractions, simple word problems, basic geometry
+// P6 (Yuhi) — PSLE Standard: ratio, percentage, algebra, speed, volume, multi-step problems
+// Each has 5 difficulty levels (0-4). Winner's level goes up after each win.
+const chalQP4 = [
+  // Level 0 — Very basic
+  [
+    {q:'6 × 7 = ?', opts:['42','48','36','54'], ans:0},
+    {q:'8 × 5 = ?', opts:['40','45','35','48'], ans:0},
+    {q:'9 × 4 = ?', opts:['36','32','40','28'], ans:0},
+    {q:'72 ÷ 8 = ?', opts:['9','8','7','6'], ans:0},
+    {q:'56 ÷ 7 = ?', opts:['8','7','9','6'], ans:0},
+    {q:'345 + 278 = ?', opts:['623','613','633','523'], ans:0},
+    {q:'500 − 237 = ?', opts:['263','273','253','363'], ans:0},
+    {q:'Round 3456 to the nearest 100', opts:['3500','3400','3460','3000'], ans:0},
+  ],
+  // Level 1 — Times tables extended, basic fractions
+  [
+    {q:'12 × 8 = ?', opts:['96','84','108','92'], ans:0},
+    {q:'11 × 7 = ?', opts:['77','84','66','78'], ans:0},
+    {q:'144 ÷ 12 = ?', opts:['12','14','11','13'], ans:0},
+    {q:'1/2 + 1/4 = ?', opts:['3/4','2/4','1/3','2/6'], ans:0},
+    {q:'3/4 − 1/4 = ?', opts:['1/2','1/4','2/4','3/8'], ans:0},
+    {q:'What is 1/4 of 48?', opts:['12','16','8','24'], ans:0},
+    {q:'25 × 4 = ?', opts:['100','90','110','95'], ans:0},
+    {q:'Which is bigger: 1/2 or 1/3?', opts:['1/2','1/3','Same','Cannot tell'], ans:0},
+  ],
+  // Level 2 — Fraction operations, word problems
+  [
+    {q:'1/3 + 1/6 = ?', opts:['1/2','2/6','1/3','2/9'], ans:0},
+    {q:'What is 2/5 of 35?', opts:['14','10','15','12'], ans:0},
+    {q:'3 books cost $8 each. Pay $50. Change?', opts:['$26','$24','$28','$22'], ans:0},
+    {q:'Movie starts 2:45pm, lasts 1h 30min. End time?', opts:['4:15 pm','4:30 pm','3:45 pm','4:00 pm'], ans:0},
+    {q:'How many minutes in 2h 15min?', opts:['135','130','125','145'], ans:0},
+    {q:'Rectangle: length 8cm, width 5cm. Area?', opts:['40 cm²','26 cm²','13 cm²','32 cm²'], ans:0},
+    {q:'Square side 6cm. Perimeter?', opts:['24 cm','12 cm','36 cm','18 cm'], ans:0},
+    {q:'756 ÷ 6 = ?', opts:['126','136','116','146'], ans:0},
+  ],
+  // Level 3 — Multi-step, comparing fractions, geometry
+  [
+    {q:'Which is bigger: 3/4 or 2/3?', opts:['3/4','2/3','Same','Cannot tell'], ans:0},
+    {q:'Samy has 48 stickers. Gives 1/4 away. How many left?', opts:['36','24','12','40'], ans:0},
+    {q:'2/3 + 1/6 = ?', opts:['5/6','3/6','4/6','3/9'], ans:0},
+    {q:'Rope is 5m 40cm. Cut into 6 equal pieces. Each?', opts:['90 cm','85 cm','95 cm','80 cm'], ans:0},
+    {q:'Triangle angles: 60° and 80°. Third angle?', opts:['40°','50°','60°','30°'], ans:0},
+    {q:'15 × 15 = ?', opts:['225','215','235','205'], ans:0},
+    {q:'Bus leaves 8:50am, journey 45min. Arrival?', opts:['9:35 am','9:25 am','9:45 am','9:30 am'], ans:0},
+    {q:'Sarah has $45. Buys 3 pens($4) + 2 books($7). Change?', opts:['$19','$17','$21','$15'], ans:0},
+  ],
+  // Level 4 — Hardest P4
+  [
+    {q:'Ali ate 1/4 of pizza. Ben ate 1/3. How much left?', opts:['5/12','1/2','7/12','1/4'], ans:0},
+    {q:'Tom has 3× as many cards as Jerry. Together 120. Tom?', opts:['90','80','60','100'], ans:0},
+    {q:'Shop sells erasers in packs of 6. Need 50. Min packs?', opts:['9','8','10','7'], ans:0},
+    {q:'Tank 1/3 full. Add 8L → 5/6 full. Capacity?', opts:['16 L','24 L','12 L','20 L'], ans:0},
+    {q:'Same perimeter as rect(10×6). Square side?', opts:['8 cm','6 cm','10 cm','7 cm'], ans:0},
+    {q:'Baker: 156 muffins in 12 boxes. Sells 9 boxes. Left?', opts:['39','36','42','48'], ans:0},
+    {q:'99 × 5 = ?', opts:['495','500','490','505'], ans:0},
+    {q:'250 × 8 = ?', opts:['2000','1800','2200','1600'], ans:0},
+  ],
+];
+
+const chalQP6 = [
+  // Level 0 — Basic ratio & percentage
+  [
+    {q:'Ratio of boys to girls is 3:5. 40 students total. Boys?', opts:['15','20','25','12'], ans:0},
+    {q:'What is 25% of 80?', opts:['20','25','16','40'], ans:0},
+    {q:'Simplify ratio 12:18', opts:['2:3','3:4','4:6','6:9'], ans:0},
+    {q:'Express 3/5 as a percentage', opts:['60%','50%','75%','55%'], ans:0},
+    {q:'Find 10% of 350', opts:['35','30','45','3.5'], ans:0},
+    {q:'A:B = 2:3. A = 14. Find B.', opts:['21','18','24','15'], ans:0},
+    {q:'What is 50% of 126?', opts:['63','53','73','66'], ans:0},
+    {q:'3/8 + 1/4 = ?', opts:['5/8','4/8','1/2','4/12'], ans:0},
+  ],
+  // Level 1 — Percentage word problems, fraction of remainder
+  [
+    {q:'Shirt costs $40. 20% off. Sale price?', opts:['$32','$36','$28','$30'], ans:0},
+    {q:'2/5 of students are boys. 18 boys. Total students?', opts:['45','36','40','50'], ans:0},
+    {q:'A:B:C = 2:3:5. Total = 60. Find C.', opts:['30','25','20','15'], ans:0},
+    {q:'Increase 80 by 25%', opts:['100','90','105','95'], ans:0},
+    {q:'5/6 − 2/3 = ?', opts:['1/6','1/3','2/6','1/2'], ans:0},
+    {q:'Ali saves 30% of $150. How much saved?', opts:['$45','$40','$50','$35'], ans:0},
+    {q:'Ratio X:Y = 4:7. Y = 35. Find X.', opts:['20','16','24','28'], ans:0},
+    {q:'1 3/4 + 2 1/2 = ?', opts:['4 1/4','3 3/4','4 1/2','3 1/4'], ans:0},
+  ],
+  // Level 2 — Algebra (find unknown), speed/distance
+  [
+    {q:'3n + 7 = 25. Find n.', opts:['6','7','5','8'], ans:0},
+    {q:'Speed 60 km/h, time 2.5 hours. Distance?', opts:['150 km','120 km','130 km','160 km'], ans:0},
+    {q:'Distance 180 km, speed 45 km/h. Time?', opts:['4 h','3 h','5 h','3.5 h'], ans:0},
+    {q:'2(x + 5) = 24. Find x.', opts:['7','8','6','9'], ans:0},
+    {q:'Volume of cube side 5cm?', opts:['125 cm³','100 cm³','75 cm³','150 cm³'], ans:0},
+    {q:'40% of a number is 28. Find the number.', opts:['70','60','80','56'], ans:0},
+    {q:'Buy 3 for $5.60 each + 7% GST. Total?', opts:['$17.98','$17.64','$16.80','$18.58'], ans:0},
+    {q:'If y = 2x + 3 and x = 4, find y.', opts:['11','10','12','9'], ans:0},
+  ],
+  // Level 3 — Multi-step, percentage change, model method
+  [
+    {q:'Price rose from $40 to $50. % increase?', opts:['25%','20%','30%','10%'], ans:0},
+    {q:'Ali has 3× as much as Ben. Together $240. Ali has?', opts:['$180','$160','$120','$200'], ans:0},
+    {q:'Tank filled at 4L/min. 75% of 120L tank. Time?', opts:['22.5 min','20 min','25 min','30 min'], ans:0},
+    {q:'Rectangle: L = 3W, perimeter = 56cm. Find L.', opts:['21 cm','18 cm','24 cm','14 cm'], ans:0},
+    {q:'5n − 8 = 3n + 12. Find n.', opts:['10','8','12','6'], ans:0},
+    {q:'Train: 90 km/h for 40 min. Distance?', opts:['60 km','90 km','45 km','80 km'], ans:0},
+    {q:'Bag: 30% red, 45% blue, rest green. 60 total. Green?', opts:['15','12','18','20'], ans:0},
+    {q:'Vol of rect tank: 8×5×6 cm. In litres?', opts:['0.24 L','2.4 L','240 L','24 L'], ans:0},
+  ],
+  // Level 4 — Hardest P6 PSLE
+  [
+    {q:'A:B = 3:4. B:C = 2:5. Find A:B:C.', opts:['3:4:10','3:4:5','6:8:20','6:4:10'], ans:0},
+    {q:'After 20% discount + 7% GST on $80. Final?', opts:['$68.48','$64.00','$72.76','$65.60'], ans:0},
+    {q:'Ali and Ben: Ali gives Ben $20 → equal. Ali had $30 more. Ali had?', opts:['$70','$60','$80','$50'], ans:0},
+    {q:'Speed A=60 km/h, B=80 km/h. A starts 1h earlier. B catches up in?', opts:['3 h','2 h','4 h','2.5 h'], ans:0},
+    {q:'Circle area ≈ 154 cm². Radius? (π≈22/7)', opts:['7 cm','14 cm','49 cm','21 cm'], ans:0},
+    {q:'Container: 1/3 full. Pour out 5L → 1/5 full. Capacity?', opts:['37.5 L','30 L','25 L','40 L'], ans:0},
+    {q:'Avg of 5 numbers = 42. Remove 30. New avg?', opts:['45','44','46','43'], ans:0},
+    {q:'Ratio M:F was 3:2. 6 F join → 3:4. Original total?', opts:['15','20','25','10'], ans:0},
+  ],
+];
 
 // Arena state
 let arenaState = {};
@@ -3163,6 +3601,7 @@ initArena();
 let battleState = {};
 try { battleState = JSON.parse(localStorage.getItem('nemoto-battle-v1')) || {}; } catch(e) {}
 if (!battleState.chalWins) battleState.chalWins = {yuhi:0, ryusei:0, ties:0};
+if (!battleState.chalLevel) battleState.chalLevel = {yuhi:0, ryusei:0};
 if (!battleState.coopWins) battleState.coopWins = 0;
 function saveBattle() { localStorage.setItem('nemoto-battle-v1', JSON.stringify(battleState)); }
 
@@ -3253,28 +3692,47 @@ function renderLeaderboard() {
 let chalData = null;
 let chalTimerInterval = null;
 
+function chalShuffleQ(pool, count) {
+  let picked = [...pool].sort(() => Math.random() - 0.5).slice(0, count);
+  return picked.map(q => {
+    const correctText = q.opts[q.ans];
+    const shuffled = [...q.opts].sort(() => Math.random() - 0.5);
+    return {...q, opts:shuffled, ans:shuffled.indexOf(correctText)};
+  });
+}
+
 function showChalSetup() {
   ['chal-setup','chal-p1-ready','chal-quiz','chal-pass','chal-p2-ready','chal-results'].forEach(id => {
     document.getElementById(id).style.display = id === 'chal-setup' ? 'block' : 'none';
   });
   if (chalTimerInterval) { clearInterval(chalTimerInterval); chalTimerInterval = null; }
-  let html = '';
-  maStages.forEach(st => {
-    const isBoss = st.id === 'boss';
-    html += `<div class="chal-stage-btn" onclick="chalPickStage('${st.id}')" ${isBoss?'style="border-color:rgba(255,71,87,.4);background:rgba(255,71,87,.05)"':''}>
-      <div class="cs-icon">${st.enemy}</div><div class="cs-name">${st.name}</div></div>`;
-  });
-  document.getElementById('chal-stage-grid').innerHTML = html;
+  const yLv = battleState.chalLevel.yuhi, rLv = battleState.chalLevel.ryusei;
+  const lvNames = ['★☆☆☆☆','★★☆☆☆','★★★☆☆','★★★★☆','★★★★★'];
+  document.getElementById('chal-stage-grid').innerHTML = `
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="display:inline-flex;gap:24px;flex-wrap:wrap;justify-content:center">
+        <div style="background:rgba(255,210,0,.08);border:1px solid rgba(255,210,0,.3);border-radius:12px;padding:12px 20px">
+          <div style="font-weight:700;color:#ffd200;font-size:.95em">📚 Yuhi (P6)</div>
+          <div style="color:#aaa;font-size:.8em;margin-top:4px">Lv ${yLv+1} ${lvNames[yLv]}</div>
+        </div>
+        <div style="background:rgba(69,183,209,.08);border:1px solid rgba(69,183,209,.3);border-radius:12px;padding:12px 20px">
+          <div style="font-weight:700;color:#45b7d1;font-size:.95em">⚽ Ryusei (P4)</div>
+          <div style="color:#aaa;font-size:.8em;margin-top:4px">Lv ${rLv+1} ${lvNames[rLv]}</div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center">
+      <button class="btn btn-primary" style="font-size:1.15em;padding:14px 40px" onclick="chalPickStage('mixed')">⚔️ START CHALLENGE!</button>
+    </div>`;
 }
 
 function chalPickStage(stageId) {
-  let pool = [...maQuestions[stageId]].sort(() => Math.random() - 0.5).slice(0, 3);
-  pool = pool.map(q => {
-    const correctText = q.opts[q.ans];
-    const shuffled = [...q.opts].sort(() => Math.random() - 0.5);
-    return {...q, opts:shuffled, ans:shuffled.indexOf(correctText)};
-  });
-  chalData = {stageId, questions:pool, p1:{score:0,totalTime:0}, p2:{score:0,totalTime:0},
+  const yLv = Math.min(battleState.chalLevel.yuhi, chalQP6.length - 1);
+  const rLv = Math.min(battleState.chalLevel.ryusei, chalQP4.length - 1);
+  const p1Qs = chalShuffleQ(chalQP6[yLv], 3);
+  const p2Qs = chalShuffleQ(chalQP4[rLv], 3);
+  chalData = {stageId, p1Questions:p1Qs, p2Questions:p2Qs,
+    p1:{score:0,totalTime:0}, p2:{score:0,totalTime:0},
     currentPlayer:1, currentQ:0, timeLeft:20, questionStartTime:0};
   document.getElementById('chal-setup').style.display = 'none';
   document.getElementById('chal-p1-ready').style.display = 'block';
@@ -3294,11 +3752,16 @@ function chalStartQuiz(playerNum) {
   chalShowQuestion();
 }
 
+function chalGetQuestions() {
+  return chalData.currentPlayer === 1 ? chalData.p1Questions : chalData.p2Questions;
+}
+
 function chalShowQuestion() {
   const d = chalData;
-  const q = d.questions[d.currentQ];
+  const qs = chalGetQuestions();
+  const q = qs[d.currentQ];
   d.questionStartTime = Date.now();
-  document.getElementById('chal-q-num').textContent = `Q ${d.currentQ+1} / ${d.questions.length}`;
+  document.getElementById('chal-q-num').textContent = `Q ${d.currentQ+1} / ${qs.length}`;
   document.getElementById('chal-q-text').textContent = q.q;
   document.getElementById('chal-feedback').style.display = 'none';
   let html = '';
@@ -3321,7 +3784,8 @@ function chalAnswer(idx) {
   const d = chalData;
   if (chalTimerInterval) { clearInterval(chalTimerInterval); chalTimerInterval = null; }
   const timeTaken = Math.min((Date.now() - d.questionStartTime) / 1000, 20);
-  const q = d.questions[d.currentQ];
+  const qs = chalGetQuestions();
+  const q = qs[d.currentQ];
   const pData = d.currentPlayer === 1 ? d.p1 : d.p2;
   const btns = document.querySelectorAll('#chal-answers .opt-btn');
   btns.forEach(b => b.disabled = true);
@@ -3334,14 +3798,14 @@ function chalAnswer(idx) {
   fbEl.style.display = 'block';
   fbEl.className = 'q-feedback show ' + (correct ? 'correct' : 'wrong');
   fbEl.innerHTML = correct ? '<h4>✅ Correct! +1 point</h4>' : (idx===-1?'<h4>⏰ Time\'s up!</h4>':`<h4>❌ Wrong!</h4><p>Answer: ${q.opts[q.ans]}</p>`);
-  setTimeout(() => { d.currentQ++; if (d.currentQ >= d.questions.length) chalPlayerDone(); else chalShowQuestion(); }, 1200);
+  setTimeout(() => { d.currentQ++; if (d.currentQ >= qs.length) chalPlayerDone(); else chalShowQuestion(); }, 1200);
 }
 
 function chalPlayerDone() {
   document.getElementById('chal-quiz').style.display = 'none';
   if (chalData.currentPlayer === 1) {
     document.getElementById('chal-pass').style.display = 'block';
-    document.getElementById('chal-p1-interim').textContent = `${chalData.p1.score} / ${chalData.questions.length}`;
+    document.getElementById('chal-p1-interim').textContent = `${chalData.p1.score} / ${chalData.p1Questions.length}`;
   } else { chalShowResults(); }
 }
 
@@ -3355,6 +3819,7 @@ function chalShowResults() {
   document.getElementById('chal-results').style.display = 'block';
   const p1s=d.p1.score, p2s=d.p2.score;
   const p1t=Math.round(d.p1.totalTime*10)/10, p2t=Math.round(d.p2.totalTime*10)/10;
+  const p1total=d.p1Questions.length, p2total=d.p2Questions.length;
   let winner = 0;
   if (p1s > p2s) winner=1; else if (p2s > p1s) winner=2;
   else if (p1t < p2t) winner=1; else if (p2t < p1t) winner=2;
@@ -3362,6 +3827,11 @@ function chalShowResults() {
   if (winner===1) { battleState.chalWins.yuhi++; state.yuhi.xp+=20; state.yuhi.coins+=10; state.ryusei.xp+=8; state.ryusei.coins+=4; }
   else if (winner===2) { battleState.chalWins.ryusei++; state.ryusei.xp+=20; state.ryusei.coins+=10; state.yuhi.xp+=8; state.yuhi.coins+=4; }
   else { battleState.chalWins.ties++; state.yuhi.xp+=12; state.yuhi.coins+=6; state.ryusei.xp+=12; state.ryusei.coins+=6; }
+
+  // Winner's difficulty goes up (max level 4)
+  let lvUpMsg = '';
+  if (winner===1 && battleState.chalLevel.yuhi < 4) { battleState.chalLevel.yuhi++; lvUpMsg = '📚 Yuhi levelled up! P6 Lv ' + (battleState.chalLevel.yuhi+1); }
+  if (winner===2 && battleState.chalLevel.ryusei < 4) { battleState.chalLevel.ryusei++; lvUpMsg = '⚽ Ryusei levelled up! P4 Lv ' + (battleState.chalLevel.ryusei+1); }
   save(); saveBattle(); updatePlayerCards();
 
   const bannerEl = document.getElementById('chal-winner-banner');
@@ -3369,28 +3839,29 @@ function chalShowResults() {
   else if (winner===2) bannerEl.innerHTML = '🏆 <span style="color:#45b7d1">RYUSEI WINS!</span>';
   else bannerEl.innerHTML = '🤝 <span style="color:#ffd200">IT\'S A DRAW!</span>';
   const isTB = (p1s===p2s && winner!==0);
+  const yLv = battleState.chalLevel.yuhi, rLv = battleState.chalLevel.ryusei;
   document.getElementById('chal-compare-cards').innerHTML = `
   <div class="chal-compare-card ${winner===1?'champion':''}">
-    <div style="font-weight:800;color:#ffd200;font-size:1.05em">📚 Yuhi</div>
+    <div style="font-weight:800;color:#ffd200;font-size:1.05em">📚 Yuhi <span style="font-size:.7em;color:#aaa">(P6 Lv${yLv+1})</span></div>
     ${winner===1?'<div style="font-size:1.8em">👑</div>':'<div style="height:28px"></div>'}
-    <div class="cc-score" style="color:#ffd200">${p1s}<span style="font-size:.35em;color:#aaa"> / ${d.questions.length}</span></div>
+    <div class="cc-score" style="color:#ffd200">${p1s}<span style="font-size:.35em;color:#aaa"> / ${p1total}</span></div>
     <div style="color:#aaa;font-size:.85em">⏱ ${p1t}s total</div>
     ${isTB&&winner===1?'<div style="color:#2ed573;font-size:.75em;margin-top:4px">Faster! 🚀</div>':''}
   </div>
   <div class="chal-compare-card ${winner===2?'champion':''}">
-    <div style="font-weight:800;color:#45b7d1;font-size:1.05em">⚽ Ryusei</div>
+    <div style="font-weight:800;color:#45b7d1;font-size:1.05em">⚽ Ryusei <span style="font-size:.7em;color:#aaa">(P4 Lv${rLv+1})</span></div>
     ${winner===2?'<div style="font-size:1.8em">👑</div>':'<div style="height:28px"></div>'}
-    <div class="cc-score" style="color:#45b7d1">${p2s}<span style="font-size:.35em;color:#aaa"> / ${d.questions.length}</span></div>
+    <div class="cc-score" style="color:#45b7d1">${p2s}<span style="font-size:.35em;color:#aaa"> / ${p2total}</span></div>
     <div style="color:#aaa;font-size:.85em">⏱ ${p2t}s total</div>
     ${isTB&&winner===2?'<div style="color:#2ed573;font-size:.75em;margin-top:4px">Faster! 🚀</div>':''}
   </div>`;
   document.getElementById('chal-tiebreak').innerHTML =
-    `Challenge Record: Yuhi ${battleState.chalWins.yuhi} — ${battleState.chalWins.ryusei} Ryusei (${battleState.chalWins.ties} ties)`;
+    `Challenge Record: Yuhi ${battleState.chalWins.yuhi} — ${battleState.chalWins.ryusei} Ryusei (${battleState.chalWins.ties} ties)`
+    + (lvUpMsg ? `<div style="color:#2ed573;font-weight:700;margin-top:8px;font-size:1em">🔺 ${lvUpMsg}</div>` : '');
 }
 
 function chalRestart() {
-  if (chalData) chalPickStage(chalData.stageId);
-  else showBattleTab('chal');
+  chalPickStage('mixed');
 }
 
 // ---- CO-OP BOSS BATTLE ----
