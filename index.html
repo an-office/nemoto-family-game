@@ -529,7 +529,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div class="icon">&#127918;</div>
     <div class="info">
       <h4>Daily Max = 10 min Gaming!</h4>
-      <p>All 4 subjects done = +5 min. Every 20 quizzes = +1 min. Max 10 min/day (can accumulate!)</p>
+      <p>20 quizzes = +1 min gaming. 100 quizzes = 5 min. Max 10 min/day (can accumulate!)</p>
     </div>
     <div style="text-align:center">
       <div style="font-size:.7em;color:#aaa">GAMING BANK</div>
@@ -580,7 +580,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       </div>
     </div>
     <div style="text-align:center;color:#999;font-size:.8em">
-      Rule: All 4 subjects = +5 min. Every 20 quizzes = +1 min. <strong style="color:#ff6b6b">Max 10 min/day</strong> (saves up!)<br>
+      Rule: 20 quizzes = +1 min. 100 quizzes = 5 min. <strong style="color:#ff6b6b">Max 10 min/day</strong> (saves up!)<br>
       <span style="color:#ffd200">Today's limit resets at midnight. Banked minutes carry over!</span>
     </div>
   </div>
@@ -629,7 +629,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     </ul>
     <div style="margin-top:10px;text-align:center">
       <div style="font-size:.85em;color:#aaa">Progress: <span id="daily-progress">0/4 subjects</span></div>
-      <div id="daily-complete-msg" style="display:none;color:#2ed573;font-weight:700;font-size:1.1em;margin-top:8px">ALL TASKS COMPLETE! +5 min banked!</div>
+      <div id="daily-complete-msg" style="display:none;color:#2ed573;font-weight:700;font-size:1.1em;margin-top:8px">ALL SUBJECTS DONE TODAY! Great work!</div>
     </div>
   </div>
 
@@ -1117,7 +1117,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
         <p>1 quiz each. Almost done with daily tasks! Check which subjects are left.</p>
         <span class="sched-tag yuhi-t">Yuhi: Remaining subject</span>
         <span class="sched-tag ryusei-t">Ryusei: Remaining subject</span>
-        <p style="color:#ffd200;margin-top:4px;font-size:.8em">Complete all 4 subjects = +5 min banked!</p>
+        <p style="color:#ffd200;margin-top:4px;font-size:.8em">Keep going! 20 quizzes = +1 min gaming!</p>
       </div>
     </div>
 
@@ -1525,7 +1525,11 @@ try { state = JSON.parse(localStorage.getItem('nemoto-study-v2')) || defaultStat
   localStorage.setItem('nemoto-study-v2', JSON.stringify(state));
 })();
 
-function save() { localStorage.setItem('nemoto-study-v2', JSON.stringify(state)); pushToFirebase(); }
+function save() {
+  ['yuhi','ryusei'].forEach(p => { state[p]._ts = Date.now(); });
+  localStorage.setItem('nemoto-study-v2', JSON.stringify(state));
+  pushToFirebase();
+}
 
 // WEAK POINTS (Treasure Chest)
 let wpState = {};
@@ -1626,9 +1630,9 @@ const questions = {
       {q:"What is the area of a triangle with base 14 cm and height 8 cm?", opts:["56 cm\u00B2","112 cm\u00B2","48 cm\u00B2","64 cm\u00B2"], ans:0, exp:"A = 1/2 \u00D7 14 \u00D7 8 = 56 cm\u00B2", diff:"easy"},
       {q:"Ali had $120. He gave 3/8 to his brother and spent $25. How much left?", opts:["$50","$55","$45","$60"], ans:0, exp:"3/8 of 120 = 45. Left = 120 - 45 - 25 = $50", diff:"medium"},
       {q:"Express 0.375 as a fraction in simplest form.", opts:["3/8","375/100","37/80","3/75"], ans:0, exp:"0.375 = 375/1000 = 3/8", diff:"medium"},
-      // P6 PSLE — Speed & Distance
-      {q:"A car travels at 60 km/h for 2.5 hours. How far does it go?", opts:["150 km","120 km","180 km","130 km"], ans:0, exp:"Distance = Speed × Time = 60 × 2.5 = 150 km", diff:"medium"},
-      {q:"Ali cycles 12 km in 40 minutes. What is his speed in km/h?", opts:["18 km/h","20 km/h","15 km/h","12 km/h"], ans:0, exp:"40 min = 2/3 hr. Speed = 12 ÷ (2/3) = 18 km/h", diff:"hard"},
+      // P6 PSLE — Data Analysis
+      {q:"The average height of 6 students is 145 cm. If a new student of 159 cm joins, what is the new average?", opts:["147 cm","148 cm","146 cm","149 cm"], ans:0, exp:"Total = 145 × 6 = 870. New total = 870 + 159 = 1029. New average = 1029 ÷ 7 = 147 cm", diff:"medium"},
+      {q:"In a pie chart, the Maths sector is 90°. What percentage chose Maths?", opts:["25%","30%","20%","50%"], ans:0, exp:"Percentage = 90 ÷ 360 × 100 = 25%", diff:"easy"},
       // P6 PSLE — Algebra
       {q:"If 2y − 5 = 11, what is y?", opts:["8","6","7","9"], ans:0, exp:"2y = 11 + 5 = 16, y = 8", diff:"medium"},
       {q:"Simplify: 6a + 3b − 2a + b", opts:["4a + 4b","8a + 4b","4a + 2b","8a + 2b"], ans:0, exp:"6a − 2a = 4a, 3b + b = 4b → 4a + 4b", diff:"medium"},
@@ -1662,9 +1666,9 @@ const questions = {
       {q:"Tom packs 5 balls per bag with 8 left over. If he packs 7 per bag, he needs 4 more. How many bags?", opts:["6","8","5","7"], ans:0, exp:"Difference per bag: 7-5=2. Total diff: 8+4=12. Bags = 12÷2 = 6", diff:"hard"},
       // P6 PSLE — Assumption method
       {q:"A farm has chickens and cows. There are 30 heads and 80 legs. How many cows?", opts:["10","15","12","8"], ans:0, exp:"If all chickens: 30×2=60 legs. Extra=80-60=20. Each cow adds 2 legs. Cows=20÷2=10", diff:"hard"},
-      // P6 PSLE — Speed
-      {q:"Car A travels at 80 km/h, Car B at 60 km/h. Both start from the same place. After 3 hours, how far apart are they?", opts:["60 km","80 km","40 km","90 km"], ans:0, exp:"Difference per hour=20 km/h. After 3 hours: 20×3=60 km apart", diff:"medium"},
-      {q:"Ali walks from home to school at 4 km/h and takes 45 min. If he cycles at 12 km/h, how long will it take?", opts:["15 min","20 min","10 min","25 min"], ans:0, exp:"Distance=4×(45/60)=3 km. Time=3÷12=0.25 hr=15 min", diff:"medium"},
+      // P6 PSLE — Data Analysis (more)
+      {q:"5 test scores: 72, 85, 90, 68, 95. What is the median?", opts:["85","80","82","90"], ans:0, exp:"Arrange: 68, 72, 85, 90, 95. Middle value = 85", diff:"medium"},
+      {q:"A bar graph shows: Mon=15, Tue=20, Wed=10, Thu=25, Fri=30. What fraction of total is Friday?", opts:["3/10","1/5","1/4","2/5"], ans:0, exp:"Total=100. Friday=30. Fraction=30/100=3/10", diff:"medium"},
       // P6 PSLE — Percentage of percentage
       {q:"A bag costs $80. First a 25% discount, then a further 10% off the discounted price. What is the final price?", opts:["$54","$52","$56","$50"], ans:0, exp:"After 25% off: $60. After 10% off $60: $60-$6=$54", diff:"hard"},
       {q:"A town has 40,000 people. Population increases by 10% in Year 1, then decreases by 10% in Year 2. What is the population now?", opts:["39,600","40,000","38,000","39,000"], ans:0, exp:"Year 1: 40000×1.1=44000. Year 2: 44000×0.9=39600. NOT back to 40000!", diff:"hard"},
@@ -2090,16 +2094,11 @@ function finishQuiz() {
   else if (quizCorrect === 4) bonusCoins = 8;
   s.coins += bonusCoins;
 
-  // Check daily completion: all 4 subjects done at least once today
+  // Track daily completion (for display only, no gaming bonus)
   const today = new Date().toDateString();
   const allSubjectsDone = ['math','science','english','chinese'].every(sub => s.subjects[sub].done > 0);
-  let dailyBonusEarned = false;
   if (allSubjectsDone && !s.dailyComplete.includes(today)) {
     s.dailyComplete.push(today);
-    const dailyBankedSoFar = s.todayBanked || 0;
-    const canAdd = Math.min(5, 10 - dailyBankedSoFar); // cap at 10min/day
-    if (canAdd > 0) { s.gameBank += canAdd; s.todayBanked = dailyBankedSoFar + canAdd; }
-    dailyBonusEarned = true;
   }
 
   const scoreEl = document.getElementById('res-score');
@@ -2113,17 +2112,14 @@ function finishQuiz() {
                'Keep studying! You got this!';
   document.getElementById('res-msg').textContent = msgs;
 
+  // Gaming progress display
+  const qgp = s.quizGameProgress || 0;
+  const qgpRemain = 20 - qgp;
   let rewardsHtml = '';
-  if (dailyBonusEarned) rewardsHtml += `<span class="reward-item" style="background:rgba(46,213,115,.15);color:#2ed573">\u{1F3AE} +5 min BANKED! All tasks done!</span>`;
-  if (perfectBonus > 0) rewardsHtml += `<span class="reward-item" style="background:rgba(255,210,0,.15);color:#ffd200">\u{1F31F} +${perfectBonus} min Perfect Bonus!</span>`;
+  if (perfectBonus > 0) rewardsHtml += `<span class="reward-item" style="background:rgba(255,210,0,.15);color:#ffd200">\u{1F31F} +${perfectBonus} min Gaming earned!</span>`;
   if (bonusCoins > 0) rewardsHtml += `<span class="reward-item">\u{1FA99} +${bonusCoins} Bonus Coins</span>`;
   rewardsHtml += `<span class="reward-item">\u2728 +XP Earned</span>`;
-
-  // Show remaining subjects if not all done yet
-  if (!allSubjectsDone) {
-    const remaining = ['math','science','english','chinese'].filter(sub => s.subjects[sub].done === 0);
-    rewardsHtml += `<div style="margin-top:8px;font-size:.85em;color:#ffa502">Remaining for 5min gaming: ${remaining.join(', ')} (${remaining.length} left)</div>`;
-  }
+  if (qgpRemain > 0) rewardsHtml += `<div style="margin-top:8px;font-size:.85em;color:#ffa502">\u{1F3AE} ${qgpRemain} more quizzes for +1 min gaming (${qgp}/20)</div>`;
 
   document.getElementById('res-rewards').innerHTML = rewardsHtml;
 
@@ -3350,7 +3346,7 @@ const maQuestions = {
 
 // ---- PROCEDURAL QUESTION GENERATORS (1000 Levels) ----
 // P4 = Ryusei (basic arithmetic, fractions, word problems, geometry)
-// P6 = Yuhi (ratio, percentage, algebra, speed, volume, multi-step)
+// P6 = Yuhi (ratio, percentage, algebra, data analysis, volume, multi-step)
 // Difficulty scales gradually with level. Every 25 levels = 1 difficulty tier.
 function _ri(a,b){return Math.floor(Math.random()*(b-a+1))+a}
 function _gc(a,b){return b===0?a:_gc(b,a%b)}
@@ -3395,7 +3391,7 @@ function _gP4(lv){
 function _gP6(lv){
   const d=Math.floor(lv/25);
   const pool=['ratio','pct','frac6'];
-  if(lv>=10)pool.push('algebra');if(lv>=25)pool.push('speed');if(lv>=40)pool.push('geo6');if(lv>=60)pool.push('wordAdv');
+  if(lv>=10)pool.push('algebra');if(lv>=25)pool.push('data');if(lv>=40)pool.push('geo6');if(lv>=60)pool.push('wordAdv');
   try{switch(pool[_ri(0,pool.length-1)]){
     case 'ratio':{const rs=_ri(0,2);
       if(rs===0){const ra=_ri(2,Math.min(4+d,12)),rb=_ri(1,Math.min(4+d,10)),u=_ri(2,Math.min(8+d*2,40));
@@ -3425,13 +3421,16 @@ function _gP6(lv){
         return{q:`${a}(x + ${b}) = ${a*(an+b)}. x = ?`,opts:_nw(an,Math.max(2,Math.ceil(an*0.3))),ans:0}}
       const a=_ri(3,Math.min(6+d,15)),c=_ri(1,a-1),an=_ri(2,Math.min(10+d,40)),bv=_ri(1,Math.min(20+d*3,80)),dv=bv+(a-c)*an;
       return{q:`${a}x + ${bv} = ${c}x + ${dv}. x = ?`,opts:_nw(an,Math.max(2,Math.ceil(an*0.25))),ans:0}}
-    case 'speed':{const ss=_ri(0,2);
-      if(ss===0){const sp=_ri(3,Math.min(10+d,20))*10,t=_ri(1,Math.min(3+Math.floor(d/3),8)),ds=sp*t;
-        return{q:`Speed ${sp} km/h, ${t} hours. Distance?`,opts:_nw(ds,Math.max(10,Math.ceil(ds*0.1))).map(v=>v+' km'),ans:0}}
-      if(ss===1){const sp=_ri(3,Math.min(8+d,15))*10,t=_ri(2,Math.min(4+Math.floor(d/3),8)),ds=sp*t;
-        return{q:`Distance ${ds} km, speed ${sp} km/h. Time?`,opts:_nw(t,Math.max(1,Math.ceil(t*0.3))).map(v=>v+' h'),ans:0}}
-      const t=_ri(2,Math.min(5+Math.floor(d/3),10)),sp=_ri(3,Math.min(10+d,20))*10,ds=sp*t;
-      return{q:`${ds} km in ${t} hours. Speed?`,opts:_nw(sp,Math.max(5,Math.ceil(sp*0.15))).map(v=>v+' km/h'),ans:0}}
+    case 'data':{const ds=_ri(0,3);
+      if(ds===0){const n=_ri(3,Math.min(5+Math.floor(d/5),8)),vals=[];let sum=0;for(let i=0;i<n;i++){const v=_ri(10,Math.min(40+d*3,100));vals.push(v);sum+=v}const avg=Math.round(sum/n);
+        return{q:`Average of ${vals.join(', ')}?`,opts:_nw(avg,Math.max(3,Math.ceil(avg*0.15))),ans:0}}
+      if(ds===1){const n=_ri(4,Math.min(5+Math.floor(d/5),8)),avg=_ri(10,Math.min(30+d*3,80)),tot=avg*n;
+        return{q:`Average of ${n} numbers = ${avg}. Total?`,opts:_nw(tot,Math.max(10,Math.ceil(tot*0.1))),ans:0}}
+      if(ds===2){const n=_ri(4,Math.min(6+Math.floor(d/5),8)),vals=[];let sum=0;for(let i=0;i<n-1;i++){const v=_ri(5,Math.min(30+d*2,60));vals.push(v);sum+=v}const avg=_ri(Math.ceil(sum/(n-1)),Math.ceil(sum/(n-1))+10),last=avg*n-sum;
+        return{q:`${n} scores: ${vals.join(', ')}, ?. Average=${avg}. Missing?`,opts:_nw(last,Math.max(3,Math.ceil(last*0.2))),ans:0}}
+      const pcts=[25,30,35,40,45,50],a=pcts[_ri(0,pcts.length-1)],b=pcts[_ri(0,pcts.length-1)],c=100-a-b,tot=_ri(2,Math.min(5+d,20))*20,partA=tot*a/100;
+      if(c>0&&c<100)return{q:`Pie chart: ${a}% Maths, ${b}% Sci, ${c}% Eng. ${tot} pupils. Maths?`,opts:_nw(partA,Math.max(3,Math.ceil(partA*0.15))),ans:0};
+      return{q:`${a}% of ${tot} students chose Maths. How many?`,opts:_nw(partA,Math.max(3,Math.ceil(partA*0.15))),ans:0}}
     case 'geo6':{const gs=_ri(0,2);
       if(gs===0){const s=_ri(2,Math.min(5+d,15)),an=s*s*s;return{q:`Cube side ${s} cm. Volume?`,opts:_nw(an,Math.max(5,Math.ceil(an*0.12))).map(v=>v+' cm³'),ans:0}}
       if(gs===1){const l=_ri(3,Math.min(8+d,20)),w=_ri(2,Math.min(6+Math.floor(d/2),15)),h=_ri(2,Math.min(5+Math.floor(d/3),12)),an=l*w*h;
@@ -4253,10 +4252,12 @@ const yuhiTaskDefs = [
   {id:'vocab_mcq',    name:'Vocab MCQ',                        detail:'1 page',  time:15, coins:20, xp:40,  cat:'📝 English', gameMin:0},
   {id:'spelling',     name:'Spelling',                         detail:'3 words', time:10, coins:15, xp:25,  cat:'📝 English', gameMin:0},
   {id:'oral_comp',    name:'Oral / Comprehension / Composition',detail:'',       time:20, coins:30, xp:60,  cat:'📝 English', gameMin:0},
+  {id:'duolingo',     name:'Duolingo',                         detail:'2 min',   time:2,  coins:10, xp:15,  cat:'📝 English', gameMin:0},
   {id:'chinese_1000', name:'Chinese 1000+ Practice',           detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
   {id:'berries',      name:'Berries 靠靠自己',                  detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
   {id:'ch_oral',      name:'Chinese Oral / Comprehension / Composition', detail:'', time:20, coins:25, xp:50, cat:'🈶 Chinese', gameMin:0},
   {id:'ch_words',     name:'Recognize Chinese Words',          detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
+  {id:'koobits',      name:'KooBits',                          detail:'10 min',  time:10, coins:20, xp:40,  cat:'🔢 Math', gameMin:0},
   {id:'tll',          name:'TLL Math / Science',               detail:'',        time:10, coins:15, xp:30,  cat:'🔬 Academic', gameMin:0},
   {id:'kendo',        name:'Kendo',                            detail:'',        time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
   {id:'golf',         name:'Golf',                             detail:'',        time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
@@ -4527,10 +4528,37 @@ function initSync() {
         const data = snap.val();
         if (!data) return;
         remoteData[p] = data;
+
+        // Merge remote state into local if remote is newer
+        const remoteTs = data._ts || 0;
+        const localTs = state[p]._ts || 0;
+        const isOtherDevice = localDevicePlayer !== p && localDevicePlayer !== 'shared';
+        if (remoteTs > localTs || isOtherDevice) {
+          // Apply remote state to local
+          const keep = ['_tasksDone','_tasksTotal','_arenaWins','_ts'];
+          Object.keys(data).forEach(k => {
+            if (!keep.includes(k)) state[p][k] = data[k];
+          });
+          state[p]._ts = remoteTs;
+          localStorage.setItem('nemoto-study-v2', JSON.stringify(state));
+        }
         flashSyncBadge();
-        renderRivalView();
-        updatePlayerCards();
+        try { renderRivalView(); } catch(e) {}
+        try { updatePlayerCards(); } catch(e) {}
+        try { updateDashboard(); } catch(e) {}
+        try { updateGamingBank(); } catch(e) {}
+        try { updateStreakUI(); } catch(e) {}
       });
+    });
+
+    // Also listen for arena & battle state
+    fbDb.ref('nemoto-family/_arena').on('value', snap => {
+      const data = snap.val();
+      if (data && typeof arenaState !== 'undefined') { Object.assign(arenaState, data); try { updateArenaStats(); } catch(e) {} }
+    });
+    fbDb.ref('nemoto-family/_battle').on('value', snap => {
+      const data = snap.val();
+      if (data && typeof battleState !== 'undefined') { Object.assign(battleState, data); try { saveBattle(); } catch(e) {} }
     });
 
     const badge = document.getElementById('sync-badge');
@@ -4563,18 +4591,20 @@ function pushToFirebase() {
       tasksTotal = defs.length;
     } catch(e) {}
 
-    fbDb.ref('nemoto-family/' + p).set({
-      xp: s.xp || 0,
-      coins: s.coins || 0,
-      gameBank: Math.max(0, (s.gameBank||0) - (s.gameUsed||0)),
-      quizzesDone: s.quizzesDone || 0,
-      totalCorrect: s.totalCorrect || 0,
-      bestStreak: s.bestStreak || 0,
-      arenaWins: (typeof arenaState !== 'undefined' ? (arenaState.wins||0) : 0),
-      tasksDone, tasksTotal,
-      ts: Date.now()
-    });
+    // Push FULL state for real sync + summary for rival view
+    const fullState = JSON.parse(JSON.stringify(s));
+    fullState._tasksDone = tasksDone;
+    fullState._tasksTotal = tasksTotal;
+    fullState._arenaWins = (typeof arenaState !== 'undefined' ? (arenaState.wins||0) : 0);
+    fullState._ts = Date.now();
+    fbDb.ref('nemoto-family/' + p).set(fullState);
   });
+
+  // Also sync arena state and battle state
+  try {
+    if (typeof arenaState !== 'undefined') fbDb.ref('nemoto-family/_arena').set(arenaState);
+    if (typeof battleState !== 'undefined') fbDb.ref('nemoto-family/_battle').set(battleState);
+  } catch(e) {}
 }
 
 function renderRivalView() {
