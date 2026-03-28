@@ -137,6 +137,42 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
 .tab-btn{padding:8px 20px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:transparent;color:#ccc;font-weight:600;font-size:.85em;cursor:pointer}
 .tab-btn.active{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.3)}
 .tab-content{display:none}.tab-content.active{display:block}
+/* DAILY STREAK */
+.streak-card{background:linear-gradient(135deg,rgba(255,71,87,.08),rgba(255,165,0,.12));border:1px solid rgba(255,107,107,.3);border-radius:16px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden}
+.streak-card::before{content:'';position:absolute;top:-20px;right:-20px;width:100px;height:100px;background:radial-gradient(circle,rgba(255,71,87,.15),transparent);border-radius:50%}
+.streak-top{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.streak-flame{font-size:2.8em;position:relative;line-height:1}
+.streak-flame.s1{filter:brightness(0.6) saturate(0.5)}
+.streak-flame.s3{animation:flamePulse 1.5s ease-in-out infinite}
+.streak-flame.s7{animation:flamePulse 1s ease-in-out infinite;filter:brightness(1.2)}
+.streak-flame.s14{animation:flamePulse .7s ease-in-out infinite;filter:brightness(1.3) drop-shadow(0 0 8px rgba(255,100,0,.5))}
+.streak-flame.s30{animation:flamePulse .5s ease-in-out infinite;filter:brightness(1.5) drop-shadow(0 0 12px rgba(255,50,0,.7))}
+.streak-flame.s100{animation:flamePulse .4s ease-in-out infinite;filter:brightness(1.6) drop-shadow(0 0 16px rgba(255,0,0,.8));font-size:3.2em}
+@keyframes flamePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.streak-info{flex:1}
+.streak-count{font-size:2em;font-weight:900;background:linear-gradient(90deg,#ff4757,#ffa502);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.streak-label{font-size:.8em;color:#aaa;margin-top:2px}
+.streak-best{font-size:.75em;color:#ff6b6b;margin-top:4px}
+.streak-next{background:rgba(255,255,255,.06);border-radius:12px;padding:10px 14px;margin-top:12px}
+.streak-next-label{font-size:.75em;color:#aaa;margin-bottom:6px}
+.streak-bar{height:8px;background:rgba(255,255,255,.1);border-radius:10px;overflow:hidden}
+.streak-bar-fill{height:100%;background:linear-gradient(90deg,#ff4757,#ffa502);border-radius:10px;transition:width .5s}
+.streak-milestone{font-size:.8em;color:#ffd200;margin-top:6px;font-weight:700}
+.streak-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:12px}
+.streak-cal-day{width:100%;aspect-ratio:1;border-radius:4px;background:rgba(255,255,255,.05);position:relative}
+.streak-cal-day.studied{background:rgba(255,71,87,.5)}
+.streak-cal-day.studied.today{background:rgba(255,210,0,.6);box-shadow:0 0 6px rgba(255,210,0,.4)}
+.streak-cal-day.future{opacity:.2}
+.streak-cal-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:8px}
+.streak-cal-labels span{text-align:center;font-size:.55em;color:#666}
+.streak-freeze{display:inline-flex;align-items:center;gap:4px;background:rgba(69,183,209,.15);border:1px solid rgba(69,183,209,.3);border-radius:12px;padding:4px 10px;font-size:.75em;color:#45b7d1;margin-top:8px}
+.streak-milestone-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#1a1a2e,#302b63);border:2px solid #ffd200;border-radius:20px;padding:30px 40px;text-align:center;z-index:1000;animation:popIn .4s ease-out}
+.streak-milestone-popup .smp-icon{font-size:3em;margin-bottom:10px}
+.streak-milestone-popup .smp-title{font-size:1.4em;font-weight:900;color:#ffd200;margin-bottom:6px}
+.streak-milestone-popup .smp-reward{font-size:1em;color:#2ed573;margin-bottom:12px}
+.streak-milestone-popup .smp-close{padding:8px 24px;border-radius:20px;border:none;background:#ffd200;color:#1a1a2e;font-weight:800;cursor:pointer}
+@keyframes popIn{from{transform:translate(-50%,-50%) scale(0.5);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+.streak-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.6);z-index:999}
 /* MISC */
 .text-center{text-align:center}
 .mt-16{margin-top:16px}
@@ -444,7 +480,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   <button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
   <button class="nav-btn" onclick="showPage('study')">Study Quest</button>
   <button class="nav-btn" onclick="showPage('oral')">Oral Quest</button>
-  <button class="nav-btn" onclick="showPage('arena')">Math Arena</button>
+  <button class="nav-btn" id="nav-arena" onclick="showPage('arena')">Math Arena</button>
   <button class="nav-btn" onclick="showPage('battle')">⚔️ Battle!</button>
   <button class="nav-btn" onclick="showPage('tasks')">✅ Tasks</button>
   <button class="nav-btn" onclick="showPage('schedule')">Weekend Plan</button>
@@ -493,12 +529,39 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div class="icon">&#127918;</div>
     <div class="info">
       <h4>Daily Max = 10 min Gaming!</h4>
-      <p>All 4 subjects done = +5 min. Perfect quiz = +1 min bonus. Max 10 min/day (can accumulate!)</p>
+      <p>All 4 subjects done = +5 min. Every 20 quizzes = +1 min. Max 10 min/day (can accumulate!)</p>
     </div>
     <div style="text-align:center">
       <div style="font-size:.7em;color:#aaa">GAMING BANK</div>
       <div class="time-earned" id="total-game-pool">0m</div>
     </div>
+  </div>
+
+  <!-- DAILY STUDY STREAK -->
+  <div class="streak-card" id="streak-card">
+    <div class="streak-top">
+      <div class="streak-flame" id="streak-flame">&#128293;</div>
+      <div class="streak-info">
+        <div class="streak-count" id="streak-count">0 Days</div>
+        <div class="streak-label">Daily Study Streak</div>
+        <div class="streak-best" id="streak-best">Best: 0 days</div>
+      </div>
+      <div style="text-align:center">
+        <div class="streak-freeze" id="streak-freeze-info">&#129482; <span id="streak-freeze-count">0</span> Freeze</div>
+        <div style="font-size:.6em;color:#666;margin-top:2px">Protects 1 missed day</div>
+      </div>
+    </div>
+    <div class="streak-next" id="streak-next-box">
+      <div class="streak-next-label">Next milestone: <span id="streak-next-name">3 Days</span> <span id="streak-next-reward" style="color:#ffd200"></span></div>
+      <div class="streak-bar"><div class="streak-bar-fill" id="streak-bar-fill" style="width:0%"></div></div>
+      <div class="streak-milestone" id="streak-milestone-msg"></div>
+    </div>
+    <div style="margin-top:12px">
+      <div style="font-size:.75em;color:#aaa;margin-bottom:4px">Last 28 Days</div>
+      <div class="streak-cal-labels"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+      <div class="streak-cal" id="streak-calendar"></div>
+    </div>
+    <div style="text-align:center;margin-top:10px;font-size:.75em;color:#888" id="streak-today-status"></div>
   </div>
 
   <!-- GAMING BANK -->
@@ -517,7 +580,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       </div>
     </div>
     <div style="text-align:center;color:#999;font-size:.8em">
-      Rule: All 4 subjects = +5 min. Perfect (5/5) = +1 min bonus. <strong style="color:#ff6b6b">Max 10 min/day</strong> (saves up!)<br>
+      Rule: All 4 subjects = +5 min. Every 20 quizzes = +1 min. <strong style="color:#ff6b6b">Max 10 min/day</strong> (saves up!)<br>
       <span style="color:#ffd200">Today's limit resets at midnight. Banked minutes carry over!</span>
     </div>
   </div>
@@ -609,7 +672,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       <div class="prog-card">
         <div class="prog-icon">&#128293;</div>
         <div class="prog-val" id="dash-best-streak">0</div>
-        <div class="prog-label">Best Streak</div>
+        <div class="prog-label">Daily Streak</div>
       </div>
       <div class="prog-card">
         <div class="prog-icon">&#128218;</div>
@@ -828,7 +891,6 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div class="ma-sub" id="ma-sub">Ryusei's Battle Zone — Defeat monsters with MATH!</div>
     <div style="display:flex;justify-content:center;gap:10px;margin-top:8px">
       <button id="ma-player-ryusei" class="sq-player-btn active" onclick="maSetPlayer('ryusei')">⚽ Ryusei</button>
-      <button id="ma-player-yuhi" class="sq-player-btn" onclick="maSetPlayer('yuhi')">📚 Yuhi</button>
     </div>
   </div>
 
@@ -841,7 +903,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
 
   <!-- STAGE SELECT -->
   <div id="ma-stage-area">
-    <div style="text-align:center;margin:12px 0;color:#aaa;font-size:.9em">Choose your battle! 3 questions per fight. WIN = coins + XP + gaming time!</div>
+    <div style="text-align:center;margin:12px 0;color:#aaa;font-size:.9em">Choose your battle! 3 questions per fight. WIN = coins + XP!</div>
     <div class="ma-stages" id="ma-stages"></div>
   </div>
 
@@ -1840,10 +1902,13 @@ const shopItems = [
   {id:'snack', emoji:'🍭', name:'Snack of Choice',      desc:'Pick any snack from the store!',       cost:60},
   {id:'dessert',emoji:'🎂',name:'Special Dessert',      desc:'Mama makes your favorite dessert!',    cost:150},
   {id:'outing',emoji:'🏖️', name:'Choose Family Outing', desc:'Pick where the family goes next!',    cost:250},
+  {id:'freeze',emoji:'🛡️', name:'Streak Freeze',       desc:'Protect your streak for 1 missed day!', cost:50, isFreeze:true},
 ];
 
 // ============ NAVIGATION ============
 function showPage(id) {
+  // Math Arena is Ryusei-only — redirect to dashboard if Yuhi tries
+  if (id==='arena' && currentPlayer!=='ryusei') { showPage('dashboard'); return; }
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('pg-'+id).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -1860,7 +1925,7 @@ function showPage(id) {
   });
   if (id==='shop') renderShop();
   if (id==='progress') renderProgress('yuhi');
-  if (id==='dashboard') { updateDashboard(); updateGamingBank(); }
+  if (id==='dashboard') { updateDashboard(); updateGamingBank(); updateStreakUI(); }
   if (id==='oral') initOralQuest();
   if (id==='arena') initArena();
   if (id==='battle') initBattle();
@@ -1874,6 +1939,9 @@ function selectPlayer(p) {
   document.getElementById('sel-ryusei').style.opacity = p==='ryusei'?1:.5;
   document.getElementById('sel-yuhi').className = p==='yuhi'?'btn btn-primary':'btn btn-secondary';
   document.getElementById('sel-ryusei').className = p==='ryusei'?'btn btn-primary':'btn btn-secondary';
+  // Math Arena is Ryusei-only
+  const arenaNav = document.getElementById('nav-arena');
+  if (arenaNav) arenaNav.style.display = p==='ryusei'?'':'none';
 }
 
 // ============ QUIZ ENGINE ============
@@ -2006,10 +2074,15 @@ function finishQuiz() {
   s.subjects[currentSubject].done++;
   s.quizzesDone++;
 
-  // Perfect quiz bonus: +1 min to bank (max 10min/day total)
+  // Gaming time: earn 1 min per 20 quizzes completed (100 quizzes = 5 min)
   let perfectBonus = 0;
   const todayBanked = s.todayBanked || 0;
-  if (quizCorrect === 5 && todayBanked < 10) { perfectBonus = 1; s.perfectBonuses += 1; s.gameBank += 1; s.todayBanked = todayBanked + 1; }
+  if (!s.quizGameProgress) s.quizGameProgress = 0;
+  s.quizGameProgress++;
+  if (s.quizGameProgress >= 20 && todayBanked < 10) {
+    s.quizGameProgress = 0;
+    perfectBonus = 1; s.gameBank += 1; s.todayBanked = todayBanked + 1;
+  }
 
   // Bonus coins for good performance
   let bonusCoins = 0;
@@ -2056,10 +2129,15 @@ function finishQuiz() {
 
   if (reviewMode) { reviewMode = false; currentSubject = 'math'; }
 
+  // Record daily study streak
+  const streakMilestone = recordStudyDay(currentPlayer);
+  if (streakMilestone) setTimeout(() => showStreakMilestone(streakMilestone, currentPlayer), 800);
+
   save();
   updatePlayerCards();
   updateDailyProgress();
   updateGamingBank();
+  updateStreakUI();
 }
 
 // ============ GAMING BANK ============
@@ -2105,6 +2183,168 @@ function updateDailyProgress() {
   if (progEl) progEl.textContent = `${done}/4 subjects`;
   const msgEl = document.getElementById('daily-complete-msg');
   if (msgEl) msgEl.style.display = done >= 4 ? 'block' : 'none';
+}
+
+// ============ DAILY STUDY STREAK ============
+const STREAK_MILESTONES = [
+  {days:3,  reward:10,  label:'3 Days',   icon:'&#127775;', title:'Getting Started!'},
+  {days:7,  reward:30,  label:'1 Week',   icon:'&#11088;',  title:'One Week Warrior!'},
+  {days:14, reward:50,  label:'2 Weeks',  icon:'&#128170;', title:'Unstoppable!'},
+  {days:30, reward:100, label:'1 Month',  icon:'&#127942;', title:'Monthly Champion!'},
+  {days:60, reward:200, label:'2 Months', icon:'&#128081;', title:'Study King!'},
+  {days:100,reward:500, label:'100 Days', icon:'&#129395;', title:'LEGENDARY!'}
+];
+
+function _todayStr() { const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function _yesterdayStr() { const d=new Date(); d.setDate(d.getDate()-1); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function _daysBetween(a,b) { return Math.round((new Date(b)-new Date(a))/(864e5)); }
+
+function initStreak(player) {
+  const s = state[player];
+  if (!s.dailyStreak) s.dailyStreak = 0;
+  if (!s.bestDailyStreak) s.bestDailyStreak = 0;
+  if (!s.lastStudyDate) s.lastStudyDate = '';
+  if (!s.studyHistory) s.studyHistory = [];
+  if (!s.streakFreezes) s.streakFreezes = 0;
+}
+
+function recordStudyDay(player) {
+  const s = state[player];
+  initStreak(player);
+  const today = _todayStr();
+  if (s.lastStudyDate === today) return null; // already recorded today
+
+  let milestoneHit = null;
+  const yesterday = _yesterdayStr();
+
+  if (s.lastStudyDate === yesterday) {
+    // Consecutive day!
+    s.dailyStreak++;
+  } else if (s.lastStudyDate && _daysBetween(s.lastStudyDate, today) === 2 && s.streakFreezes > 0) {
+    // Missed 1 day but have freeze
+    s.streakFreezes--;
+    s.dailyStreak++;
+  } else if (s.lastStudyDate === '') {
+    // First ever study day
+    s.dailyStreak = 1;
+  } else {
+    // Streak broken
+    s.dailyStreak = 1;
+  }
+
+  s.lastStudyDate = today;
+  if (!s.studyHistory.includes(today)) s.studyHistory.push(today);
+  // Keep history manageable (last 120 days)
+  if (s.studyHistory.length > 120) s.studyHistory = s.studyHistory.slice(-120);
+
+  if (s.dailyStreak > s.bestDailyStreak) s.bestDailyStreak = s.dailyStreak;
+
+  // Check milestones
+  for (const m of STREAK_MILESTONES) {
+    if (s.dailyStreak === m.days) {
+      s.coins += m.reward;
+      milestoneHit = m;
+      break;
+    }
+  }
+  save();
+  return milestoneHit;
+}
+
+function showStreakMilestone(milestone, player) {
+  const overlay = document.createElement('div');
+  overlay.className = 'streak-overlay';
+  const popup = document.createElement('div');
+  popup.className = 'streak-milestone-popup';
+  popup.innerHTML = `
+    <div class="smp-icon">${milestone.icon}</div>
+    <div class="smp-title">${milestone.title}</div>
+    <div style="font-size:1.1em;font-weight:800;color:#ff4757;margin-bottom:8px">${milestone.days}-Day Streak!</div>
+    <div class="smp-reward">+${milestone.reward} Coins earned!</div>
+    <div style="font-size:.8em;color:#aaa;margin-bottom:12px">${player === 'yuhi' ? 'Yuhi' : 'Ryusei'}</div>
+    <button class="smp-close" onclick="this.parentElement.remove();document.querySelector('.streak-overlay').remove()">AWESOME!</button>
+  `;
+  document.body.appendChild(overlay);
+  document.body.appendChild(popup);
+  overlay.onclick = () => { popup.remove(); overlay.remove(); };
+}
+
+function updateStreakUI() {
+  ['yuhi','ryusei'].forEach(p => initStreak(p));
+  // Show combined/current player streak on dashboard
+  const yuS = state.yuhi.dailyStreak;
+  const ryS = state.ryusei.dailyStreak;
+  // Show the higher streak (both kids study together usually)
+  const showStreak = Math.max(yuS, ryS);
+  const bestStreak = Math.max(state.yuhi.bestDailyStreak, state.ryusei.bestDailyStreak);
+  const totalFreezes = state.yuhi.streakFreezes + state.ryusei.streakFreezes;
+
+  document.getElementById('streak-count').textContent = showStreak + (showStreak === 1 ? ' Day' : ' Days');
+  document.getElementById('streak-best').textContent = 'Best: ' + bestStreak + ' days';
+  document.getElementById('streak-freeze-count').textContent = totalFreezes;
+
+  // Flame class based on streak
+  const flame = document.getElementById('streak-flame');
+  flame.className = 'streak-flame';
+  if (showStreak >= 100) flame.classList.add('s100');
+  else if (showStreak >= 30) flame.classList.add('s30');
+  else if (showStreak >= 14) flame.classList.add('s14');
+  else if (showStreak >= 7) flame.classList.add('s7');
+  else if (showStreak >= 3) flame.classList.add('s3');
+  else flame.classList.add('s1');
+
+  // Next milestone progress
+  let nextM = STREAK_MILESTONES.find(m => m.days > showStreak);
+  if (!nextM) nextM = {days: showStreak+1, label:'Legend', reward:0};
+  const prevM = [...STREAK_MILESTONES].reverse().find(m => m.days <= showStreak);
+  const prevDays = prevM ? prevM.days : 0;
+  const progress = nextM.days > prevDays ? ((showStreak - prevDays) / (nextM.days - prevDays)) * 100 : 100;
+  document.getElementById('streak-next-name').textContent = nextM.label;
+  document.getElementById('streak-next-reward').textContent = nextM.reward ? '(+' + nextM.reward + ' coins)' : '';
+  document.getElementById('streak-bar-fill').style.width = Math.min(100, progress) + '%';
+  const remain = nextM.days - showStreak;
+  document.getElementById('streak-milestone-msg').textContent = remain > 0 ? remain + ' more day' + (remain>1?'s':'') + ' to go!' : '';
+
+  // Today status
+  const today = _todayStr();
+  const studiedToday = state.yuhi.studyHistory?.includes(today) || state.ryusei.studyHistory?.includes(today);
+  document.getElementById('streak-today-status').innerHTML = studiedToday
+    ? '&#9989; Studied today! Streak safe.'
+    : '&#9888;&#65039; Complete a quiz today to keep your streak!';
+
+  // Calendar (last 28 days)
+  const cal = document.getElementById('streak-calendar');
+  cal.innerHTML = '';
+  const allHistory = new Set([...(state.yuhi.studyHistory||[]), ...(state.ryusei.studyHistory||[])]);
+  // Start from 27 days ago, aligned to Monday
+  const startDate = new Date();
+  startDate.setDate(startDate.getDate() - 27);
+  // Align to previous Monday
+  const dayOfWeek = startDate.getDay();
+  const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  startDate.setDate(startDate.getDate() + mondayOffset);
+
+  const nowDate = new Date();
+  for (let i = 0; i < 28; i++) {
+    const d = new Date(startDate);
+    d.setDate(startDate.getDate() + i);
+    const dStr = d.toISOString().slice(0,10);
+    const div = document.createElement('div');
+    div.className = 'streak-cal-day';
+    if (allHistory.has(dStr)) {
+      div.classList.add('studied');
+      if (dStr === today) div.classList.add('today');
+    }
+    if (d > nowDate) div.classList.add('future');
+    div.title = dStr;
+    cal.appendChild(div);
+  }
+
+  // Update the player card streak display to show daily streak instead of quiz streak
+  ['yuhi','ryusei'].forEach(p => {
+    const el = document.getElementById('streak-'+p);
+    if (el) el.textContent = state[p].dailyStreak + 'd Streak';
+  });
 }
 
 // ============ BEDTIME PENALTY ============
@@ -2200,7 +2440,7 @@ function getLevel(xp) {
 // ============ DASHBOARD ============
 function updateDashboard() {
   const total = state.yuhi.totalCorrect + state.ryusei.totalCorrect;
-  const best = Math.max(state.yuhi.bestStreak, state.ryusei.bestStreak);
+  const best = Math.max(state.yuhi.dailyStreak||0, state.ryusei.dailyStreak||0);
   const quizzes = state.yuhi.quizzesDone + state.ryusei.quizzesDone;
   const game = ((state.yuhi.gameBank||0)-(state.yuhi.gameUsed||0)) + ((state.ryusei.gameBank||0)-(state.ryusei.gameUsed||0));
 
@@ -2284,8 +2524,14 @@ function buyItem(item) {
     s.shopGameDate = today;
   }
 
+  if (item.isFreeze) {
+    initStreak(shopPlayer);
+    s.streakFreezes = (s.streakFreezes || 0) + 1;
+  }
+
   save();
   updatePlayerCards();
+  updateStreakUI();
   renderShop();
   alert(`${shopPlayer === 'yuhi' ? 'Yuhi' : 'Ryusei'} bought: ${item.name}! 🎉`);
 }
@@ -2321,7 +2567,7 @@ function renderProgress(p) {
       <div class="prog-card"><div class="prog-icon">\u2728</div><div class="prog-val">${s.xp}</div><div class="prog-label">Total XP</div></div>
       <div class="prog-card"><div class="prog-icon">\u{1FA99}</div><div class="prog-val">${s.coins}</div><div class="prog-label">Coins</div></div>
       <div class="prog-card"><div class="prog-icon">\u{1F3AF}</div><div class="prog-val">${accuracy}%</div><div class="prog-label">Accuracy</div></div>
-      <div class="prog-card"><div class="prog-icon">\u{1F525}</div><div class="prog-val">${s.bestStreak}</div><div class="prog-label">Best Streak</div></div>
+      <div class="prog-card"><div class="prog-icon">\u{1F525}</div><div class="prog-val">${s.dailyStreak||0}d</div><div class="prog-label">Daily Streak</div></div>
       <div class="prog-card"><div class="prog-icon">\u{1F4DA}</div><div class="prog-val">${s.quizzesDone}</div><div class="prog-label">Quizzes Done</div></div>
       <div class="prog-card"><div class="prog-icon">\u{1F3AE}</div><div class="prog-val">${(s.gameBank||0)-(s.gameUsed||0)}m</div><div class="prog-label">Gaming Bank</div></div>
       <div class="prog-card"><div class="prog-icon">\u{1F4C5}</div><div class="prog-val">${(s.dailyComplete||[]).length}</div><div class="prog-label">Days Completed</div></div>
@@ -2416,6 +2662,9 @@ updatePlayerCards();
 updateDashboard();
 updateGamingBank();
 updateDailyProgress();
+updateStreakUI();
+// Math Arena is Ryusei-only — hide tab on init (default player is Yuhi)
+(function(){ const an=document.getElementById('nav-arena'); if(an) an.style.display=currentPlayer==='ryusei'?'':'none'; })();
 
 // ============ ORAL QUEST SYSTEM ============
 const oralScenarios = [
@@ -2909,7 +3158,10 @@ function scoreOralResponse() {
     date: new Date().toLocaleDateString(),
     peelCount, emotionsUsed: foundEmotions.length, valuesUsed: uniqueValues.length
   });
-  saveOral(); save(); updatePlayerCards(); updateOralStats();
+  // Record daily streak for Oral Quest
+  const oralStreakM = recordStudyDay('yuhi');
+  if (oralStreakM) setTimeout(() => showStreakMilestone(oralStreakM, 'yuhi'), 800);
+  saveOral(); save(); updatePlayerCards(); updateOralStats(); updateStreakUI();
 
   // Highlight weapons
   document.getElementById('w-peel').classList.toggle('active', peelCount >= 3);
@@ -3096,125 +3348,110 @@ const maQuestions = {
   boss: [] // filled dynamically from all stages
 };
 
-// ---- GRADE-SPECIFIC QUESTION BANKS FOR CHALLENGE MODE ----
-// P4 (Ryusei) — PSLE Standard foundations: times tables, basic fractions, simple word problems, basic geometry
-// P6 (Yuhi) — PSLE Standard: ratio, percentage, algebra, speed, volume, multi-step problems
-// Each has 5 difficulty levels (0-4). Winner's level goes up after each win.
-const chalQP4 = [
-  // Level 0 — Very basic
-  [
-    {q:'6 × 7 = ?', opts:['42','48','36','54'], ans:0},
-    {q:'8 × 5 = ?', opts:['40','45','35','48'], ans:0},
-    {q:'9 × 4 = ?', opts:['36','32','40','28'], ans:0},
-    {q:'72 ÷ 8 = ?', opts:['9','8','7','6'], ans:0},
-    {q:'56 ÷ 7 = ?', opts:['8','7','9','6'], ans:0},
-    {q:'345 + 278 = ?', opts:['623','613','633','523'], ans:0},
-    {q:'500 − 237 = ?', opts:['263','273','253','363'], ans:0},
-    {q:'Round 3456 to the nearest 100', opts:['3500','3400','3460','3000'], ans:0},
-  ],
-  // Level 1 — Times tables extended, basic fractions
-  [
-    {q:'12 × 8 = ?', opts:['96','84','108','92'], ans:0},
-    {q:'11 × 7 = ?', opts:['77','84','66','78'], ans:0},
-    {q:'144 ÷ 12 = ?', opts:['12','14','11','13'], ans:0},
-    {q:'1/2 + 1/4 = ?', opts:['3/4','2/4','1/3','2/6'], ans:0},
-    {q:'3/4 − 1/4 = ?', opts:['1/2','1/4','2/4','3/8'], ans:0},
-    {q:'What is 1/4 of 48?', opts:['12','16','8','24'], ans:0},
-    {q:'25 × 4 = ?', opts:['100','90','110','95'], ans:0},
-    {q:'Which is bigger: 1/2 or 1/3?', opts:['1/2','1/3','Same','Cannot tell'], ans:0},
-  ],
-  // Level 2 — Fraction operations, word problems
-  [
-    {q:'1/3 + 1/6 = ?', opts:['1/2','2/6','1/3','2/9'], ans:0},
-    {q:'What is 2/5 of 35?', opts:['14','10','15','12'], ans:0},
-    {q:'3 books cost $8 each. Pay $50. Change?', opts:['$26','$24','$28','$22'], ans:0},
-    {q:'Movie starts 2:45pm, lasts 1h 30min. End time?', opts:['4:15 pm','4:30 pm','3:45 pm','4:00 pm'], ans:0},
-    {q:'How many minutes in 2h 15min?', opts:['135','130','125','145'], ans:0},
-    {q:'Rectangle: length 8cm, width 5cm. Area?', opts:['40 cm²','26 cm²','13 cm²','32 cm²'], ans:0},
-    {q:'Square side 6cm. Perimeter?', opts:['24 cm','12 cm','36 cm','18 cm'], ans:0},
-    {q:'756 ÷ 6 = ?', opts:['126','136','116','146'], ans:0},
-  ],
-  // Level 3 — Multi-step, comparing fractions, geometry
-  [
-    {q:'Which is bigger: 3/4 or 2/3?', opts:['3/4','2/3','Same','Cannot tell'], ans:0},
-    {q:'Samy has 48 stickers. Gives 1/4 away. How many left?', opts:['36','24','12','40'], ans:0},
-    {q:'2/3 + 1/6 = ?', opts:['5/6','3/6','4/6','3/9'], ans:0},
-    {q:'Rope is 5m 40cm. Cut into 6 equal pieces. Each?', opts:['90 cm','85 cm','95 cm','80 cm'], ans:0},
-    {q:'Triangle angles: 60° and 80°. Third angle?', opts:['40°','50°','60°','30°'], ans:0},
-    {q:'15 × 15 = ?', opts:['225','215','235','205'], ans:0},
-    {q:'Bus leaves 8:50am, journey 45min. Arrival?', opts:['9:35 am','9:25 am','9:45 am','9:30 am'], ans:0},
-    {q:'Sarah has $45. Buys 3 pens($4) + 2 books($7). Change?', opts:['$19','$17','$21','$15'], ans:0},
-  ],
-  // Level 4 — Hardest P4
-  [
-    {q:'Ali ate 1/4 of pizza. Ben ate 1/3. How much left?', opts:['5/12','1/2','7/12','1/4'], ans:0},
-    {q:'Tom has 3× as many cards as Jerry. Together 120. Tom?', opts:['90','80','60','100'], ans:0},
-    {q:'Shop sells erasers in packs of 6. Need 50. Min packs?', opts:['9','8','10','7'], ans:0},
-    {q:'Tank 1/3 full. Add 8L → 5/6 full. Capacity?', opts:['16 L','24 L','12 L','20 L'], ans:0},
-    {q:'Same perimeter as rect(10×6). Square side?', opts:['8 cm','6 cm','10 cm','7 cm'], ans:0},
-    {q:'Baker: 156 muffins in 12 boxes. Sells 9 boxes. Left?', opts:['39','36','42','48'], ans:0},
-    {q:'99 × 5 = ?', opts:['495','500','490','505'], ans:0},
-    {q:'250 × 8 = ?', opts:['2000','1800','2200','1600'], ans:0},
-  ],
-];
-
-const chalQP6 = [
-  // Level 0 — Basic ratio & percentage
-  [
-    {q:'Ratio of boys to girls is 3:5. 40 students total. Boys?', opts:['15','20','25','12'], ans:0},
-    {q:'What is 25% of 80?', opts:['20','25','16','40'], ans:0},
-    {q:'Simplify ratio 12:18', opts:['2:3','3:4','4:6','6:9'], ans:0},
-    {q:'Express 3/5 as a percentage', opts:['60%','50%','75%','55%'], ans:0},
-    {q:'Find 10% of 350', opts:['35','30','45','3.5'], ans:0},
-    {q:'A:B = 2:3. A = 14. Find B.', opts:['21','18','24','15'], ans:0},
-    {q:'What is 50% of 126?', opts:['63','53','73','66'], ans:0},
-    {q:'3/8 + 1/4 = ?', opts:['5/8','4/8','1/2','4/12'], ans:0},
-  ],
-  // Level 1 — Percentage word problems, fraction of remainder
-  [
-    {q:'Shirt costs $40. 20% off. Sale price?', opts:['$32','$36','$28','$30'], ans:0},
-    {q:'2/5 of students are boys. 18 boys. Total students?', opts:['45','36','40','50'], ans:0},
-    {q:'A:B:C = 2:3:5. Total = 60. Find C.', opts:['30','25','20','15'], ans:0},
-    {q:'Increase 80 by 25%', opts:['100','90','105','95'], ans:0},
-    {q:'5/6 − 2/3 = ?', opts:['1/6','1/3','2/6','1/2'], ans:0},
-    {q:'Ali saves 30% of $150. How much saved?', opts:['$45','$40','$50','$35'], ans:0},
-    {q:'Ratio X:Y = 4:7. Y = 35. Find X.', opts:['20','16','24','28'], ans:0},
-    {q:'1 3/4 + 2 1/2 = ?', opts:['4 1/4','3 3/4','4 1/2','3 1/4'], ans:0},
-  ],
-  // Level 2 — Algebra (find unknown), speed/distance
-  [
-    {q:'3n + 7 = 25. Find n.', opts:['6','7','5','8'], ans:0},
-    {q:'Speed 60 km/h, time 2.5 hours. Distance?', opts:['150 km','120 km','130 km','160 km'], ans:0},
-    {q:'Distance 180 km, speed 45 km/h. Time?', opts:['4 h','3 h','5 h','3.5 h'], ans:0},
-    {q:'2(x + 5) = 24. Find x.', opts:['7','8','6','9'], ans:0},
-    {q:'Volume of cube side 5cm?', opts:['125 cm³','100 cm³','75 cm³','150 cm³'], ans:0},
-    {q:'40% of a number is 28. Find the number.', opts:['70','60','80','56'], ans:0},
-    {q:'Buy 3 for $5.60 each + 7% GST. Total?', opts:['$17.98','$17.64','$16.80','$18.58'], ans:0},
-    {q:'If y = 2x + 3 and x = 4, find y.', opts:['11','10','12','9'], ans:0},
-  ],
-  // Level 3 — Multi-step, percentage change, model method
-  [
-    {q:'Price rose from $40 to $50. % increase?', opts:['25%','20%','30%','10%'], ans:0},
-    {q:'Ali has 3× as much as Ben. Together $240. Ali has?', opts:['$180','$160','$120','$200'], ans:0},
-    {q:'Tank filled at 4L/min. 75% of 120L tank. Time?', opts:['22.5 min','20 min','25 min','30 min'], ans:0},
-    {q:'Rectangle: L = 3W, perimeter = 56cm. Find L.', opts:['21 cm','18 cm','24 cm','14 cm'], ans:0},
-    {q:'5n − 8 = 3n + 12. Find n.', opts:['10','8','12','6'], ans:0},
-    {q:'Train: 90 km/h for 40 min. Distance?', opts:['60 km','90 km','45 km','80 km'], ans:0},
-    {q:'Bag: 30% red, 45% blue, rest green. 60 total. Green?', opts:['15','12','18','20'], ans:0},
-    {q:'Vol of rect tank: 8×5×6 cm. In litres?', opts:['0.24 L','2.4 L','240 L','24 L'], ans:0},
-  ],
-  // Level 4 — Hardest P6 PSLE
-  [
-    {q:'A:B = 3:4. B:C = 2:5. Find A:B:C.', opts:['3:4:10','3:4:5','6:8:20','6:4:10'], ans:0},
-    {q:'After 20% discount + 7% GST on $80. Final?', opts:['$68.48','$64.00','$72.76','$65.60'], ans:0},
-    {q:'Ali and Ben: Ali gives Ben $20 → equal. Ali had $30 more. Ali had?', opts:['$70','$60','$80','$50'], ans:0},
-    {q:'Speed A=60 km/h, B=80 km/h. A starts 1h earlier. B catches up in?', opts:['3 h','2 h','4 h','2.5 h'], ans:0},
-    {q:'Circle area ≈ 154 cm². Radius? (π≈22/7)', opts:['7 cm','14 cm','49 cm','21 cm'], ans:0},
-    {q:'Container: 1/3 full. Pour out 5L → 1/5 full. Capacity?', opts:['37.5 L','30 L','25 L','40 L'], ans:0},
-    {q:'Avg of 5 numbers = 42. Remove 30. New avg?', opts:['45','44','46','43'], ans:0},
-    {q:'Ratio M:F was 3:2. 6 F join → 3:4. Original total?', opts:['15','20','25','10'], ans:0},
-  ],
-];
+// ---- PROCEDURAL QUESTION GENERATORS (1000 Levels) ----
+// P4 = Ryusei (basic arithmetic, fractions, word problems, geometry)
+// P6 = Yuhi (ratio, percentage, algebra, speed, volume, multi-step)
+// Difficulty scales gradually with level. Every 25 levels = 1 difficulty tier.
+function _ri(a,b){return Math.floor(Math.random()*(b-a+1))+a}
+function _gc(a,b){return b===0?a:_gc(b,a%b)}
+function _nw(c,sp){
+  if(sp<1)sp=1;const s=new Set([c]);
+  for(let i=0;i<80&&s.size<4;i++){const v=c+(_ri(0,1)?1:-1)*_ri(1,sp);if(v>=0)s.add(v)}
+  let k=1;while(s.size<4){s.add(c+k);k++}return[...s].map(String);
+}
+function _gP4(lv){
+  const d=Math.floor(lv/25);
+  const pool=['mul','div','add'];
+  if(lv>=10)pool.push('frac');if(lv>=25)pool.push('word');if(lv>=40)pool.push('geo');
+  try{switch(pool[_ri(0,pool.length-1)]){
+    case 'mul':{const a=_ri(2,Math.min(5+d*2,35)),b=_ri(2,Math.min(4+d,15)),c=a*b;
+      return{q:`${a} × ${b} = ?`,opts:_nw(c,Math.max(3,Math.ceil(c*0.12))),ans:0}}
+    case 'div':{const b=_ri(2,Math.min(4+d,12)),c=_ri(2,Math.min(5+d*3,60));
+      return{q:`${c*b} ÷ ${b} = ?`,opts:_nw(c,Math.max(2,Math.ceil(c*0.2))),ans:0}}
+    case 'add':{const a=_ri(50+d*15,200+d*40),b=_ri(30+d*10,150+d*25);
+      if(_ri(0,1)){const s=a+b;return{q:`${a} + ${b} = ?`,opts:_nw(s,Math.max(5,Math.ceil(s*0.05))),ans:0}}
+      const x=Math.max(a,b),y=Math.min(a,b);return{q:`${x} − ${y} = ?`,opts:_nw(x-y,Math.max(5,Math.ceil((x-y)*0.1))),ans:0}}
+    case 'frac':{const fs=_ri(0,2);
+      if(fs===0){const n=_ri(2,Math.min(3+Math.floor(d/2),10)),r=_ri(3,10+d*2);return{q:`What is 1/${n} of ${r*n}?`,opts:_nw(r,Math.max(2,Math.ceil(r*0.3))),ans:0}}
+      if(fs===1){const n=_ri(2,Math.min(4+Math.floor(d/3),8)),m=_ri(2,n),base=_ri(2,5+d);return{q:`What is ${m}/${n} of ${base*n}?`,opts:_nw(base*m,Math.max(2,Math.ceil(base*m*0.25))),ans:0}}
+      const dn=_ri(3,Math.min(6+Math.floor(d/2),12)),a=_ri(1,dn-1),b=_ri(1,Math.max(1,dn-a)),nm=a+b,g=_gc(nm,dn);
+      return{q:`${a}/${dn} + ${b}/${dn} = ?`,opts:[`${nm/g}/${dn/g}`,`${nm}/${dn*2}`,`${Math.max(1,nm-1)}/${dn}`,`${nm+1}/${dn}`],ans:0}}
+    case 'word':{const ws=_ri(0,4);
+      if(ws===0){const n=_ri(2,4+Math.floor(d/5)),p=_ri(3,8+Math.floor(d/3)),tot=n*p,paid=Math.ceil(tot/10)*10+_ri(1,3)*10;
+        return{q:`${n} items at $${p} each. Pay $${paid}. Change?`,opts:_nw(paid-tot,Math.max(2,5)).map(v=>'$'+v),ans:0}}
+      if(ws===1){const dv=_ri(2,Math.min(5,2+Math.floor(d/5))),tot=_ri(3,8+d)*dv;
+        return{q:`${tot} stickers. Give 1/${dv} away. Left?`,opts:_nw(tot-tot/dv,Math.max(3,Math.ceil(tot*0.1))),ans:0}}
+      if(ws===2){const h=_ri(1,4),m=_ri(5,55);return{q:`How many minutes in ${h}h ${m}min?`,opts:_nw(h*60+m,Math.max(5,15)),ans:0}}
+      if(ws===3){const kg=_ri(1,4+Math.floor(d/4)),g=_ri(1,9)*100;return{q:`${kg} kg ${g} g = ? grams`,opts:_nw(kg*1000+g,Math.max(50,200)),ans:0}}
+      const r=_ri(2,4+Math.floor(d/5)),u=_ri(5,15+d*2);return{q:`Ali has ${r}× Ben's amount. Together ${u*(r+1)}. Ali?`,opts:_nw(u*r,Math.max(3,Math.ceil(u*r*0.15))),ans:0}}
+    case 'geo':{const gs=_ri(0,3);
+      if(gs===0){const l=_ri(4,10+d),w=_ri(3,8+Math.floor(d/2)),a=l*w;return{q:`Rectangle ${l}×${w} cm. Area?`,opts:_nw(a,Math.max(3,Math.ceil(a*0.12))).map(v=>v+' cm²'),ans:0}}
+      if(gs===1){const s=_ri(3,10+d),a=4*s;return{q:`Square side ${s} cm. Perimeter?`,opts:_nw(a,Math.max(3,Math.ceil(a*0.12))).map(v=>v+' cm'),ans:0}}
+      if(gs===2){const a1=_ri(25,75),a2=_ri(25,Math.max(26,155-a1));return{q:`Triangle: ${a1}° and ${a2}°. Third?`,opts:_nw(180-a1-a2,Math.max(5,10)).map(v=>v+'°'),ans:0}}
+      const l=_ri(5,12+d),w=_ri(3,8+Math.floor(d/2)),p=2*(l+w);return{q:`Rectangle ${l}×${w} cm. Perimeter?`,opts:_nw(p,Math.max(3,Math.ceil(p*0.1))).map(v=>v+' cm'),ans:0}}
+  }}catch(e){}
+  const a=_ri(2,9+d),b=_ri(2,9);return{q:`${a} × ${b} = ?`,opts:_nw(a*b,Math.max(3,5)),ans:0};
+}
+function _gP6(lv){
+  const d=Math.floor(lv/25);
+  const pool=['ratio','pct','frac6'];
+  if(lv>=10)pool.push('algebra');if(lv>=25)pool.push('speed');if(lv>=40)pool.push('geo6');if(lv>=60)pool.push('wordAdv');
+  try{switch(pool[_ri(0,pool.length-1)]){
+    case 'ratio':{const rs=_ri(0,2);
+      if(rs===0){const ra=_ri(2,Math.min(4+d,12)),rb=_ri(1,Math.min(4+d,10)),u=_ri(2,Math.min(8+d*2,40));
+        return{q:`A:B = ${ra}:${rb}. Total ${u*(ra+rb)}. A = ?`,opts:_nw(u*ra,Math.max(3,Math.ceil(u*ra*0.15))),ans:0}}
+      if(rs===1){let a,b;do{a=_ri(2,8);b=_ri(2,8)}while(a===b||_gc(a,b)!==1);const f=_ri(2,Math.min(4+Math.floor(d/3),10));
+        return{q:`Simplify ${a*f}:${b*f}`,opts:[`${a}:${b}`,`${b}:${a}`,`${a+1}:${b}`,`${a}:${b+1}`],ans:0}}
+      const ra=_ri(2,Math.min(5+d,10)),rb=_ri(2,Math.min(5+d,10)),av=_ri(2,Math.min(10+d,30))*ra;
+      return{q:`A:B = ${ra}:${rb}. A = ${av}. B = ?`,opts:_nw(av/ra*rb,Math.max(2,Math.ceil(av/ra*rb*0.2))),ans:0}}
+    case 'pct':{const ps=_ri(0,3);
+      if(ps===0){const pc=[10,20,25,30,40,50,75][_ri(0,Math.min(6,2+Math.floor(d/5)))],fc=100/_gc(pc,100),y=fc*_ri(1,Math.min(5+d,30));
+        return{q:`What is ${pc}% of ${y}?`,opts:_nw(y*pc/100,Math.max(2,Math.ceil(y*pc/100*0.2))),ans:0}}
+      if(ps===1){const pr=_ri(2,Math.min(10+d,50))*10,dc=[10,15,20,25,30,40,50][_ri(0,Math.min(6,2+Math.floor(d/4)))],an=pr-pr*dc/100;
+        return{q:`$${pr}, ${dc}% off. Price?`,opts:_nw(an,Math.max(3,Math.ceil(an*0.1))).map(v=>'$'+v),ans:0}}
+      if(ps===2){const p2=[10,20,25,50][_ri(0,Math.min(3,1+Math.floor(d/5)))],fc=100/_gc(p2,100),ol=_ri(1,Math.min(5+d,25))*fc;
+        return{q:`Increase ${ol} by ${p2}%`,opts:_nw(ol+ol*p2/100,Math.max(5,Math.ceil(ol*0.08))),ans:0}}
+      const p3=[10,20,25,50][_ri(0,Math.min(3,1+Math.floor(d/5)))],fc=100/_gc(p3,100),an=_ri(1,Math.min(5+d,30))*fc,pt=an*p3/100;
+      return{q:`${p3}% of ? = ${pt}. The number?`,opts:_nw(an,Math.max(5,Math.ceil(an*0.15))),ans:0}}
+    case 'frac6':{const fs=_ri(0,1);
+      if(fs===0){const d1=_ri(2,Math.min(4+Math.floor(d/2),8)),d2=d1*_ri(2,3),a=_ri(1,d1-1),b=_ri(1,d2-1),nm=a*(d2/d1)+b,g=_gc(nm,d2);
+        return{q:`${a}/${d1} + ${b}/${d2} = ?`,opts:[`${nm/g}/${d2/g}`,`${a+b}/${d1+d2}`,`${nm}/${d2}`,`${Math.max(1,nm/g-1)}/${d2/g}`],ans:0}}
+      const dn=_ri(3,Math.min(6+Math.floor(d/2),12)),a=_ri(Math.ceil(dn/2),dn-1),b=_ri(1,a-1),nm=a-b,g=_gc(nm,dn);
+      return{q:`${a}/${dn} − ${b}/${dn} = ?`,opts:[`${nm/g}/${dn/g}`,`${nm}/${dn*2}`,`${Math.min(nm+1,dn)}/${dn}`,`${Math.max(1,nm-1)}/${dn}`],ans:0}}
+    case 'algebra':{const as=_ri(0,2);
+      if(as===0){const a=_ri(2,Math.min(5+d,15)),an=_ri(2,Math.min(10+d*2,50)),b=_ri(1,Math.min(20+d*3,100));
+        return{q:`${a}n + ${b} = ${a*an+b}. n = ?`,opts:_nw(an,Math.max(2,Math.ceil(an*0.25))),ans:0}}
+      if(as===1){const a=_ri(2,Math.min(4+Math.floor(d/2),10)),an=_ri(2,Math.min(8+d,30)),b=_ri(2,Math.min(10+d*2,50));
+        return{q:`${a}(x + ${b}) = ${a*(an+b)}. x = ?`,opts:_nw(an,Math.max(2,Math.ceil(an*0.3))),ans:0}}
+      const a=_ri(3,Math.min(6+d,15)),c=_ri(1,a-1),an=_ri(2,Math.min(10+d,40)),bv=_ri(1,Math.min(20+d*3,80)),dv=bv+(a-c)*an;
+      return{q:`${a}x + ${bv} = ${c}x + ${dv}. x = ?`,opts:_nw(an,Math.max(2,Math.ceil(an*0.25))),ans:0}}
+    case 'speed':{const ss=_ri(0,2);
+      if(ss===0){const sp=_ri(3,Math.min(10+d,20))*10,t=_ri(1,Math.min(3+Math.floor(d/3),8)),ds=sp*t;
+        return{q:`Speed ${sp} km/h, ${t} hours. Distance?`,opts:_nw(ds,Math.max(10,Math.ceil(ds*0.1))).map(v=>v+' km'),ans:0}}
+      if(ss===1){const sp=_ri(3,Math.min(8+d,15))*10,t=_ri(2,Math.min(4+Math.floor(d/3),8)),ds=sp*t;
+        return{q:`Distance ${ds} km, speed ${sp} km/h. Time?`,opts:_nw(t,Math.max(1,Math.ceil(t*0.3))).map(v=>v+' h'),ans:0}}
+      const t=_ri(2,Math.min(5+Math.floor(d/3),10)),sp=_ri(3,Math.min(10+d,20))*10,ds=sp*t;
+      return{q:`${ds} km in ${t} hours. Speed?`,opts:_nw(sp,Math.max(5,Math.ceil(sp*0.15))).map(v=>v+' km/h'),ans:0}}
+    case 'geo6':{const gs=_ri(0,2);
+      if(gs===0){const s=_ri(2,Math.min(5+d,15)),an=s*s*s;return{q:`Cube side ${s} cm. Volume?`,opts:_nw(an,Math.max(5,Math.ceil(an*0.12))).map(v=>v+' cm³'),ans:0}}
+      if(gs===1){const l=_ri(3,Math.min(8+d,20)),w=_ri(2,Math.min(6+Math.floor(d/2),15)),h=_ri(2,Math.min(5+Math.floor(d/3),12)),an=l*w*h;
+        return{q:`Box ${l}×${w}×${h} cm. Volume?`,opts:_nw(an,Math.max(10,Math.ceil(an*0.1))).map(v=>v+' cm³'),ans:0}}
+      const bL=_ri(8,12+d),bW=_ri(6,10+Math.floor(d/2)),sL=_ri(2,Math.floor(bL/2)),sW=_ri(2,Math.floor(bW/2)),an=bL*bW-sL*sW;
+      return{q:`L-shape: ${bL}×${bW} minus ${sL}×${sW} cut. Area?`,opts:_nw(an,Math.max(5,Math.ceil(an*0.1))).map(v=>v+' cm²'),ans:0}}
+    case 'wordAdv':{const ws=_ri(0,2);
+      if(ws===0){const r=_ri(2,Math.min(5+d,10)),u=_ri(5,Math.min(20+d*3,80));
+        return{q:`Ali has ${r}× Ben's amount. Together $${u*(r+1)}. Ali?`,opts:_nw(u*r,Math.max(5,Math.ceil(u*r*0.12))).map(v=>'$'+v),ans:0}}
+      if(ws===1){const each=_ri(3,Math.min(8+d,20)),bags=_ri(4,Math.min(8+Math.floor(d/3),15)),sold=_ri(1,bags-1),left=(bags-sold)*each;
+        return{q:`${bags} bags of ${each} marbles. Sell ${sold} bags. Left?`,opts:_nw(left,Math.max(3,Math.ceil(left*0.15))),ans:0}}
+      const n=_ri(3,Math.min(5+Math.floor(d/5),8)),avg=_ri(10,Math.min(30+d*3,80));
+      return{q:`Average of ${n} numbers = ${avg}. Total?`,opts:_nw(n*avg,Math.max(5,Math.ceil(n*avg*0.1))),ans:0}}
+  }}catch(e){}
+  const a=_ri(2,9+d),b=_ri(2,9);return{q:`${a} × ${b} = ?`,opts:_nw(a*b,Math.max(3,5)),ans:0};
+}
+function genChalP4(lv){return[_gP4(lv),_gP4(lv),_gP4(lv)]}
+function genChalP6(lv){return[_gP6(lv),_gP6(lv),_gP6(lv)]}
+const chalTiers=['Beginner','Intermediate','Advanced','Expert','Master','Legend','Grandmaster'];
+function chalTier(lv){return chalTiers[Math.min(Math.floor(lv/150),chalTiers.length-1)]}
 
 // Arena state
 let arenaState = {};
@@ -3500,8 +3737,8 @@ function maEndBattle(won) {
   let coinReward = won ? 10 : 3;
   let gameReward = 0;
   if (stars >= 2) { xpReward += 15; coinReward += 5; }
-  if (stars >= 3) { xpReward += 25; coinReward += 10; gameReward = 2; }
-  if (b.stage.boss && won) { xpReward += 30; coinReward += 15; gameReward += 3; }
+  if (stars >= 3) { xpReward += 25; coinReward += 10; }
+  if (b.stage.boss && won) { xpReward += 30; coinReward += 15; }
 
   state[maCurrentPlayer].xp += xpReward;
   state[maCurrentPlayer].coins += coinReward;
@@ -3515,7 +3752,10 @@ function maEndBattle(won) {
     }
   }
 
-  save(); saveArena(); updatePlayerCards(); updateArenaStats();
+  // Record daily streak for Math Arena
+  const arenaStreakM = recordStudyDay(maCurrentPlayer);
+  if (arenaStreakM) setTimeout(() => showStreakMilestone(arenaStreakM, maCurrentPlayer), 800);
+  save(); saveArena(); updatePlayerCards(); updateArenaStats(); updateStreakUI();
 
   // Display
   const titleEl = document.getElementById('ma-result-title');
@@ -3633,7 +3873,7 @@ function renderLeaderboard() {
     {label:'Total XP ✨',      yu:`${yu.xp}`,                       ry:`${ry.xp}`,                     yuN:yu.xp,                    ryN:ry.xp},
     {label:'Coins 🪙',         yu:`${yu.coins}`,                    ry:`${ry.coins}`,                  yuN:yu.coins,                 ryN:ry.coins},
     {label:'Accuracy 🎯',      yu:`${yuAcc}%`,                      ry:`${ryAcc}%`,                    yuN:yuAcc,                    ryN:ryAcc},
-    {label:'Best Streak 🔥',   yu:`${yu.bestStreak}`,               ry:`${ry.bestStreak}`,             yuN:yu.bestStreak,            ryN:ry.bestStreak},
+    {label:'Daily Streak 🔥',   yu:`${yu.dailyStreak||0}d`,          ry:`${ry.dailyStreak||0}d`,        yuN:yu.dailyStreak||0,        ryN:ry.dailyStreak||0},
     {label:'Quizzes Done 📚',  yu:`${yu.quizzesDone}`,              ry:`${ry.quizzesDone}`,            yuN:yu.quizzesDone,           ryN:ry.quizzesDone},
     {label:'Gaming Bank ⏱',    yu:`${yuGame}m`,                     ry:`${ryGame}m`,                   yuN:yuGame,                   ryN:ryGame},
     {label:'Challenge Wins ⚡', yu:`${battleState.chalWins.yuhi}`,   ry:`${battleState.chalWins.ryusei}`,yuN:battleState.chalWins.yuhi,ryN:battleState.chalWins.ryusei},
@@ -3707,17 +3947,18 @@ function showChalSetup() {
   });
   if (chalTimerInterval) { clearInterval(chalTimerInterval); chalTimerInterval = null; }
   const yLv = battleState.chalLevel.yuhi, rLv = battleState.chalLevel.ryusei;
-  const lvNames = ['★☆☆☆☆','★★☆☆☆','★★★☆☆','★★★★☆','★★★★★'];
   document.getElementById('chal-stage-grid').innerHTML = `
     <div style="text-align:center;margin-bottom:16px">
       <div style="display:inline-flex;gap:24px;flex-wrap:wrap;justify-content:center">
         <div style="background:rgba(255,210,0,.08);border:1px solid rgba(255,210,0,.3);border-radius:12px;padding:12px 20px">
           <div style="font-weight:700;color:#ffd200;font-size:.95em">📚 Yuhi (P6)</div>
-          <div style="color:#aaa;font-size:.8em;margin-top:4px">Lv ${yLv+1} ${lvNames[yLv]}</div>
+          <div style="color:#ffd200;font-size:1.3em;font-weight:900;margin-top:4px">Lv ${yLv+1}</div>
+          <div style="color:#aaa;font-size:.75em">${chalTier(yLv)}</div>
         </div>
         <div style="background:rgba(69,183,209,.08);border:1px solid rgba(69,183,209,.3);border-radius:12px;padding:12px 20px">
           <div style="font-weight:700;color:#45b7d1;font-size:.95em">⚽ Ryusei (P4)</div>
-          <div style="color:#aaa;font-size:.8em;margin-top:4px">Lv ${rLv+1} ${lvNames[rLv]}</div>
+          <div style="color:#45b7d1;font-size:1.3em;font-weight:900;margin-top:4px">Lv ${rLv+1}</div>
+          <div style="color:#aaa;font-size:.75em">${chalTier(rLv)}</div>
         </div>
       </div>
     </div>
@@ -3727,10 +3968,10 @@ function showChalSetup() {
 }
 
 function chalPickStage(stageId) {
-  const yLv = Math.min(battleState.chalLevel.yuhi, chalQP6.length - 1);
-  const rLv = Math.min(battleState.chalLevel.ryusei, chalQP4.length - 1);
-  const p1Qs = chalShuffleQ(chalQP6[yLv], 3);
-  const p2Qs = chalShuffleQ(chalQP4[rLv], 3);
+  const yLv = battleState.chalLevel.yuhi;
+  const rLv = battleState.chalLevel.ryusei;
+  const p1Qs = chalShuffleQ(genChalP6(yLv), 3);
+  const p2Qs = chalShuffleQ(genChalP4(rLv), 3);
   chalData = {stageId, p1Questions:p1Qs, p2Questions:p2Qs,
     p1:{score:0,totalTime:0}, p2:{score:0,totalTime:0},
     currentPlayer:1, currentQ:0, timeLeft:20, questionStartTime:0};
@@ -3830,9 +4071,11 @@ function chalShowResults() {
 
   // Winner's difficulty goes up (max level 4)
   let lvUpMsg = '';
-  if (winner===1 && battleState.chalLevel.yuhi < 4) { battleState.chalLevel.yuhi++; lvUpMsg = '📚 Yuhi levelled up! P6 Lv ' + (battleState.chalLevel.yuhi+1); }
-  if (winner===2 && battleState.chalLevel.ryusei < 4) { battleState.chalLevel.ryusei++; lvUpMsg = '⚽ Ryusei levelled up! P4 Lv ' + (battleState.chalLevel.ryusei+1); }
-  save(); saveBattle(); updatePlayerCards();
+  if (winner===1 && battleState.chalLevel.yuhi < 999) { battleState.chalLevel.yuhi++; lvUpMsg = '📚 Yuhi → P6 Lv ' + (battleState.chalLevel.yuhi+1) + ' (' + chalTier(battleState.chalLevel.yuhi) + ')'; }
+  if (winner===2 && battleState.chalLevel.ryusei < 999) { battleState.chalLevel.ryusei++; lvUpMsg = '⚽ Ryusei → P4 Lv ' + (battleState.chalLevel.ryusei+1) + ' (' + chalTier(battleState.chalLevel.ryusei) + ')'; }
+  // Record daily streak for both players in Battle Arena
+  ['yuhi','ryusei'].forEach(bp => { const bsm=recordStudyDay(bp); if(bsm) setTimeout(()=>showStreakMilestone(bsm,bp),800); });
+  save(); saveBattle(); updatePlayerCards(); updateStreakUI();
 
   const bannerEl = document.getElementById('chal-winner-banner');
   if (winner===1) bannerEl.innerHTML = '🏆 <span style="color:#ffd200">YUHI WINS!</span>';
@@ -3972,7 +4215,7 @@ function coopEndBattle(won) {
   const b = coopBattle;
   let yuXp=0,ryXp=0,yuC=0,ryC=0,gameR=0;
   if (won) {
-    battleState.coopWins++; yuXp=50; ryXp=50; yuC=20; ryC=20; gameR=3;
+    battleState.coopWins++; yuXp=50; ryXp=50; yuC=20; ryC=20; gameR=0;
     document.getElementById('coop-result-icon').textContent = '🏆';
     document.getElementById('coop-result-title').innerHTML = '<span style="color:#2ed573">MATH DRAGON DEFEATED!</span>';
     document.getElementById('coop-result-msg').textContent =
@@ -3992,7 +4235,9 @@ function coopEndBattle(won) {
       if (canAdd>0) { state[p].gameBank=(state[p].gameBank||0)+canAdd; state[p].todayBanked=today+canAdd; }
     });
   }
-  save(); saveBattle(); updatePlayerCards();
+  // Record daily streak for Co-op
+  ['yuhi','ryusei'].forEach(cp => { const csm=recordStudyDay(cp); if(csm) setTimeout(()=>showStreakMilestone(csm,cp),800); });
+  save(); saveBattle(); updatePlayerCards(); updateStreakUI();
   let rw = `<span class="reward-chip" style="color:#ffd200">Yuhi +${yuXp} XP</span>
     <span class="reward-chip" style="color:#45b7d1">Ryusei +${ryXp} XP</span>
     <span class="reward-chip" style="color:#4facfe">+${yuC} Coins each</span>`;
