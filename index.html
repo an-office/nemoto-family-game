@@ -1690,14 +1690,15 @@ try { state = JSON.parse(localStorage.getItem('nemoto-study-v2')) || defaultStat
 // Seed baseline points — applies once per seed version per device
 // Uses Math.max so player progress is NEVER reduced — only raised to minimum
 (function applySeedBaseline() {
-  const SEED_KEY = 'nemoto-seed-20260330a';
+  const SEED_KEY = 'nemoto-seed-20260330b';
   if (!localStorage.getItem(SEED_KEY)) {
     // Yuhi minimums
     state.yuhi.xp        = Math.max(state.yuhi.xp        || 0, 5200);
     state.yuhi.coins     = Math.max(state.yuhi.coins     || 0, 926);
     state.yuhi.gameBank  = Math.max(state.yuhi.gameBank  || 0, 17);
-    // Ryusei minimums — Level 10 = 7000 XP
-    state.ryusei.xp      = Math.max(state.ryusei.xp      || 0, 7000);
+    // Ryusei — match Yuhi's XP (at least 7000 for Level 10)
+    var yuhiXpNow = state.yuhi.xp || 5200;
+    state.ryusei.xp      = Math.max(state.ryusei.xp || 0, yuhiXpNow, 7000);
     state.ryusei.coins   = Math.max(state.ryusei.coins   || 0, 1635);
     state.ryusei.gameBank = Math.max(state.ryusei.gameBank || 0, 7);
     localStorage.setItem(SEED_KEY, '1');
