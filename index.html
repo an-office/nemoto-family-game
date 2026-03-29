@@ -2315,15 +2315,8 @@ function finishQuiz() {
   if (s.subjects[currentSubject]) s.subjects[currentSubject].done++;
   s.quizzesDone++;
 
-  // Gaming time: earn 1 min per 20 quizzes completed (100 quizzes = 5 min)
+  // Gaming time is ONLY purchasable via Shop — no direct earning from quizzes
   let perfectBonus = 0;
-  const todayBanked = s.todayBanked || 0;
-  if (!s.quizGameProgress) s.quizGameProgress = 0;
-  s.quizGameProgress++;
-  if (s.quizGameProgress >= 20 && todayBanked < 10) {
-    s.quizGameProgress = 0;
-    perfectBonus = 1; s.gameBank += 1; s.todayBanked = todayBanked + 1;
-  }
 
   // Bonus coins for good performance
   let bonusCoins = 0;
@@ -2349,14 +2342,10 @@ function finishQuiz() {
                'Keep studying! You got this!';
   document.getElementById('res-msg').textContent = msgs;
 
-  // Gaming progress display
-  const qgp = s.quizGameProgress || 0;
-  const qgpRemain = 20 - qgp;
+  // Rewards display (gaming time only via Shop)
   let rewardsHtml = '';
   rewardsHtml += `<span class="reward-item" style="background:rgba(79,172,254,.15);color:#4facfe">⚡ +${quizXpEarned} XP</span>`;
   rewardsHtml += `<span class="reward-item" style="background:rgba(255,210,0,.1);color:#ffd200">🪙 +${quizCoinsEarned + bonusCoins} Coins</span>`;
-  if (perfectBonus > 0) rewardsHtml += `<span class="reward-item" style="background:rgba(255,210,0,.15);color:#ffd200">\u{1F31F} +${perfectBonus} min Gaming earned!</span>`;
-  if (qgpRemain > 0) rewardsHtml += `<div style="margin-top:8px;font-size:.85em;color:#ffa502">\u{1F3AE} ${qgpRemain} more quizzes for +1 min gaming (${qgp}/20)</div>`;
 
   document.getElementById('res-rewards').innerHTML = rewardsHtml;
 
@@ -4790,17 +4779,17 @@ const yuhiTaskDefs = [
   {id:'ch_words',     name:'Recognize Chinese Words',          detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
   {id:'koobits',      name:'KooBits',                          detail:'10 min',  time:10, coins:20, xp:40,  cat:'🔢 Math', gameMin:0},
   {id:'tll',          name:'TLL Math / Science',               detail:'',        time:10, coins:15, xp:30,  cat:'🔬 Academic', gameMin:0},
-  {id:'kendo',        name:'Kendo',                            detail:'',        time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
-  {id:'golf',         name:'Golf',                             detail:'',        time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
-  {id:'hiit',         name:'HIIT',                             detail:'',        time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
+  {id:'kendo',        name:'Kendo',                            detail:'',        time:3,  coins:10, xp:15,  cat:'🏅 Activity', gameMin:0},
+  {id:'golf',         name:'Golf',                             detail:'',        time:2,  coins:8,  xp:10,  cat:'🏅 Activity', gameMin:0},
+  {id:'hiit',         name:'HIIT',                             detail:'',        time:5,  coins:15, xp:25,  cat:'🏅 Activity', gameMin:0},
 ];
 
 const ryuseiTaskDefs = [
   {id:'dd_english',   name:'Daily Dose English',  detail:'',  time:15, coins:20, xp:35,  cat:'📝 English', gameMin:0},
   {id:'dd_math',      name:'Daily Dose Math',      detail:'',  time:20, coins:25, xp:45,  cat:'🔢 Math',    gameMin:0},
-  {id:'kendo',        name:'Kendo',                detail:'',  time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
-  {id:'golf',         name:'Golf',                 detail:'',  time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
-  {id:'hiit',         name:'HIIT',                 detail:'',  time:10, coins:10, xp:20,  cat:'🏅 Activity', gameMin:1},
+  {id:'kendo',        name:'Kendo',                detail:'',  time:3,  coins:10, xp:15,  cat:'🏅 Activity', gameMin:0},
+  {id:'golf',         name:'Golf',                 detail:'',  time:2,  coins:8,  xp:10,  cat:'🏅 Activity', gameMin:0},
+  {id:'hiit',         name:'HIIT',                 detail:'',  time:5,  coins:15, xp:25,  cat:'🏅 Activity', gameMin:0},
   {id:'berries_ch',   name:'Berries Chinese',      detail:'',  time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
   {id:'learning_lab', name:'Learning Lab',         detail:'',  time:20, coins:20, xp:40,  cat:'🔬 Academic', gameMin:0},
 ];
@@ -4862,13 +4851,12 @@ function renderTasksPage() {
     html += `<div class="task-category-label">${cat}</div>`;
     tasks.filter(t => t.cat === cat).forEach(task => {
       const done = today.done.includes(task.id);
-      const gameTag = task.gameMin > 0 ? `<span style="color:#2ed573;font-size:.75em"> +${task.gameMin}m game</span>` : '';
       html += `
         <div class="task-item ${done?'done':''}" onclick="toggleDailyTask('${task.id}')">
           <div class="task-check">${done?'✅':'⬜'}</div>
           <div class="task-info">
             <div class="task-name">${task.name}${task.detail?` <span class="task-detail">(${task.detail})</span>`:''}</div>
-            <div class="task-meta">${task.time} min${gameTag}</div>
+            <div class="task-meta">${task.time} min</div>
           </div>
           <div class="task-reward">
             <span class="task-coins">+${task.coins}c</span>
@@ -4893,20 +4881,10 @@ function toggleDailyTask(taskId) {
     today.done.push(taskId);
     state[player].coins += task.coins;
     state[player].xp    += task.xp;
-    if (task.gameMin > 0) {
-      const banked = state[player].todayBanked || 0;
-      if (banked < 10) {
-        state[player].gameBank = (state[player].gameBank||0) + task.gameMin;
-        state[player].todayBanked = banked + task.gameMin;
-      }
-    }
   } else {
     today.done.splice(idx, 1);
     state[player].coins = Math.max(0, state[player].coins - task.coins);
     state[player].xp    = Math.max(0, state[player].xp    - task.xp);
-    if (task.gameMin > 0) {
-      state[player].gameBank = Math.max(0, (state[player].gameBank||0) - task.gameMin);
-    }
   }
 
   save(); saveTasks(); updatePlayerCards();
