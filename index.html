@@ -6786,14 +6786,12 @@ function renderTaskTimeResult(type) {
   el.classList.add('task-result-animate');
 
   // Disable button after recording (once per day)
-  const btn = document.getElementById('task-' + type + '-btn');
   if (btn) {
     btn.textContent = '✅ Recorded';
     btn.disabled = true;
     btn.style.opacity = '.5';
     btn.style.cursor = 'not-allowed';
   }
-  const inp = document.getElementById('task-' + type + '-input');
   if (inp) { inp.disabled = true; inp.style.opacity = '.5'; }
 
   // Show dramatic overlay reaction
