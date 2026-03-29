@@ -1582,7 +1582,7 @@ const defaultState = () => ({
     subjects:{ math:{done:0,correct:0,total:0}, science:{done:0,correct:0,total:0}, english:{done:0,correct:0,total:0}, chinese:{done:0,correct:0,total:0} },
     dailyComplete:[], perfectBonuses:0, purchases:[]
   },
-  ryusei: { xp:342, coins:143, streak:5, bestStreak:5, gameBank:1, gameUsed:0, totalCorrect:0, totalWrong:0, quizzesDone:0,
+  ryusei: { xp:342, coins:143, streak:5, bestStreak:5, gameBank:7, gameUsed:0, totalCorrect:0, totalWrong:0, quizzesDone:0,
     subjects:{ math:{done:0,correct:0,total:0}, science:{done:0,correct:0,total:0}, english:{done:0,correct:0,total:0}, chinese:{done:0,correct:0,total:0} },
     dailyComplete:[], perfectBonuses:0, purchases:[]
   }
@@ -1606,15 +1606,20 @@ try { state = JSON.parse(localStorage.getItem('nemoto-study-v2')) || defaultStat
   });
 });
 
-// Seed baseline points — applies once per device
+// Seed baseline points — applies once per seed version per device
+// Uses Math.max so player progress is NEVER reduced — only raised to minimum
 (function applySeedBaseline() {
-  if (!localStorage.getItem('nemoto-seed-20260329b')) {
+  const SEED_KEY = 'nemoto-seed-20260329c';
+  if (!localStorage.getItem(SEED_KEY)) {
+    // Yuhi minimums
     state.yuhi.xp        = Math.max(state.yuhi.xp        || 0, 5200);
     state.yuhi.coins     = Math.max(state.yuhi.coins     || 0, 926);
     state.yuhi.gameBank  = Math.max(state.yuhi.gameBank  || 0, 17);
+    // Ryusei minimums
     state.ryusei.xp      = Math.max(state.ryusei.xp      || 0, 3562);
     state.ryusei.coins   = Math.max(state.ryusei.coins   || 0, 1635);
-    localStorage.setItem('nemoto-seed-20260329b', '1');
+    state.ryusei.gameBank = Math.max(state.ryusei.gameBank || 0, 7);
+    localStorage.setItem(SEED_KEY, '1');
     localStorage.setItem('nemoto-study-v2', JSON.stringify(state));
   }
 })();
