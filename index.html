@@ -325,13 +325,18 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   .sched-time{min-width:auto}
   .top-nav{gap:4px;padding:8px 6px}
   .nav-btn{padding:6px 12px;font-size:.75em}
-  #pomo-float{bottom:8px;right:8px;left:8px;align-items:stretch}
-  #pomo-widget{display:flex;align-items:center;gap:10px;padding:8px 12px;min-width:auto}
-  #pomo-widget .pomo-label{margin-bottom:0;font-size:.65em}
-  #pomo-widget .pomo-timer{font-size:1.3em}
-  #pomo-widget .pomo-controls{margin-top:0}
+  #pomo-float{bottom:12px;right:12px;left:auto}
+  #pomo-widget{padding:6px 10px;min-width:auto;border-radius:50px}
+  #pomo-widget .pomo-label{display:none}
+  #pomo-widget .pomo-timer{font-size:1em}
+  #pomo-widget .pomo-controls{margin-top:0;gap:4px}
+  #pomo-widget .pomo-btn{padding:3px 8px;font-size:.65em}
   #pomo-widget .pomo-count{display:none}
-  .page{padding-bottom:80px}
+  #pomo-widget.pomo-collapsed .pomo-timer,
+  #pomo-widget.pomo-collapsed .pomo-controls{display:none}
+  #pomo-widget.pomo-collapsed{padding:8px 12px;border-radius:50%}
+  #pomo-widget.pomo-collapsed::after{content:'🍅';font-size:1.4em}
+  .page{padding-bottom:70px}
 }
 /* BATTLE MODE */
 .win-cell{color:#2ed573!important}
@@ -7278,7 +7283,14 @@ function pomoSelectActivity(el, idx) {
 }
 
 function pomoToggleExpand() {
-  // Could add expand/collapse but keep simple for now
+  const w = document.getElementById('pomo-widget');
+  if (window.innerWidth <= 600) {
+    w.classList.toggle('pomo-collapsed');
+  }
+}
+// Auto-collapse on mobile load
+if (window.innerWidth <= 600) {
+  document.getElementById('pomo-widget').classList.add('pomo-collapsed');
 }
 
 // Initialize display
