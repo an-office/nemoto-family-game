@@ -107,7 +107,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
 .sched-time{min-width:80px;font-weight:700;font-size:.85em;color:#aaa;padding-top:2px}
 .sched-content{flex:1}
 .sched-content h4{font-size:.95em;margin-bottom:3px}
-.sched-content p{font-size:.8em;color:#999}
+.sched-content p,.sched-content .sched-desc{font-size:.8em;color:#999}
 .sched-tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.65em;font-weight:700;margin-right:4px}
 .sched-tag.yuhi-t{background:rgba(255,210,0,.2);color:#ffd200}
 .sched-tag.ryusei-t{background:rgba(69,183,209,.2);color:#45b7d1}
@@ -476,6 +476,35 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
 .device-btn:hover { background:rgba(255,255,255,.12); border-color:rgba(79,172,254,.6); }
 .device-btn.yuhi-btn  { border-color:rgba(79,172,254,.4); }
 .device-btn.ryusei-btn { border-color:rgba(255,210,0,.4); }
+/* Pomodoro Timer */
+#pomo-float{position:fixed;bottom:16px;right:16px;z-index:9990;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+#pomo-widget{background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid rgba(255,210,0,.3);border-radius:16px;padding:12px 16px;min-width:200px;box-shadow:0 4px 20px rgba(0,0,0,.4);cursor:pointer;transition:all .3s}
+#pomo-widget.break-mode{border-color:rgba(46,213,115,.5);background:linear-gradient(135deg,#0a2e1a,#1a3a2e)}
+#pomo-widget.paused{border-color:rgba(255,165,0,.3);opacity:.8}
+.pomo-timer{font-size:2em;font-weight:900;text-align:center;font-family:monospace;letter-spacing:2px}
+.pomo-timer.study{color:#ffd200}
+.pomo-timer.break{color:#2ed573}
+.pomo-label{text-align:center;font-size:.75em;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.pomo-label.study{color:#ffa502}
+.pomo-label.break{color:#2ed573}
+.pomo-controls{display:flex;gap:6px;justify-content:center;margin-top:8px}
+.pomo-btn{padding:4px 12px;border:none;border-radius:8px;font-size:.75em;font-weight:700;cursor:pointer;transition:all .2s}
+.pomo-btn.start{background:#2ed573;color:#1a1a2e}
+.pomo-btn.pause{background:#ffa502;color:#1a1a2e}
+.pomo-btn.reset{background:#ff6b6b;color:white}
+.pomo-count{text-align:center;font-size:.7em;color:#888;margin-top:4px}
+#pomo-break-overlay{display:none;position:fixed;inset:0;background:rgba(10,46,26,.95);z-index:9995;overflow-y:auto}
+.pomo-break-content{max-width:500px;margin:40px auto;padding:20px;text-align:center}
+.pomo-break-content h2{font-size:1.8em;color:#2ed573;margin-bottom:8px}
+.pomo-break-content .pomo-break-timer{font-size:3em;font-weight:900;color:#2ed573;font-family:monospace;margin:16px 0}
+.pomo-activity-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:20px 0}
+.pomo-activity{background:rgba(255,255,255,.08);border:2px solid rgba(46,213,115,.2);border-radius:14px;padding:14px 10px;cursor:pointer;transition:all .3s;text-align:center}
+.pomo-activity:hover{border-color:#2ed573;transform:scale(1.03)}
+.pomo-activity.selected{border-color:#2ed573;background:rgba(46,213,115,.15)}
+.pomo-activity-emoji{font-size:2em;display:block;margin-bottom:6px}
+.pomo-activity-name{font-weight:700;font-size:.9em}
+.pomo-activity-desc{font-size:.7em;color:#aaa;margin-top:4px}
+.pomo-skip-btn{margin-top:16px;padding:10px 24px;border:2px solid rgba(255,210,0,.3);background:transparent;color:#ffd200;border-radius:12px;font-weight:700;cursor:pointer;font-size:.9em}
 </style>
   <!-- Firebase Realtime Database (cross-device sync) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -1238,6 +1267,32 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   <div class="task-summary" id="task-summary"></div>
 </div>
 
+<!-- Pomodoro Timer Widget -->
+<div id="pomo-float">
+  <div id="pomo-widget" onclick="pomoToggleExpand()">
+    <div class="pomo-label study" id="pomo-phase-label">📚 STUDY TIME</div>
+    <div class="pomo-timer study" id="pomo-timer-display">50:00</div>
+    <div class="pomo-controls" id="pomo-controls">
+      <button class="pomo-btn start" id="pomo-start-btn" onclick="event.stopPropagation();pomoStart()">▶ Start</button>
+      <button class="pomo-btn pause" id="pomo-pause-btn" onclick="event.stopPropagation();pomoPause()" style="display:none">⏸ Pause</button>
+      <button class="pomo-btn reset" onclick="event.stopPropagation();pomoReset()">↺</button>
+    </div>
+    <div class="pomo-count" id="pomo-count">🍅 0 pomodoros today</div>
+  </div>
+</div>
+
+<!-- Break Overlay -->
+<div id="pomo-break-overlay">
+  <div class="pomo-break-content">
+    <h2>🌿 Break Time!</h2>
+    <p style="color:#aaa">Great job studying! Pick an activity to recharge:</p>
+    <div class="pomo-break-timer" id="pomo-break-timer">10:00</div>
+    <div class="pomo-activity-grid" id="pomo-activity-grid"></div>
+    <button class="pomo-skip-btn" onclick="pomoSkipBreak()">⏩ Skip Break — Back to Study!</button>
+    <div style="margin-top:12px;color:#666;font-size:.75em">Break ends automatically. Next study session starts after!</div>
+  </div>
+</div>
+
 <!-- Device identity modal (shown once per device) -->
 <div id="device-modal" style="display:none">
   <div id="device-modal-box">
@@ -1281,25 +1336,17 @@ try { state = JSON.parse(localStorage.getItem('nemoto-study-v2')) || defaultStat
   });
 });
 
-// Seed baseline points (2026-03-28) — applies once per device if XP is below baseline
+// Seed baseline points — applies once per device
 (function applySeedBaseline() {
-  if (localStorage.getItem('nemoto-seed-20260328')) return;
-  if ((state.yuhi.xp || 0) < 344) {
-    state.yuhi.xp        = 344;
-    state.yuhi.coins     = Math.max(state.yuhi.coins     || 0, 155);
-    state.yuhi.streak    = Math.max(state.yuhi.streak    || 0, 1);
-    state.yuhi.bestStreak= Math.max(state.yuhi.bestStreak|| 0, 1);
-    state.yuhi.gameBank  = Math.max(state.yuhi.gameBank  || 0, 2);
+  if (!localStorage.getItem('nemoto-seed-20260329')) {
+    state.yuhi.xp        = Math.max(state.yuhi.xp        || 0, 3560);
+    state.yuhi.coins     = Math.max(state.yuhi.coins     || 0, 926);
+    state.yuhi.gameBank  = Math.max(state.yuhi.gameBank  || 0, 12);
+    state.ryusei.xp      = Math.max(state.ryusei.xp      || 0, 3562);
+    state.ryusei.coins   = Math.max(state.ryusei.coins   || 0, 1635);
+    localStorage.setItem('nemoto-seed-20260329', '1');
+    localStorage.setItem('nemoto-study-v2', JSON.stringify(state));
   }
-  if ((state.ryusei.xp || 0) < 342) {
-    state.ryusei.xp        = 342;
-    state.ryusei.coins     = Math.max(state.ryusei.coins     || 0, 143);
-    state.ryusei.streak    = Math.max(state.ryusei.streak    || 0, 5);
-    state.ryusei.bestStreak= Math.max(state.ryusei.bestStreak|| 0, 5);
-    state.ryusei.gameBank  = Math.max(state.ryusei.gameBank  || 0, 1);
-  }
-  localStorage.setItem('nemoto-seed-20260328', '1');
-  localStorage.setItem('nemoto-study-v2', JSON.stringify(state));
 })();
 
 function save() {
@@ -1375,6 +1422,8 @@ function startReview(player) {
   }));
   quizIndex = 0;
   quizCorrect = 0;
+  quizXpEarned = 0;
+  quizCoinsEarned = 0;
   document.getElementById('subject-select').style.display = 'none';
   document.getElementById('quiz-area').classList.add('active');
   document.getElementById('quiz-results').classList.remove('active');
@@ -1389,6 +1438,8 @@ let currentSubject = 'math';
 let quizQuestions = [];
 let quizIndex = 0;
 let quizCorrect = 0;
+let quizXpEarned = 0;
+let quizCoinsEarned = 0;
 let shopPlayer = 'yuhi';
 
 // ============ QUESTIONS DATABASE (PSLE STANDARD) ============
@@ -2118,6 +2169,8 @@ function startSubject(subj) {
   });
   quizIndex = 0;
   quizCorrect = 0;
+  quizXpEarned = 0;
+  quizCoinsEarned = 0;
   document.getElementById('subject-select').style.display = 'none';
   document.getElementById('quiz-area').classList.add('active');
   document.getElementById('quiz-results').classList.remove('active');
@@ -2205,10 +2258,14 @@ function selectAnswer(idx) {
 
     // XP: easy=10, medium=15, hard=25
     const xpMap = {easy:10, medium:15, hard:25};
-    state[currentPlayer].xp += xpMap[q.diff] || 10;
+    const earnedXp = xpMap[q.diff] || 10;
+    state[currentPlayer].xp += earnedXp;
+    quizXpEarned += earnedXp;
     // Coins
     const coinMap = {easy:3, medium:5, hard:8};
-    state[currentPlayer].coins += coinMap[q.diff] || 3;
+    const earnedCoins = coinMap[q.diff] || 3;
+    state[currentPlayer].coins += earnedCoins;
+    quizCoinsEarned += earnedCoins;
 
     document.getElementById('q-fb-title').textContent = 'Correct! +' + (xpMap[q.diff]||10) + ' XP, +' + (coinMap[q.diff]||3) + ' coins';
     document.getElementById('q-fb-text').textContent = q.exp;
@@ -2227,6 +2284,7 @@ function selectAnswer(idx) {
       }
     }
     state[currentPlayer].xp += 2; // consolation XP
+    quizXpEarned += 2;
     document.getElementById('q-fb-title').textContent = 'Not quite! +2 XP for trying';
     document.getElementById('q-fb-text').textContent = q.exp;
     fb.className = 'q-feedback wrong show';
@@ -2295,9 +2353,9 @@ function finishQuiz() {
   const qgp = s.quizGameProgress || 0;
   const qgpRemain = 20 - qgp;
   let rewardsHtml = '';
+  rewardsHtml += `<span class="reward-item" style="background:rgba(79,172,254,.15);color:#4facfe">⚡ +${quizXpEarned} XP</span>`;
+  rewardsHtml += `<span class="reward-item" style="background:rgba(255,210,0,.1);color:#ffd200">🪙 +${quizCoinsEarned + bonusCoins} Coins</span>`;
   if (perfectBonus > 0) rewardsHtml += `<span class="reward-item" style="background:rgba(255,210,0,.15);color:#ffd200">\u{1F31F} +${perfectBonus} min Gaming earned!</span>`;
-  if (bonusCoins > 0) rewardsHtml += `<span class="reward-item">\u{1FA99} +${bonusCoins} Bonus Coins</span>`;
-  rewardsHtml += `<span class="reward-item">\u2728 +XP Earned</span>`;
   if (qgpRemain > 0) rewardsHtml += `<div style="margin-top:8px;font-size:.85em;color:#ffa502">\u{1F3AE} ${qgpRemain} more quizzes for +1 min gaming (${qgp}/20)</div>`;
 
   document.getElementById('res-rewards').innerHTML = rewardsHtml;
@@ -2766,6 +2824,57 @@ function fmtDate(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart
 function fmtTime(t) { return t; } // already HH:MM
 function timeToMin(t) { const [h,m]=t.split(':').map(Number); return h*60+m; }
 
+const WEEKEND_ACTIVITIES = {
+  breakfast: [
+    {title:'🥞 Pancake Shape Competition!', desc:'Who can make the coolest pancake shape? Stars, animals, letters!'},
+    {title:'🍳 Family Cooking Challenge', desc:'Everyone makes their own special breakfast creation!'},
+    {title:'🥐 Breakfast Picnic', desc:'Make breakfast and eat it picnic-style on the floor or balcony!'},
+    {title:'🧇 Waffle Art Contest', desc:'Decorate your waffle with fruit and toppings!'},
+  ],
+  morning: [
+    {title:'🎨 Art & Craft Time', desc:'Drawing, origami, or craft project together!'},
+    {title:'🧩 Board Game Battle', desc:'Pick a family board game and compete!'},
+    {title:'📸 Photo Challenge', desc:'Go around the house/neighborhood and take creative photos!'},
+    {title:'🔬 Science Experiment', desc:'Try a fun home science experiment together!'},
+  ],
+  afternoon: [
+    {title:'🏊 Swimming', desc:'Pool time! Who can swim the farthest?'},
+    {title:'🚴 Bike Adventure', desc:'Family bike ride to somewhere new!'},
+    {title:'🌳 Nature Walk', desc:'Explore a park or trail together!'},
+    {title:'🎳 Bowling', desc:'Family bowling challenge!'},
+    {title:'⚽ Sports Time', desc:'Soccer, basketball, or badminton in the park!'},
+    {title:'🎬 Movie Marathon', desc:'Pick a theme and watch 2-3 movies!'},
+  ],
+  evening: [
+    {title:'🍕 Pizza Night', desc:'Make homemade pizza with custom toppings!'},
+    {title:'🎮 Family Game Night', desc:'Video games or card games together!'},
+    {title:'📖 Storytelling', desc:'Everyone tells a story — real or made up!'},
+    {title:'🌟 Stargazing', desc:'Go outside and look at the stars!'},
+  ]
+};
+
+// Today special: Pancake Shape Competition for Sunday March 29
+(function() {
+  const today = new Date();
+  if (today.getDay() === 0 && today.getDate() === 29 && today.getMonth() === 2) {
+    WEEKEND_ACTIVITIES.breakfast.unshift(
+      {title:'🥞 Pancake Shape Competition!', desc:'TODAY SPECIAL: Who can make the coolest pancake? ⭐ Winner gets 50 bonus coins!'}
+    );
+  }
+})();
+
+function renderActivitySuggestions(category) {
+  const pool = WEEKEND_ACTIVITIES[category] || WEEKEND_ACTIVITIES.afternoon;
+  const picks = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
+  return `<div style="margin-top:8px">
+    <div style="font-size:.8em;color:#ffd200;margin-bottom:6px">🎯 Pick an activity:</div>
+    ${picks.map((a, i) => `<label style="display:flex;align-items:center;gap:8px;padding:6px 8px;margin:4px 0;background:rgba(255,255,255,.05);border-radius:8px;cursor:pointer;border:1px solid rgba(255,255,255,.1)">
+      <input type="checkbox" style="width:18px;height:18px;accent-color:#2ed573" onchange="this.parentElement.style.background=this.checked?'rgba(46,213,115,.12)':'rgba(255,255,255,.05)'">
+      <div><strong>${a.title}</strong><br><span style="font-size:.8em;color:#aaa">${a.desc}</span></div>
+    </label>`).join('')}
+  </div>`;
+}
+
 function buildDaySchedule(dateStr, events) {
   const dayDate = new Date(dateStr+'T00:00:00');
   const dow = dayDate.getDay();
@@ -2830,13 +2939,19 @@ function buildDaySchedule(dateStr, events) {
     const evts = sorted.filter(e => e.type !== 'school');
     let cursor = 7*60; // Start 7:00
 
-    blocks.push({time:'07:00', title:'Morning Routine + Breakfast', desc:'Wake up, eat breakfast. Get ready for the day!', type:'family',
+    blocks.push({time:'07:00', title:'Morning Routine + Breakfast', desc:'Wake up, eat breakfast. Get ready for the day!' + renderActivitySuggestions('breakfast'), type:'family',
       tags:[{text:'Whole Family',cls:'all-t'}]});
 
     if (evts.length === 0 || timeToMin(evts[0].start) - 7.5*60 >= 30) {
       blocks.push({time:'07:30', title:'Morning Study Block', desc:'Brain is freshest in the morning! Do 2-3 quizzes.', type:'study',
         tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
       cursor = 8.5*60;
+    }
+
+    // Morning family activity suggestion block
+    if (evts.length === 0 || timeToMin(evts[0].start) - 10*60 >= 30) {
+      blocks.push({time:'10:00', title:'Family Activity Time', desc:'Time for something fun together!' + renderActivitySuggestions('morning'), type:'family',
+        tags:[{text:'Whole Family',cls:'all-t'}]});
     }
 
     evts.forEach((e, i) => {
@@ -2859,13 +2974,18 @@ function buildDaySchedule(dateStr, events) {
     if (cursor < 18*60) {
       const h = Math.floor(cursor/60), m = cursor%60;
       blocks.push({time:String(h).padStart(2,'0')+':'+String(m).padStart(2,'0'),
-        title:'Free Time + Study', desc:'Family time or more quizzes! Keep that streak going.', type:'free',
+        title:'Afternoon Adventure', desc:'Time for an afternoon activity!' + renderActivitySuggestions('afternoon'), type:'free',
+        tags:[{text:'Whole Family',cls:'all-t'}]});
+      blocks.push({time:String(Math.min(Math.floor(cursor/60)+2,17)).padStart(2,'0')+':00',
+        title:'Study + Quiz Time', desc:'Keep that streak going! More quizzes, more coins.', type:'study',
         tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
     }
   }
 
   // Always end with dinner and bedtime
-  blocks.push({time:'19:00', title:'Dinner + Family Time', desc:'Eat together. Board game or movie if time!', type:'family',
+  const isDow = new Date(dateStr+'T00:00:00').getDay();
+  const isWknd = isDow === 0 || isDow === 6;
+  blocks.push({time:'19:00', title:'Dinner + Family Time', desc:'Eat together. Board game or movie if time!' + (isWknd ? renderActivitySuggestions('evening') : ''), type:'family',
     tags:[{text:'Whole Family',cls:'all-t'}]});
   blocks.push({time:'20:00', title:'Wind Down: Brush Teeth + Story', desc:'Get ready for bed. Reading time.', type:'family',
     tags:[{text:'Yuhi',cls:'yuhi-t'},{text:'Ryusei',cls:'ryusei-t'}]});
@@ -2922,7 +3042,7 @@ function renderWeeklyPlan() {
       const borderStyle = b.type==='bedtime'?'border-left-color:#9b59b6;background:rgba(155,89,182,.05)':'';
       html += `<div class="sched-block ${typeClass}" ${borderStyle?'style="'+borderStyle+'"':''}>`;
       html += `<div class="sched-time">${b.time}</div>`;
-      html += `<div class="sched-content"><h4>${b.title}</h4><p>${b.desc}</p>`;
+      html += `<div class="sched-content"><h4>${b.title}</h4><div class="sched-desc">${b.desc}</div>`;
       b.tags.forEach(t => { html += `<span class="sched-tag ${t.cls}">${t.text}</span>`; });
       html += '</div></div>';
     });
@@ -4916,6 +5036,180 @@ function renderTasksSummary() {
     <div class="ts-counts">${doneCount} / ${total} tasks &nbsp;·&nbsp; +${earnedC} coins &nbsp;·&nbsp; +${earnedXP} XP earned today</div>
     <div class="ts-msg">${msg}</div>`;
 }
+
+// ============ POMODORO TIMER ============
+const POMO_STUDY_MINS = 50;
+const POMO_BREAK_MINS = 10;
+const BREAK_ACTIVITIES = [
+  {emoji:'💧', name:'Water Break', desc:'Drink a full glass of water!'},
+  {emoji:'🚽', name:'Toilet Break', desc:'Quick bathroom break'},
+  {emoji:'🧘', name:'Stretch', desc:'Stretch arms, legs, neck & back'},
+  {emoji:'⚽', name:'Soccer', desc:'Kick the ball around outside!'},
+  {emoji:'💪', name:'Squats', desc:'Do 10-20 squats!'},
+  {emoji:'🫸', name:'Push-ups', desc:'Do 5-15 push-ups!'},
+  {emoji:'🔥', name:'HIIT', desc:'30s on, 10s off × 5 rounds!'},
+  {emoji:'🚶', name:'Walking', desc:'Walk around the block'},
+  {emoji:'🎵', name:'Dance', desc:'Put on a song and dance!'},
+  {emoji:'🍎', name:'Healthy Snack', desc:'Grab a fruit or yogurt'},
+];
+
+let pomoState = {
+  phase: 'study', // 'study' or 'break'
+  running: false,
+  secondsLeft: POMO_STUDY_MINS * 60,
+  todayCount: 0,
+  intervalId: null,
+  selectedActivity: null,
+};
+
+// Load pomo state
+try {
+  const saved = JSON.parse(localStorage.getItem('nemoto-pomo'));
+  if (saved) {
+    const savedDate = saved.date;
+    const today = new Date().toDateString();
+    if (savedDate === today) {
+      pomoState.todayCount = saved.todayCount || 0;
+    }
+  }
+} catch(e) {}
+
+function savePomo() {
+  localStorage.setItem('nemoto-pomo', JSON.stringify({
+    date: new Date().toDateString(),
+    todayCount: pomoState.todayCount,
+  }));
+}
+
+function pomoUpdateDisplay() {
+  const mins = Math.floor(pomoState.secondsLeft / 60);
+  const secs = pomoState.secondsLeft % 60;
+  const timeStr = String(mins).padStart(2,'0') + ':' + String(secs).padStart(2,'0');
+
+  const timerEl = document.getElementById('pomo-timer-display');
+  const labelEl = document.getElementById('pomo-phase-label');
+  const widget = document.getElementById('pomo-widget');
+  const startBtn = document.getElementById('pomo-start-btn');
+  const pauseBtn = document.getElementById('pomo-pause-btn');
+
+  timerEl.textContent = timeStr;
+
+  if (pomoState.phase === 'study') {
+    timerEl.className = 'pomo-timer study';
+    labelEl.className = 'pomo-label study';
+    labelEl.textContent = pomoState.running ? '📚 STUDYING...' : '📚 STUDY TIME';
+    widget.classList.remove('break-mode');
+  } else {
+    timerEl.className = 'pomo-timer break';
+    labelEl.className = 'pomo-label break';
+    labelEl.textContent = '🌿 BREAK TIME';
+    widget.classList.add('break-mode');
+  }
+
+  widget.classList.toggle('paused', !pomoState.running && pomoState.secondsLeft < (pomoState.phase === 'study' ? POMO_STUDY_MINS * 60 : POMO_BREAK_MINS * 60));
+
+  startBtn.style.display = pomoState.running ? 'none' : '';
+  pauseBtn.style.display = pomoState.running ? '' : 'none';
+
+  document.getElementById('pomo-count').textContent = '🍅 ' + pomoState.todayCount + ' pomodoro' + (pomoState.todayCount !== 1 ? 's' : '') + ' today';
+
+  // Update break overlay timer
+  if (pomoState.phase === 'break') {
+    document.getElementById('pomo-break-timer').textContent = timeStr;
+  }
+}
+
+function pomoTick() {
+  if (!pomoState.running) return;
+  pomoState.secondsLeft--;
+
+  if (pomoState.secondsLeft <= 0) {
+    if (pomoState.phase === 'study') {
+      // Study phase complete -> start break
+      pomoState.todayCount++;
+      savePomo();
+      pomoState.phase = 'break';
+      pomoState.secondsLeft = POMO_BREAK_MINS * 60;
+      pomoShowBreak();
+      // Reward for completing a pomodoro
+      state[currentPlayer].xp += 20;
+      state[currentPlayer].coins += 10;
+      save(); updatePlayerCards();
+    } else {
+      // Break complete -> back to study
+      pomoState.phase = 'study';
+      pomoState.secondsLeft = POMO_STUDY_MINS * 60;
+      pomoHideBreak();
+    }
+  }
+
+  pomoUpdateDisplay();
+}
+
+function pomoStart() {
+  if (pomoState.running) return;
+  pomoState.running = true;
+  pomoState.intervalId = setInterval(pomoTick, 1000);
+  pomoUpdateDisplay();
+}
+
+function pomoPause() {
+  pomoState.running = false;
+  if (pomoState.intervalId) { clearInterval(pomoState.intervalId); pomoState.intervalId = null; }
+  pomoUpdateDisplay();
+}
+
+function pomoReset() {
+  pomoPause();
+  pomoState.phase = 'study';
+  pomoState.secondsLeft = POMO_STUDY_MINS * 60;
+  pomoHideBreak();
+  pomoUpdateDisplay();
+}
+
+function pomoSkipBreak() {
+  pomoState.phase = 'study';
+  pomoState.secondsLeft = POMO_STUDY_MINS * 60;
+  pomoState.running = true;
+  pomoState.intervalId = setInterval(pomoTick, 1000);
+  pomoHideBreak();
+  pomoUpdateDisplay();
+}
+
+function pomoShowBreak() {
+  const overlay = document.getElementById('pomo-break-overlay');
+  overlay.style.display = 'block';
+  // Render activity cards
+  const grid = document.getElementById('pomo-activity-grid');
+  // Pick 6 random activities
+  const shuffled = [...BREAK_ACTIVITIES].sort(() => Math.random() - 0.5).slice(0, 6);
+  grid.innerHTML = shuffled.map((a, i) => `
+    <div class="pomo-activity" onclick="pomoSelectActivity(this, ${i})">
+      <span class="pomo-activity-emoji">${a.emoji}</span>
+      <div class="pomo-activity-name">${a.name}</div>
+      <div class="pomo-activity-desc">${a.desc}</div>
+    </div>
+  `).join('');
+  // Play a sound-like visual flash
+  overlay.style.animation = 'none';
+  void overlay.offsetWidth;
+}
+
+function pomoHideBreak() {
+  document.getElementById('pomo-break-overlay').style.display = 'none';
+}
+
+function pomoSelectActivity(el, idx) {
+  document.querySelectorAll('.pomo-activity').forEach(a => a.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function pomoToggleExpand() {
+  // Could add expand/collapse but keep simple for now
+}
+
+// Initialize display
+pomoUpdateDisplay();
 
 // ========= FIREBASE SYNC =========
 // SETUP INSTRUCTIONS:
