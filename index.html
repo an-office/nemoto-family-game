@@ -7512,6 +7512,86 @@ function initTasks() {
   document.getElementById('task-tab-yuhi').classList.toggle('active', currentTaskPlayer==='yuhi');
   document.getElementById('task-tab-ryusei').classList.toggle('active', currentTaskPlayer==='ryusei');
   renderTasksPage();
+  // Show morning Good Job message if before 7 AM and bedtime was early
+  showTaskMorningCheer(currentTaskPlayer);
+}
+
+function showTaskMorningCheer(player) {
+  var now = new Date();
+  var hour = now.getHours();
+  if (hour >= 7) return; // only before 7 AM
+
+  // Check last night's bedtime (stored under yesterday's date)
+  var yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  var dateKey = yesterday.toISOString().slice(0,10);
+
+  if (!tasksState[player] || !tasksState[player][dateKey]) return;
+  var data = tasksState[player][dateKey];
+  if (!data.bed) return;
+
+  var parts = data.bed.split(':');
+  var bedMins = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+  var targetMins = 20 * 60 + 30;
+  if (bedMins > targetMins) return; // was late, no cheer
+
+  var diff = targetMins - bedMins;
+  var pName = player === 'yuhi' ? 'Yuhi' : 'Ryusei';
+
+  var cheers = [
+    "🌟 " + pName + "! You slept early last night — that's awesome discipline!",
+    "💪 " + pName + ", champions get great sleep! You're a sleep hero!",
+    "⭐ Great job going to bed " + diff + " minutes early, " + pName + "!",
+    "🏆 " + pName + "! Your brain recharged fully — you're UNSTOPPABLE today!",
+    "🚀 " + pName + " slept like a pro! Today is going to be a GREAT day!",
+    "🔥 " + pName + "! Early bedtime = BIG brain power! Keep it up!",
+    "🎉 " + diff + " min early to bed! " + pName + ", that's real dedication!",
+    "✨ " + pName + "! Sleep superstar! Ready to conquer the day!",
+  ];
+  var msg = cheers[Math.floor(Math.random() * cheers.length)];
+
+  // Play a short cheerful sound
+  if (!soundMuted) {
+    try {
+      var ctx = getAudioCtx();
+      var t = ctx.currentTime;
+      var g = ctx.createGain();
+      g.connect(ctx.destination);
+      g.gain.setValueAtTime(0.15, t);
+      g.gain.exponentialRampToValueAtTime(0.01, t + 0.8);
+      var notes = [523, 659, 784, 1047];
+      notes.forEach(function(f, i) {
+        var o = ctx.createOscillator();
+        o.type = 'triangle';
+        o.frequency.setValueAtTime(f, t + i * 0.1);
+        o.connect(g);
+        o.start(t + i * 0.1);
+        o.stop(t + i * 0.1 + 0.15);
+      });
+    } catch(e) {}
+  }
+
+  // Show toast-style banner (not blocking, disappears after a few seconds)
+  var existing = document.getElementById('morning-cheer-toast');
+  if (existing) existing.remove();
+
+  var toast = document.createElement('div');
+  toast.id = 'morning-cheer-toast';
+  toast.style.cssText = 'position:fixed;top:0;left:0;width:100%;z-index:19000;display:flex;justify-content:center;pointer-events:none;animation:fadeIn .4s ease';
+  toast.innerHTML = '<div style="margin:12px;padding:14px 22px;background:linear-gradient(135deg,#1a1a2e,#16213e);border:2px solid #2ed573;border-radius:16px;box-shadow:0 6px 24px rgba(46,213,115,.35);max-width:360px;text-align:center;pointer-events:auto">' +
+    '<div style="font-size:1.05em;color:#fff;line-height:1.5;font-weight:600">' + msg + '</div>' +
+    '<div style="margin-top:6px;font-size:.85em;color:#2ed573">🌙 Bedtime: ' + data.bed + ' (+' + data.bedCoins + ' coins, +' + data.bedXP + ' XP)</div>' +
+  '</div>';
+  document.body.appendChild(toast);
+
+  // Auto-dismiss after 5 seconds
+  setTimeout(function() {
+    if (toast.parentElement) {
+      toast.style.transition = 'opacity .5s';
+      toast.style.opacity = '0';
+      setTimeout(function(){ if (toast.parentElement) toast.remove(); }, 500);
+    }
+  }, 5000);
 }
 
 function switchTaskTab(player) {
