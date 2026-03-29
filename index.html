@@ -520,6 +520,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   <button class="nav-btn" id="nav-arena" onclick="showPage('arena')">Math Arena</button>
   <button class="nav-btn" id="nav-eng-arena" onclick="showPage('eng-arena')">English Arena</button>
   <button class="nav-btn" id="nav-ch-arena" onclick="showPage('ch-arena')">Chinese Arena</button>
+  <button class="nav-btn" id="nav-sci-arena" onclick="showPage('sci-arena')">Science Arena</button>
   <button class="nav-btn" onclick="showPage('battle')">⚔️ Battle!</button>
   <button class="nav-btn" onclick="showPage('tasks')">✅ Tasks</button>
   <button class="nav-btn" onclick="showPage('schedule')">Weekly Plan</button>
@@ -560,6 +561,15 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
         <span class="stat streak" id="streak-ryusei">0 Streak</span>
         <span class="stat game-time" id="gametime-ryusei">0m Gaming</span>
       </div>
+    </div>
+  </div>
+
+  <!-- PLAYER SWITCH -->
+  <div class="card" style="text-align:center;margin:12px 0;padding:12px;border:2px solid rgba(255,165,2,.3);background:rgba(255,165,2,.05)">
+    <div style="font-size:.75em;color:#aaa;margin-bottom:6px">Who is playing now?</div>
+    <div style="display:flex;gap:10px;justify-content:center">
+      <button id="dash-switch-yuhi" onclick="switchPlayerDash('yuhi')" style="flex:1;max-width:160px;padding:12px 20px;border-radius:12px;border:2px solid #ffd200;background:rgba(255,210,0,.15);color:#ffd200;font-size:1.1em;font-weight:700;cursor:pointer;transition:all .2s">📘 Yuhi (P6)</button>
+      <button id="dash-switch-ryusei" onclick="switchPlayerDash('ryusei')" style="flex:1;max-width:160px;padding:12px 20px;border-radius:12px;border:2px solid #2ed573;background:rgba(46,213,115,.15);color:#2ed573;font-size:1.1em;font-weight:700;cursor:pointer;transition:all .2s">⚽ Ryusei (P4)</button>
     </div>
   </div>
 
@@ -1173,6 +1183,70 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   </div>
 </div>
 
+<!-- ===== SCIENCE ARENA ===== -->
+<div class="page" id="pg-sci-arena">
+  <div class="ma-header" style="background:linear-gradient(135deg,#1a1a2e 0%,#0a2e1a 50%,#1a3e20 100%)">
+    <h1>🔬 SCIENCE ARENA 🧪</h1>
+    <div class="ma-sub" style="color:#2ed573">Discover, Experiment, Master — Science is POWER!</div>
+  </div>
+
+  <div class="ma-stats" style="background:rgba(46,213,115,.08)">
+    <div class="ma-stat"><div class="ms-val" id="sa-wins">0</div><div class="ms-lbl">Wins</div></div>
+    <div class="ma-stat"><div class="ms-val" id="sa-streak">0</div><div class="ms-lbl">🔥 Streak</div></div>
+    <div class="ma-stat"><div class="ms-val" id="sa-best-combo">0</div><div class="ms-lbl">Best Combo</div></div>
+    <div class="ma-stat"><div class="ms-val" id="sa-mastery">0</div><div class="ms-lbl">Mastery %</div></div>
+  </div>
+
+  <!-- STAGE SELECT -->
+  <div id="sa-stage-area">
+    <div style="text-align:center;margin:12px 0;color:#aaa;font-size:.9em">Choose your experiment! 5 questions per round. Let's go!</div>
+    <div class="ma-stages" id="sa-stages"></div>
+  </div>
+
+  <!-- BATTLE -->
+  <div id="sa-battle-area" style="display:none" class="ma-battle">
+    <div class="ma-arena" id="sa-arena-box" style="background:linear-gradient(135deg,#0a2e1a,#1a3e20)">
+      <div style="text-align:center">
+        <div class="mf-sprite" style="font-size:2.5em" id="sa-stage-icon">🔬</div>
+        <div id="sa-stage-title" style="color:#2ed573;font-size:1.1em;font-weight:bold;margin:4px 0">Living Things</div>
+        <div class="mf-hp-bar" style="width:80%;margin:8px auto"><div class="mf-hp-fill hero" id="sa-progress-bar" style="width:0%;background:linear-gradient(90deg,#2ed573,#7bed9f)"></div></div>
+        <div id="sa-progress-text" style="color:#aaa;font-size:.85em">0 / 5 correct</div>
+      </div>
+      <div class="ma-combo">
+        <div class="combo-text" id="sa-combo-display"></div>
+      </div>
+    </div>
+
+    <div class="ma-powerups" id="sa-powerups">
+      <button class="ma-pu-btn" onclick="saUsePowerUp('5050')">🎯 50/50<br><small>10 coins</small></button>
+      <button class="ma-pu-btn" onclick="saUsePowerUp('hint')">💡 Show Hint<br><small>20 coins</small></button>
+    </div>
+
+    <div class="ma-question" id="sa-question-box">
+      <div class="mq-num" id="sa-q-num">Q1 / 5</div>
+      <div id="sa-passage-box" style="display:none;background:rgba(255,255,255,.05);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em;color:#ddd;line-height:1.6;text-align:left;border-left:3px solid #2ed573"></div>
+      <div class="mq-text" id="sa-q-text">Loading...</div>
+    </div>
+
+    <div class="ma-answers" id="sa-answers"></div>
+
+    <div id="sa-hint-box" style="display:none;text-align:center;margin-top:8px;padding:8px;background:rgba(46,213,115,.08);border-radius:8px;color:#2ed573;font-size:.85em"></div>
+    <div id="sa-feedback" style="display:none;text-align:center;margin-top:12px;padding:12px;border-radius:10px;font-size:.95em"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="sa-result-area" style="display:none" class="ma-result">
+    <div class="mr-title" id="sa-result-title">Victory!</div>
+    <div class="mr-stars" id="sa-result-stars"></div>
+    <div style="font-size:.9em;color:#aaa" id="sa-result-msg"></div>
+    <div class="mr-rewards" id="sa-result-rewards"></div>
+    <div class="mr-btns">
+      <button class="ma-btn-next" style="background:linear-gradient(135deg,#2ed573,#7bed9f);color:#1a1a2e" onclick="saNextRound()">🔬 Next Round!</button>
+      <button class="ma-btn-back" onclick="saShowStages()">🗺️ Stage Select</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== WEEKLY PLAN (Calendar-driven) ===== -->
 <div class="page" id="pg-schedule">
   <div class="header">
@@ -1418,7 +1492,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div class="task-time-row">
       <div class="task-time-target">Target: <strong id="task-wake-target">05:15</strong></div>
       <input type="time" id="task-wake-input" class="task-time-input">
-      <button class="task-time-btn" onclick="applyTaskTime('wake')">Apply</button>
+      <button class="task-time-btn" id="task-wake-btn" onclick="applyTaskTime('wake')">🔒 Apply (Parent)</button>
     </div>
     <div class="task-time-result" id="task-wake-result"></div>
     <div style="color:#777;font-size:.75em;margin-top:6px">Early: +2 coins +3 XP per min &nbsp;|&nbsp; Late: −3 coins −5 XP per min</div>
@@ -1433,7 +1507,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div class="task-time-row">
       <div class="task-time-target">Target: <strong>20:30</strong></div>
       <input type="time" id="task-bed-input" class="task-time-input">
-      <button class="task-time-btn" onclick="applyTaskTime('bed')">Apply</button>
+      <button class="task-time-btn" id="task-bed-btn" onclick="applyTaskTime('bed')">🔒 Apply (Parent)</button>
     </div>
     <div class="task-time-result" id="task-bed-result"></div>
     <div style="color:#777;font-size:.75em;margin-top:6px">Early: +1 coin +2 XP per min &nbsp;|&nbsp; Late: −2 coins −3 XP per min</div>
@@ -1514,13 +1588,13 @@ try { state = JSON.parse(localStorage.getItem('nemoto-study-v2')) || defaultStat
 
 // Seed baseline points — applies once per device
 (function applySeedBaseline() {
-  if (!localStorage.getItem('nemoto-seed-20260329')) {
-    state.yuhi.xp        = Math.max(state.yuhi.xp        || 0, 3560);
+  if (!localStorage.getItem('nemoto-seed-20260329b')) {
+    state.yuhi.xp        = Math.max(state.yuhi.xp        || 0, 5200);
     state.yuhi.coins     = Math.max(state.yuhi.coins     || 0, 926);
-    state.yuhi.gameBank  = Math.max(state.yuhi.gameBank  || 0, 12);
+    state.yuhi.gameBank  = Math.max(state.yuhi.gameBank  || 0, 17);
     state.ryusei.xp      = Math.max(state.ryusei.xp      || 0, 3562);
     state.ryusei.coins   = Math.max(state.ryusei.coins   || 0, 1635);
-    localStorage.setItem('nemoto-seed-20260329', '1');
+    localStorage.setItem('nemoto-seed-20260329b', '1');
     localStorage.setItem('nemoto-study-v2', JSON.stringify(state));
   }
 })();
@@ -2394,6 +2468,7 @@ function showPage(id) {
   if (id==='eng-arena' && currentPlayer!=='yuhi') { showPage('dashboard'); return; }
   if (id==='eng-arena') eaShowStages();
   if (id==='ch-arena') caShowStages();
+  if (id==='sci-arena') saShowStages();
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('pg-'+id).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -2404,6 +2479,7 @@ function showPage(id) {
         (id==='arena'&&b.textContent.includes('Math'))||
         (id==='eng-arena'&&b.textContent.includes('English'))||
         (id==='ch-arena'&&b.textContent.includes('Chinese'))||
+        (id==='sci-arena'&&b.textContent.includes('Science'))||
         (id==='battle'&&b.textContent.includes('Battle'))||
         (id==='tasks'&&b.textContent.includes('Tasks'))||
         (id==='schedule'&&b.textContent.includes('Weekly'))||
@@ -2432,6 +2508,27 @@ function selectPlayer(p) {
   const engArenaNav = document.getElementById('nav-eng-arena');
   if (engArenaNav) engArenaNav.style.display = p==='yuhi'?'':'none';
 }
+
+function switchPlayerDash(p) {
+  selectPlayer(p);
+  // Update dashboard switch buttons
+  const yuBtn = document.getElementById('dash-switch-yuhi');
+  const ryBtn = document.getElementById('dash-switch-ryusei');
+  if (p === 'yuhi') {
+    yuBtn.style.background = 'rgba(255,210,0,.35)';
+    yuBtn.style.boxShadow = '0 0 12px rgba(255,210,0,.3)';
+    ryBtn.style.background = 'rgba(46,213,115,.08)';
+    ryBtn.style.boxShadow = 'none';
+  } else {
+    ryBtn.style.background = 'rgba(46,213,115,.35)';
+    ryBtn.style.boxShadow = '0 0 12px rgba(46,213,115,.3)';
+    yuBtn.style.background = 'rgba(255,210,0,.08)';
+    yuBtn.style.boxShadow = 'none';
+  }
+  if (typeof playSound === 'function') playSound('click');
+}
+// Initialize dashboard switch highlight on load
+setTimeout(() => switchPlayerDash(currentPlayer), 100);
 
 // ============ QUIZ ENGINE ============
 function startSubject(subj) {
@@ -4263,6 +4360,430 @@ function caNextRound() {
   const idx = caStages.findIndex(s => s.id === caBattle.stage.id);
   const next = (idx + 1) % caStages.length;
   caStartBattle(next);
+}
+
+// ============ SCIENCE ARENA SYSTEM ============
+function saGetStages() {
+  const isP6 = currentPlayer === 'yuhi';
+  return [
+    // STAGE 1 — Living Things (easy)
+    {id:'living', name:'Living Things', icon:'🌱', topic:'living', desc:'Plants, animals & life cycles', diff:'easy',
+     qs: [
+       () => {
+         const p6=[
+           ['Which part of a plant is responsible for photosynthesis?','Leaves','Roots','Stem','Flowers','Leaves contain chlorophyll which captures sunlight for photosynthesis!'],
+           ['What is the function of the root system in a plant?','Absorb water and minerals from soil','Produce food via photosynthesis','Attract pollinators','Store seeds','Roots anchor the plant and absorb water & minerals from the soil!'],
+           ['Which of these is NOT a characteristic of living things?','Conducting electricity','Reproduction','Growth','Response to stimuli','All living things can reproduce, grow, and respond to stimuli, but not all conduct electricity!'],
+           ['What is the process by which a caterpillar becomes a butterfly called?','Metamorphosis','Photosynthesis','Germination','Pollination','Metamorphosis is the transformation process through distinct life stages!'],
+           ['Which part of a flower develops into a fruit?','Ovary','Petal','Stamen','Sepal','After fertilisation, the ovary of the flower develops into a fruit containing seeds!'],
+           ['What do fungi feed on?','Dead or living organic matter','Sunlight','Carbon dioxide','Minerals only','Fungi are decomposers that break down organic matter for nutrients!'],
+           ['Which animal undergoes incomplete metamorphosis?','Cockroach','Butterfly','Frog','Beetle','Cockroaches undergo incomplete metamorphosis: egg → nymph → adult (no pupa stage)!'],
+           ['What is the role of the stigma in a flower?','To receive pollen grains','To produce nectar','To protect the bud','To make seeds','The stigma is the sticky top of the pistil that catches pollen during pollination!']
+         ];
+         const p4=[
+           ['Which of these is a living thing?','A cat','A rock','A pencil','Water','A cat is living because it breathes, grows, and reproduces!'],
+           ['What do plants need to grow?','Water, sunlight and air','Only water','Only sunlight','Only soil','Plants need water, sunlight, and air (carbon dioxide) to grow!'],
+           ['Which animal lays eggs?','Chicken','Dog','Cat','Cow','Chickens are egg-laying animals (oviparous)!'],
+           ['What is the baby of a frog called?','Tadpole','Kitten','Cub','Chick','Frogs start life as tadpoles that live in water before becoming adults!'],
+           ['Which part of a plant grows underground?','Roots','Leaves','Flowers','Fruits','Roots grow underground to absorb water and hold the plant in place!'],
+           ['What do caterpillars turn into?','Butterflies','Ants','Bees','Spiders','Caterpillars undergo metamorphosis to become butterflies!'],
+           ['Which of these animals is a mammal?','Dolphin','Snake','Goldfish','Eagle','Dolphins are mammals — they breathe air, are warm-blooded, and feed milk to their young!'],
+           ['What does a seed need to start growing (germinate)?','Water and warmth','Only light','Only soil','Cold temperature','Seeds need water and warmth to begin germination!']
+         ];
+         const items = isP6 ? p6 : p4;
+         const item = items[rand(0,items.length-1)];
+         return {q:item[0], opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🌱 '+item[5], diff:'easy'};
+       }
+     ]},
+
+    // STAGE 2 — Materials & Matter (easy)
+    {id:'matter', name:'Materials & Matter', icon:'🧱', topic:'matter', desc:'States, properties & changes', diff:'easy',
+     qs: [
+       () => {
+         const p6=[
+           ['Which of the following is a chemical change?','Rusting of iron','Melting of ice','Dissolving sugar in water','Tearing paper','Rusting forms a new substance (iron oxide), making it a chemical change!'],
+           ['What happens to the particles in a solid when it is heated?','They vibrate faster and move further apart','They stop moving','They get smaller','They become heavier','Heating makes particles gain energy, vibrate faster, and spread further apart!'],
+           ['Which material is the best conductor of heat?','Copper','Wood','Plastic','Rubber','Metals like copper are excellent heat conductors because of their free-moving electrons!'],
+           ['What is evaporation?','Liquid changing to gas at the surface','Gas changing to liquid','Solid changing to liquid','Liquid changing to solid','Evaporation is when liquid molecules at the surface gain enough energy to escape as gas!'],
+           ['Which property makes rubber suitable for making tyres?','Flexibility and durability','Transparency','Hardness','Brittleness','Rubber is flexible (bends without breaking) and durable (long-lasting) — perfect for tyres!'],
+           ['What is the difference between melting and dissolving?','Melting needs heat; dissolving needs a solvent','They are the same thing','Melting needs water; dissolving needs heat','Melting is faster than dissolving','Melting is a change of state (solid→liquid by heat); dissolving is mixing into a solvent!'],
+           ['Which of these is a reversible change?','Freezing water','Burning wood','Cooking an egg','Baking a cake','Freezing is reversible — ice can melt back to water. Burning/cooking create new substances!'],
+           ['Why does a metal spoon feel colder than a wooden spoon at room temperature?','Metal conducts heat away from your hand faster','Metal is actually colder','Wood is warmer','Metal absorbs cold','Both are the same temperature, but metal conducts heat away from your hand faster, feeling colder!']
+         ];
+         const p4=[
+           ['Which of these is a solid?','A book','Milk','Air','Steam','A book has a fixed shape and volume — it is a solid!'],
+           ['What happens when you heat ice?','It melts into water','It becomes harder','It stays the same','It disappears','Heat energy causes ice (solid) to melt into water (liquid)!'],
+           ['Which material is transparent (you can see through it)?','Glass','Wood','Metal','Stone','Glass is transparent — light passes through it so you can see through it!'],
+           ['What are the three states of matter?','Solid, liquid, gas','Hot, warm, cold','Big, medium, small','Hard, soft, squishy','The three states of matter are solid, liquid, and gas!'],
+           ['Which of these is a gas?','Air','Juice','Ice','Sand','Air is a gas — it has no fixed shape and fills any container!'],
+           ['What material is a pencil mostly made of?','Wood and graphite','Metal and glass','Plastic and rubber','Stone and clay','Pencils have a wooden body with a graphite core for writing!'],
+           ['Which of these will float in water?','A wooden block','A stone','A metal coin','A marble','Wood is less dense than water, so it floats!'],
+           ['What happens to water when you put it in a freezer?','It turns into ice','It disappears','It becomes air','It gets warmer','Water freezes into ice (solid) when cooled below 0°C!']
+         ];
+         const items = isP6 ? p6 : p4;
+         const item = items[rand(0,items.length-1)];
+         return {q:item[0], opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🧱 '+item[5], diff:'easy'};
+       }
+     ]},
+
+    // STAGE 3 — Forces & Energy (medium)
+    {id:'forces', name:'Forces & Energy', icon:'⚡', topic:'forces', desc:'Gravity, friction, magnets & energy', diff:'medium',
+     qs: [
+       () => {
+         const p6=[
+           ['What type of energy transformation occurs in a solar panel?','Light energy to electrical energy','Electrical energy to light energy','Heat energy to sound energy','Kinetic energy to potential energy','Solar panels convert light energy from the sun into electrical energy!'],
+           ['Why does a ball eventually stop rolling on a flat surface?','Friction between the ball and the surface','Gravity pulls it down','The ball runs out of energy','Air pushes it backwards','Friction is a force that opposes motion, gradually slowing the ball down!'],
+           ['Which of these is an example of a non-contact force?','Magnetic force','Friction','Pushing a box','Kicking a ball','Magnetic force acts at a distance without physical contact!'],
+           ['What happens to gravitational potential energy as an object falls?','It decreases and converts to kinetic energy','It increases','It stays the same','It disappears completely','As an object falls, its height decreases so PE converts to KE (movement energy)!'],
+           ['An unbalanced force acting on an object will cause it to...','Change its speed or direction','Stay still','Float in the air','Become heavier','Unbalanced forces cause a change in motion — speeding up, slowing down, or changing direction!'],
+           ['Why is it easier to slide on a smooth surface than a rough surface?','Less friction on a smooth surface','More gravity on smooth surface','Smooth surfaces are lighter','Rough surfaces have more air','Smooth surfaces produce less friction, so objects slide more easily!'],
+           ['Which material would a magnet attract?','Steel paper clip','Wooden ruler','Plastic cup','Glass marble','Magnets attract ferromagnetic materials like steel, iron, nickel, and cobalt!'],
+           ['A stretched rubber band has what type of energy?','Elastic potential energy','Kinetic energy','Light energy','Sound energy','Stretching stores elastic potential energy which converts to kinetic when released!']
+         ];
+         const p4=[
+           ['What force pulls things down to the ground?','Gravity','Friction','Magnetism','Wind','Gravity is the force that pulls all objects towards the centre of the Earth!'],
+           ['Which of these is attracted to a magnet?','An iron nail','A wooden stick','A plastic ruler','A rubber band','Magnets attract objects made of iron, steel, nickel, and cobalt!'],
+           ['What type of energy does a moving car have?','Kinetic energy','Light energy','Sound energy only','No energy','A moving object has kinetic energy — energy of movement!'],
+           ['Why do we feel warm near a fire?','The fire gives off heat energy','The fire pushes air','Gravity creates warmth','The fire makes light only','Fire releases heat energy which warms nearby objects and air!'],
+           ['What makes it hard to push a heavy box across the floor?','Friction','Gravity only','Air','Magnetism','Friction between the box and floor resists the pushing force!'],
+           ['What happens when you let go of a ball in the air?','It falls down because of gravity','It floats','It goes up','It stays still','Gravity pulls the ball downward towards the Earth!'],
+           ['A battery in a torch provides what type of energy?','Electrical energy','Only light','Only heat','No energy','Batteries store chemical energy and provide electrical energy to devices!'],
+           ['Which end of a magnet is called the North pole?','The end that points north when hanging freely','The stronger end','The red end always','The bigger end','When freely suspended, one end points north — that is the North pole!']
+         ];
+         const items = isP6 ? p6 : p4;
+         const item = items[rand(0,items.length-1)];
+         return {q:item[0], opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'⚡ '+item[5], diff:'medium'};
+       }
+     ]},
+
+    // STAGE 4 — Heat & Light (medium)
+    {id:'heatlight', name:'Heat & Light', icon:'💡', topic:'heatlight', desc:'Conductors, insulators & light properties', diff:'medium',
+     qs: [
+       () => {
+         const p6=[
+           ['Why can we see our reflection in a mirror?','Light reflects off the smooth surface','The mirror creates light','Our eyes produce light','The mirror absorbs then re-emits light','Mirrors have smooth, shiny surfaces that reflect light rays in an orderly way, forming images!'],
+           ['What happens when white light passes through a prism?','It splits into a spectrum of colours','It becomes brighter','It turns black','It bends but stays white','A prism refracts white light into its component colours (ROYGBIV) — a spectrum!'],
+           ['Which of these is the best insulator of heat?','Wool','Aluminium','Copper','Iron','Wool traps air pockets which are poor heat conductors, making it an excellent insulator!'],
+           ['Why does a shadow form?','Light travels in straight lines and cannot pass through opaque objects','Objects produce darkness','Air blocks the light','Gravity creates shadows','Shadows form because light travels in straight lines and opaque objects block it!'],
+           ['Heat flows from a _____ object to a _____ object.','Hotter; cooler','Cooler; hotter','Lighter; heavier','Bigger; smaller','Heat always flows from regions of higher temperature to regions of lower temperature!'],
+           ['Why are cooking pots usually made of metal but with plastic handles?','Metal conducts heat well; plastic insulates','Metal is cheaper','Plastic is stronger','Metal is lighter','Metal conducts heat to cook food; plastic handles insulate to protect hands from burns!'],
+           ['What is the term for light bending when it passes from air into water?','Refraction','Reflection','Absorption','Diffusion','Refraction is the bending of light when it passes between materials of different densities!'],
+           ['Which colour of light is bent the most when passing through a prism?','Violet','Red','Yellow','Green','Violet light has the shortest wavelength and is refracted (bent) the most by a prism!']
+         ];
+         const p4=[
+           ['What is the main source of light on Earth?','The Sun','The Moon','Stars','Light bulbs','The Sun is the main natural source of light and heat for Earth!'],
+           ['Which of these materials lets light pass through?','Clear glass','Cardboard','Wood','Metal','Clear glass is transparent — it allows light to pass through!'],
+           ['What happens when you touch a hot cup?','Heat moves from the cup to your hand','Cold moves from your hand to the cup','Nothing happens','The cup gets hotter','Heat transfers from hotter objects (cup) to cooler objects (your hand)!'],
+           ['What colour is a shadow?','Black/dark','The same colour as the object','White','Transparent','Shadows appear dark because the object blocks light from reaching that area!'],
+           ['Which of these is a source of light?','A torch','A table','A shoe','A book','A torch produces its own light — it is a light source!'],
+           ['Why do we wear light-coloured clothes in hot weather?','Light colours reflect heat and keep us cooler','Light colours are cheaper','Light colours are heavier','Light colours absorb more heat','Light colours reflect more sunlight/heat than dark colours, keeping us cooler!'],
+           ['Can light pass through your hand?','No, your hand is opaque','Yes, easily','Only at night','Only in water','Your hand is opaque — it blocks light from passing through!'],
+           ['Why does a metal spoon in hot soup get hot?','Heat travels through the metal (conduction)','The spoon makes its own heat','Air heats the spoon','The spoon absorbs light','Metal is a good conductor — heat travels through it from the hot soup to the handle!']
+         ];
+         const items = isP6 ? p6 : p4;
+         const item = items[rand(0,items.length-1)];
+         return {q:item[0], opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'💡 '+item[5], diff:'medium'};
+       }
+     ]},
+
+    // STAGE 5 — Water Cycle & Weather (medium)
+    {id:'water', name:'Water Cycle & Weather', icon:'🌧️', topic:'water', desc:'Evaporation, condensation & weather', diff:'medium',
+     qs: [
+       () => {
+         const p6=[
+           ['What process causes water droplets to form on the outside of a cold glass?','Condensation','Evaporation','Precipitation','Transpiration','Water vapour in warm air condenses into liquid droplets on the cold glass surface!'],
+           ['What drives the water cycle?','Heat from the Sun','The Moon\'s gravity','Wind alone','Ocean currents only','The Sun\'s heat energy drives evaporation, which powers the entire water cycle!'],
+           ['What is transpiration?','Water loss from plant leaves','Rain falling from clouds','Rivers flowing to the sea','Water soaking into soil','Transpiration is the process where plants release water vapour through tiny pores (stomata) in their leaves!'],
+           ['Why do clouds form at high altitudes?','Warm moist air rises, cools, and water vapour condenses','Clouds are made in space','Wind pushes water upwards','The sky produces clouds','Rising warm air cools at altitude, causing water vapour to condense around dust particles forming clouds!'],
+           ['What is the difference between weather and climate?','Weather is short-term; climate is long-term average','They are the same','Weather is always hot; climate is cold','Climate changes daily','Weather describes current atmospheric conditions; climate is the average weather pattern over many years!'],
+           ['In the water cycle, what happens during infiltration?','Water seeps into the ground through soil','Water evaporates from the ocean','Water falls as rain','Clouds form in the sky','Infiltration is when precipitation soaks into the ground, replenishing groundwater!'],
+           ['Why does it rain more near mountains?','Moist air rises over mountains, cools, and condenses','Mountains attract water','Mountains are closer to clouds','There is more wind near mountains','Orographic rainfall occurs when moist air is forced upward by mountains, cooling and condensing!'],
+           ['What role does the water cycle play in maintaining life on Earth?','It distributes fresh water to different areas','It only creates rain','It makes the oceans bigger','It heats the Earth','The water cycle purifies and distributes fresh water across the planet, essential for all life!']
+         ];
+         const p4=[
+           ['What happens to puddles on a sunny day?','They dry up (evaporate)','They get bigger','They freeze','They turn into mud','The Sun\'s heat causes water in puddles to evaporate (turn into water vapour)!'],
+           ['Where does rain come from?','Clouds','The Sun','Space','Trees','Rain forms when water droplets in clouds become heavy enough to fall as precipitation!'],
+           ['What is water vapour?','Water in gas form (invisible)','Tiny water drops you can see','Ice crystals','Bubbles in water','Water vapour is the invisible gas form of water — you cannot see it!'],
+           ['What are clouds made of?','Tiny water droplets or ice crystals','Cotton','Smoke','Dust only','Clouds form when water vapour condenses into millions of tiny water droplets or ice crystals!'],
+           ['What happens to water when it boils?','It turns into steam (water vapour)','It disappears forever','It becomes ice','It gets heavier','Boiling water changes from liquid to gas (steam/water vapour) — this is evaporation!'],
+           ['Which is the correct order in the water cycle?','Evaporation → Condensation → Precipitation','Precipitation → Evaporation → Condensation','Condensation → Precipitation → Evaporation','Rain → Sun → Cloud → Nothing','Water evaporates, condenses into clouds, then falls as precipitation (rain/snow)!'],
+           ['Why does dew form on grass in the morning?','Cool night air causes water vapour to condense','Grass produces water','It rained at night','Worms bring water up','At night, surfaces cool down, and water vapour in the air condenses into tiny droplets (dew)!'],
+           ['What is fog?','A cloud that forms near the ground','Smoke from factories','Dust in the air','Steam from the ocean','Fog is a low-lying cloud formed when water vapour near the ground condenses!']
+         ];
+         const items = isP6 ? p6 : p4;
+         const item = items[rand(0,items.length-1)];
+         return {q:item[0], opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🌧️ '+item[5], diff:'medium'};
+       }
+     ]},
+
+    // STAGE 6 — Human Body Systems (hard)
+    {id:'body', name:'Human Body Systems', icon:'🫀', topic:'body', desc:'Digestive, circulatory & respiratory', diff:'hard',
+     qs: [
+       () => {
+         const p6=[
+           ['What is the function of the small intestine?','Absorb digested nutrients into the blood','Break down food with acid','Store waste','Pump blood around the body','The small intestine has villi that increase surface area for absorbing nutrients into the bloodstream!'],
+           ['Which blood vessels carry blood AWAY from the heart?','Arteries','Veins','Capillaries','Bronchi','Arteries carry oxygenated blood away from the heart to the body (except pulmonary artery)!'],
+           ['What is the role of the diaphragm in breathing?','It contracts and flattens to draw air into the lungs','It filters air','It warms the blood','It produces mucus','The diaphragm contracts (flattens) to increase chest volume, drawing air into the lungs!'],
+           ['Where does gaseous exchange occur in the lungs?','Alveoli','Bronchi','Trachea','Nose','Alveoli are tiny air sacs where oxygen passes into blood and carbon dioxide passes out!'],
+           ['What is the function of white blood cells?','Fight infections and diseases','Carry oxygen','Help blood clot','Transport nutrients','White blood cells are part of the immune system — they destroy bacteria, viruses, and harmful microbes!'],
+           ['What enzyme in saliva begins the digestion of starch?','Amylase','Lipase','Protease','Bile','Salivary amylase breaks down starch into simpler sugars starting in the mouth!'],
+           ['Why does the heart have valves?','To prevent blood from flowing backwards','To pump faster','To filter blood','To produce red blood cells','Heart valves ensure one-way blood flow, preventing backflow between chambers!'],
+           ['What happens to food in the stomach?','It is mixed with gastric acid and enzymes for digestion','It is fully absorbed','It turns into blood','It is stored permanently','The stomach churns food with hydrochloric acid and enzymes (protease) to break down proteins!']
+         ];
+         const p4=[
+           ['What does the heart do?','Pumps blood around the body','Helps us breathe','Digests food','Stores water','The heart is a muscular organ that pumps blood throughout your entire body!'],
+           ['Where does digestion begin?','In the mouth','In the stomach','In the intestines','In the lungs','Digestion starts in the mouth — teeth break food down and saliva begins chemical digestion!'],
+           ['What do we breathe in?','Oxygen','Carbon dioxide','Nitrogen only','Water','We breathe in air containing oxygen, which our body needs to stay alive!'],
+           ['What organ helps us breathe?','Lungs','Heart','Stomach','Liver','Our lungs take in oxygen from air and release carbon dioxide as waste!'],
+           ['What carries blood around the body?','Blood vessels (arteries and veins)','Bones','Muscles','Nerves','Blood vessels — arteries, veins, and capillaries — carry blood throughout the body!'],
+           ['What happens to food in the stomach?','It gets broken down by digestive juices','It turns into bones','It becomes air','It stays the same','The stomach uses acid and muscles to break food into smaller pieces!'],
+           ['What do we breathe out?','Carbon dioxide','Oxygen','Nitrogen','Clean air','Our body produces carbon dioxide as waste, which we breathe out through our lungs!'],
+           ['What is the largest organ in the human body?','Skin','Heart','Brain','Lungs','Skin is the largest organ — it covers your whole body and protects you!']
+         ];
+         const items = isP6 ? p6 : p4;
+         const item = items[rand(0,items.length-1)];
+         return {q:item[0], opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🫀 '+item[5], diff:'hard'};
+       }
+     ]},
+
+    // STAGE 7 — Ecosystems & Food Chains (hard)
+    {id:'ecosystem', name:'Ecosystems & Food Chains', icon:'🦁', topic:'ecosystem', desc:'Producers, consumers & food webs', diff:'hard',
+     qs: [
+       () => {
+         const p6=[
+           ['In a food chain: grass → rabbit → fox, what is the rabbit?','Primary consumer','Producer','Secondary consumer','Decomposer','The rabbit eats plants (producer), making it a primary consumer (herbivore)!'],
+           ['What would happen if all the producers in an ecosystem died?','All consumers would eventually die too','Nothing would change','Only herbivores would be affected','Carnivores would thrive','Producers are the base of food chains — without them, no energy enters the ecosystem for consumers!'],
+           ['What is the role of decomposers in an ecosystem?','Break down dead organisms and recycle nutrients','Produce food using sunlight','Hunt and eat other animals','Provide shelter for animals','Decomposers (fungi, bacteria) break down dead matter, returning nutrients to the soil for producers!'],
+           ['Why is a food web more accurate than a food chain?','It shows multiple interconnected feeding relationships','It has more animals','It is bigger','It uses arrows','A food web shows that organisms eat multiple things, reflecting real ecosystem complexity!'],
+           ['What is an adaptation?','A feature that helps an organism survive in its environment','A type of food','A disease','A habitat','Adaptations are inherited traits (structural, behavioural) that improve survival in a specific environment!'],
+           ['If a new predator is introduced to an ecosystem, what is likely to happen first?','Prey population decreases','Plants grow faster','Nothing changes','Predators leave','A new predator hunts prey, reducing the prey population, which then affects the whole food web!'],
+           ['What is the difference between a habitat and an ecosystem?','A habitat is where an organism lives; an ecosystem includes all living and non-living things interacting','They are the same','A habitat is bigger','An ecosystem has no plants','A habitat is a specific living place; an ecosystem is the entire community of organisms plus their environment!'],
+           ['Why are green plants called producers?','They produce their own food through photosynthesis','They produce oxygen only','They grow the fastest','They are green','Producers make their own food using sunlight, water, and CO₂ through photosynthesis!']
+         ];
+         const p4=[
+           ['What does a food chain show?','What eats what in nature','How to cook food','Where animals live','How plants grow','A food chain shows the flow of energy from one organism to another through eating!'],
+           ['Which of these is a producer in a food chain?','Grass','Rabbit','Eagle','Snake','Grass is a producer — it makes its own food using sunlight (photosynthesis)!'],
+           ['What do herbivores eat?','Plants','Meat','Both plants and meat','Rocks','Herbivores are animals that eat only plants, like rabbits, cows, and caterpillars!'],
+           ['What does a carnivore eat?','Other animals','Plants only','Fruits only','Seeds only','Carnivores are meat-eaters — they hunt and eat other animals!'],
+           ['Where would you find a pond ecosystem?','In or around a freshwater pond','On a mountain top','In a desert','In the sky','A pond ecosystem includes all living things (fish, plants, insects) and non-living things (water, rocks) in and around a pond!'],
+           ['What happens if there are no more frogs in a pond food chain?','Insects would increase, and snakes would have less food','Nothing changes','Fish would disappear','Plants would die','Removing frogs means more insects (their prey) and less food for snakes (their predators)!'],
+           ['An animal that eats both plants and animals is called a...','Omnivore','Herbivore','Carnivore','Producer','Omnivores eat both plants and animals — examples include bears, humans, and pigs!'],
+           ['What do all living things in an ecosystem need?','Food, water, air and shelter','Only food','Only water','Only sunlight','All organisms need food (energy), water, air (oxygen), and shelter to survive!']
+         ];
+         const items = isP6 ? p6 : p4;
+         const item = items[rand(0,items.length-1)];
+         return {q:item[0], opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🦁 '+item[5], diff:'hard'};
+       }
+     ]},
+
+    // STAGE 8 — BOSS: Science Master (mixed)
+    {id:'boss', name:'🔬 Science Master', icon:'👑', topic:'mixed', desc:'Mixed Challenge — All topics!', diff:'hard', boss:true,
+     qs: [() => { const stages = saGetStages(); const all=[...stages[0].qs,...stages[1].qs,...stages[2].qs,...stages[3].qs,...stages[4].qs,...stages[5].qs,...stages[6].qs]; return all[rand(0,all.length-1)](); }]},
+  ];
+}
+
+let saBattle = { stage:null, qIdx:0, correct:0, combo:0, bestCombo:0, questions:[], answered:false, currentQ:null };
+
+function saShowStages() {
+  document.getElementById('sa-stage-area').style.display = '';
+  document.getElementById('sa-battle-area').style.display = 'none';
+  document.getElementById('sa-result-area').style.display = 'none';
+  if (!state[currentPlayer].sciArena) state[currentPlayer].sciArena = {};
+  const sa = state[currentPlayer].sciArena;
+  if (!sa.wins) sa.wins = 0;
+  if (!sa.streak) sa.streak = 0;
+  if (!sa.bestCombo) sa.bestCombo = 0;
+  if (!sa.stageStars) sa.stageStars = {};
+  document.getElementById('sa-wins').textContent = sa.wins;
+  document.getElementById('sa-streak').textContent = sa.streak;
+  document.getElementById('sa-best-combo').textContent = sa.bestCombo;
+  const saStages = saGetStages();
+  const totalStars = Object.values(sa.stageStars || {}).reduce((s,v) => s+v, 0);
+  const maxStars = saStages.length * 3;
+  document.getElementById('sa-mastery').textContent = Math.round(totalStars/maxStars*100) + '%';
+
+  let html = '';
+  saStages.forEach((s, i) => {
+    const stars = sa.stageStars[s.id] || 0;
+    const starStr = '\u2B50'.repeat(stars) + '\u2606'.repeat(3-stars);
+    const locked = s.boss && totalStars < (saStages.length-1)*1;
+    html += `<div class="ma-stage-card ${locked?'locked':''}" onclick="${locked?'':'saStartBattle('+i+')'}">
+      <div class="mas-icon">${s.icon}</div>
+      <div class="mas-name">${s.name}</div>
+      <div class="mas-desc">${s.desc}</div>
+      <div class="mas-stars">${starStr}</div>
+      ${locked?'<div class="mas-lock">\uD83D\uDD12 Win more stages!</div>':''}
+    </div>`;
+  });
+  document.getElementById('sa-stages').innerHTML = html;
+}
+
+function saStartBattle(stageIdx) {
+  const saStages = saGetStages();
+  const stage = saStages[stageIdx];
+  saBattle = {stage, qIdx:0, correct:0, combo:0, bestCombo:0, questions:[], answered:false, currentQ:null};
+  if (!state[currentPlayer].completedQs) state[currentPlayer].completedQs = {};
+  if (!state[currentPlayer].completedQs.science) state[currentPlayer].completedQs.science = [];
+  const completed = state[currentPlayer].completedQs.science || [];
+  for (let i = 0; i < 20; i++) {
+    const q = stage.qs[rand(0, stage.qs.length-1)]();
+    if (!saBattle.questions.some(x => x.q === q.q) && !completed.includes(q.q)) {
+      saBattle.questions.push(q);
+    }
+    if (saBattle.questions.length >= 5) break;
+  }
+  if (saBattle.questions.length < 5) {
+    for (let i = saBattle.questions.length; i < 5; i++) {
+      saBattle.questions.push(stage.qs[rand(0, stage.qs.length-1)]());
+    }
+  }
+  document.getElementById('sa-stage-area').style.display = 'none';
+  document.getElementById('sa-battle-area').style.display = '';
+  document.getElementById('sa-result-area').style.display = 'none';
+  document.getElementById('sa-stage-icon').textContent = stage.icon;
+  document.getElementById('sa-stage-title').textContent = stage.name;
+  document.getElementById('sa-hint-box').style.display = 'none';
+  document.getElementById('sa-feedback').style.display = 'none';
+  saRenderQuestion();
+}
+
+function saRenderQuestion() {
+  const q = saBattle.questions[saBattle.qIdx];
+  saBattle.answered = false;
+  document.getElementById('sa-q-num').textContent = `Q${saBattle.qIdx+1} / ${saBattle.questions.length}`;
+  document.getElementById('sa-q-text').textContent = q.q;
+  document.getElementById('sa-hint-box').style.display = 'none';
+  document.getElementById('sa-feedback').style.display = 'none';
+  document.getElementById('sa-progress-bar').style.width = (saBattle.correct/5*100)+'%';
+  document.getElementById('sa-progress-text').textContent = `${saBattle.correct} / 5 correct`;
+  const passageBox = document.getElementById('sa-passage-box');
+  if (q.passage) { passageBox.style.display = 'block'; passageBox.textContent = q.passage; }
+  else { passageBox.style.display = 'none'; }
+  const correctText = q.opts[q.ans];
+  const shuffled = [...q.opts].sort(() => Math.random()-0.5);
+  const newAns = shuffled.indexOf(correctText);
+  saBattle.currentQ = {...q, opts:shuffled, ans:newAns};
+  const answersEl = document.getElementById('sa-answers');
+  answersEl.innerHTML = '';
+  shuffled.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'ma-ans-btn';
+    btn.textContent = String.fromCharCode(65+i) + '. ' + opt;
+    btn.onclick = () => saSelectAnswer(i);
+    answersEl.appendChild(btn);
+  });
+  if (saBattle.combo >= 2) {
+    document.getElementById('sa-combo-display').textContent = `${saBattle.combo}x COMBO!`;
+    document.getElementById('sa-combo-display').style.animation = 'pulse .5s';
+  } else {
+    document.getElementById('sa-combo-display').textContent = '';
+  }
+}
+
+function saSelectAnswer(idx) {
+  if (saBattle.answered) return;
+  saBattle.answered = true;
+  const q = saBattle.currentQ;
+  const btns = document.getElementById('sa-answers').querySelectorAll('.ma-ans-btn');
+  btns.forEach(b => b.style.pointerEvents = 'none');
+  const fb = document.getElementById('sa-feedback');
+
+  if (idx === q.ans) {
+    btns[idx].classList.add('correct');
+    saBattle.correct++;
+    saBattle.combo++;
+    if (saBattle.combo > saBattle.bestCombo) saBattle.bestCombo = saBattle.combo;
+    const coins = q.diff==='hard'?10:q.diff==='medium'?6:4;
+    state[currentPlayer].coins += coins;
+    fb.style.display = 'block';
+    fb.style.background = 'rgba(46,213,115,.15)';
+    fb.style.color = '#2ed573';
+    fb.innerHTML = `✅ Correct! +${coins} coins<br><span style="font-size:.85em;color:#aaa">${q.exp}</span>`;
+    playSound('correct');
+    if (saBattle.combo >= 3) playSound('combo');
+    if (!state[currentPlayer].completedQs.science) state[currentPlayer].completedQs.science = [];
+    const cq = state[currentPlayer].completedQs.science;
+    if (cq && !cq.includes(q.q)) cq.push(q.q);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    saBattle.combo = 0;
+    fb.style.display = 'block';
+    fb.style.background = 'rgba(255,71,87,.15)';
+    fb.style.color = '#ff4757';
+    fb.innerHTML = `❌ Not quite! <br>Correct answer: ${q.opts[q.ans]}<br><span style="font-size:.85em;color:#aaa">${q.exp}</span>`;
+    playSound('wrong');
+    if (!state[currentPlayer].completedQs.science) state[currentPlayer].completedQs.science = [];
+    const cq = state[currentPlayer].completedQs.science;
+    if (cq && !cq.includes(q.q)) cq.push(q.q);
+  }
+  document.getElementById('sa-progress-bar').style.width = (saBattle.correct/5*100)+'%';
+  document.getElementById('sa-progress-text').textContent = `${saBattle.correct} / 5 correct`;
+  save(); updatePlayerCards();
+  setTimeout(() => {
+    saBattle.qIdx++;
+    if (saBattle.qIdx >= saBattle.questions.length) saFinish();
+    else saRenderQuestion();
+  }, 2000);
+}
+
+function saUsePowerUp(type) {
+  if (saBattle.answered) return;
+  const costs = {'5050':10, 'hint':20};
+  if (state[currentPlayer].coins < costs[type]) return;
+  state[currentPlayer].coins -= costs[type];
+  save(); updatePlayerCards();
+  const q = saBattle.currentQ;
+  if (type === '5050') {
+    const btns = document.getElementById('sa-answers').querySelectorAll('.ma-ans-btn');
+    let removed = 0;
+    btns.forEach((b, i) => { if (i !== q.ans && removed < 2) { b.style.opacity='0.3'; b.style.pointerEvents='none'; removed++; } });
+  } else if (type === 'hint') {
+    document.getElementById('sa-hint-box').style.display = 'block';
+    document.getElementById('sa-hint-box').textContent = '\uD83D\uDCA1 ' + q.exp;
+  }
+}
+
+function saFinish() {
+  if (!state[currentPlayer].sciArena) state[currentPlayer].sciArena = {};
+  const sa = state[currentPlayer].sciArena;
+  if (!sa.wins) sa.wins = 0; if (!sa.streak) sa.streak = 0;
+  if (!sa.bestCombo) sa.bestCombo = 0; if (!sa.stageStars) sa.stageStars = {};
+  const won = saBattle.correct >= 3;
+  let stars = 0;
+  if (won) { stars = 1; sa.wins++; sa.streak++; }
+  else { sa.streak = 0; }
+  if (saBattle.correct >= 4) stars = 2;
+  if (saBattle.correct >= 5) stars = 3;
+  if (saBattle.bestCombo > sa.bestCombo) sa.bestCombo = saBattle.bestCombo;
+  const prevStars = sa.stageStars[saBattle.stage.id] || 0;
+  if (stars > prevStars) sa.stageStars[saBattle.stage.id] = stars;
+
+  let xpReward = won ? 15 : 3;
+  let coinReward = won ? 10 : 2;
+  if (stars >= 2) { xpReward += 8; coinReward += 6; }
+  if (stars >= 3) { xpReward += 12; coinReward += 8; }
+  if (saBattle.stage.boss && won) { xpReward += 15; coinReward += 12; }
+  state[currentPlayer].xp += xpReward;
+  state[currentPlayer].coins += coinReward;
+
+  document.getElementById('sa-battle-area').style.display = 'none';
+  document.getElementById('sa-result-area').style.display = '';
+  document.getElementById('sa-result-title').textContent = won ? '🔬 Victory!' : '📖 Keep Studying!';
+  document.getElementById('sa-result-title').style.color = won ? '#2ed573' : '#ffa502';
+  document.getElementById('sa-result-stars').textContent = '\u2B50'.repeat(stars) + '\u2606'.repeat(3-stars);
+  document.getElementById('sa-result-msg').textContent = `${saBattle.correct}/5 correct | Best Combo: ${saBattle.bestCombo}x`;
+  document.getElementById('sa-result-rewards').innerHTML =
+    `<span class="reward-chip" style="color:#2ed573">+${xpReward} XP</span>
+     <span class="reward-chip" style="color:#ffd200">+${coinReward} Coins</span>`;
+  save(); updatePlayerCards();
+}
+
+function saNextRound() {
+  const saStages = saGetStages();
+  const idx = saStages.findIndex(s => s.id === saBattle.stage.id);
+  const next = (idx + 1) % saStages.length;
+  saStartBattle(next);
 }
 
 // ============ ORAL QUEST SYSTEM ============
@@ -6157,13 +6678,29 @@ function toggleDailyTask(taskId) {
   renderTasksPage();
 }
 
+const PARENT_PIN = '2410';
+
 function applyTaskTime(type) {
   const player = currentTaskPlayer;
   const today = getTodayTaskData(player);
   const input = document.getElementById('task-' + type + '-input').value;
   if (!input) return;
 
-  // Reverse previous bonus
+  // Check if already set today (once per day)
+  const alreadySet = type === 'wake' ? today.wake : today.bed;
+  if (alreadySet) {
+    alert('This has already been recorded today. Only one entry per day is allowed.');
+    return;
+  }
+
+  // Parent PIN check
+  const pin = prompt('Parent PIN required.\nJoanne or Akihiro, please enter the PIN:');
+  if (pin !== PARENT_PIN) {
+    alert('Incorrect PIN. Only parents can record wake-up and bedtime.');
+    return;
+  }
+
+  // Reverse previous bonus (safety, shouldn't happen with once-per-day check)
   if (type === 'wake' && today.wake) {
     state[player].coins = Math.max(0, state[player].coins - today.wakeCoins);
     state[player].xp    = Math.max(0, state[player].xp    - today.wakeXP);
@@ -6205,7 +6742,15 @@ function renderTaskTimeResult(type) {
   const today = getTodayTaskData(player);
   const el = document.getElementById('task-' + type + '-result');
   const stored = type === 'wake' ? today.wake : today.bed;
-  if (!stored) { el.textContent = ''; return; }
+  const btn = document.getElementById('task-' + type + '-btn');
+  const inp = document.getElementById('task-' + type + '-input');
+  if (!stored) {
+    el.textContent = '';
+    // Reset button to enabled state
+    if (btn) { btn.textContent = '🔒 Apply (Parent)'; btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
+    if (inp) { inp.disabled = false; inp.style.opacity = '1'; }
+    return;
+  }
 
   const [h, m] = stored.split(':').map(Number);
   const actualMins = h * 60 + m;
@@ -6239,6 +6784,17 @@ function renderTaskTimeResult(type) {
   el.classList.remove('task-result-animate');
   void el.offsetWidth;
   el.classList.add('task-result-animate');
+
+  // Disable button after recording (once per day)
+  const btn = document.getElementById('task-' + type + '-btn');
+  if (btn) {
+    btn.textContent = '✅ Recorded';
+    btn.disabled = true;
+    btn.style.opacity = '.5';
+    btn.style.cursor = 'not-allowed';
+  }
+  const inp = document.getElementById('task-' + type + '-input');
+  if (inp) { inp.disabled = true; inp.style.opacity = '.5'; }
 
   // Show dramatic overlay reaction
   const overlay = document.createElement('div');
