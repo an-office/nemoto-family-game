@@ -530,6 +530,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   <button class="nav-btn" onclick="showPage('schedule')">Weekly Plan</button>
   <button class="nav-btn" onclick="showPage('shop')">Reward Shop</button>
   <button class="nav-btn" onclick="showPage('progress')">Progress</button>
+  <button class="nav-btn" onclick="showPage('feedback')">🐛 Feedback</button>
 </div>
 
 <!-- ===== DASHBOARD ===== -->
@@ -1539,6 +1540,54 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
 
   <!-- Summary -->
   <div class="task-summary" id="task-summary"></div>
+</div>
+
+<!-- ===== FEEDBACK PAGE ===== -->
+<div class="page" id="pg-feedback">
+  <div style="text-align:center;padding:16px 0 8px">
+    <h1 style="margin:0">🐛 Bug Report & Feedback</h1>
+    <p style="color:#aaa;font-size:.85em;margin:4px 0 0">Found a bug? Tell us! <strong style="color:#ffd200">Get 50 coins</strong> if your report helps fix something!</p>
+  </div>
+
+  <!-- New Report Form -->
+  <div class="card" style="border:1px solid rgba(79,172,254,.3)">
+    <h3 style="color:#4facfe;margin:0 0 12px">📝 New Report</h3>
+    <div style="margin-bottom:10px">
+      <label style="color:#aaa;font-size:.8em;display:block;margin-bottom:4px">What happened?</label>
+      <textarea id="fb-description" rows="3" placeholder="Describe the bug or suggestion..." style="width:100%;padding:10px;border:2px solid #333;border-radius:10px;background:#16213e;color:#fff;font-size:.95em;resize:vertical;box-sizing:border-box"></textarea>
+    </div>
+    <div style="margin-bottom:10px">
+      <label style="color:#aaa;font-size:.8em;display:block;margin-bottom:4px">Which page / feature?</label>
+      <select id="fb-page" style="width:100%;padding:8px;border:2px solid #333;border-radius:10px;background:#16213e;color:#fff;font-size:.9em">
+        <option value="">-- Select --</option>
+        <option value="Dashboard">Dashboard</option>
+        <option value="Study Quest">Study Quest</option>
+        <option value="Math Arena">Math Arena</option>
+        <option value="English Arena">English Arena</option>
+        <option value="Chinese Arena">Chinese Arena</option>
+        <option value="Science Arena">Science Arena</option>
+        <option value="Oral Quest">Oral Quest</option>
+        <option value="Tasks">Tasks</option>
+        <option value="Battle">Battle</option>
+        <option value="Reward Shop">Reward Shop</option>
+        <option value="Weekly Plan">Weekly Plan</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div style="margin-bottom:12px">
+      <label style="color:#aaa;font-size:.8em;display:block;margin-bottom:4px">📸 Screenshot (optional)</label>
+      <input type="file" id="fb-screenshot" accept="image/*" capture="environment" style="width:100%;padding:6px;border:2px solid #333;border-radius:10px;background:#16213e;color:#fff;font-size:.85em;box-sizing:border-box">
+      <div id="fb-preview" style="margin-top:8px;text-align:center"></div>
+    </div>
+    <button class="btn" onclick="submitFeedback()" style="width:100%;padding:12px;font-size:1em;background:linear-gradient(135deg,#4facfe,#00f2fe)">🚀 Submit Report</button>
+    <div id="fb-status" style="text-align:center;margin-top:8px;font-size:.85em"></div>
+  </div>
+
+  <!-- Pending Reports -->
+  <div style="margin-top:16px">
+    <h3 style="color:#ffa502;margin:0 0 10px">📋 Your Reports</h3>
+    <div id="fb-list"></div>
+  </div>
 </div>
 
 <!-- Parent PIN Modal -->
@@ -2835,7 +2884,8 @@ function showPage(id) {
         (id==='tasks'&&b.textContent.includes('Tasks'))||
         (id==='schedule'&&b.textContent.includes('Weekly'))||
         (id==='shop'&&b.textContent.includes('Shop'))||
-        (id==='progress'&&b.textContent==='Progress')) b.classList.add('active');
+        (id==='progress'&&b.textContent==='Progress')||
+        (id==='feedback'&&b.textContent.includes('Feedback'))) b.classList.add('active');
   });
   if (id==='shop') renderShop();
   if (id==='progress') renderProgress('yuhi');
@@ -2844,6 +2894,7 @@ function showPage(id) {
   if (id==='arena') initArena();
   if (id==='battle') initBattle();
   if (id==='tasks') initTasks();
+  if (id==='feedback') renderFeedbackList();
 }
 
 // ============ PLAYER SELECTION ============
@@ -7436,6 +7487,218 @@ function coopEndBattle(won) {
 
 initBattle();
 
+// ========= FEEDBACK SYSTEM =========
+let feedbackData = [];
+try { feedbackData = JSON.parse(localStorage.getItem('nemoto-feedback-v1')) || []; } catch(e) { feedbackData = []; }
+function saveFeedback() { localStorage.setItem('nemoto-feedback-v1', JSON.stringify(feedbackData)); }
+
+// Screenshot preview
+document.addEventListener('DOMContentLoaded', function() {
+  var fbScreenshot = document.getElementById('fb-screenshot');
+  if (fbScreenshot) {
+    fbScreenshot.addEventListener('change', function(e) {
+      var preview = document.getElementById('fb-preview');
+      if (!preview) return;
+      var file = e.target.files[0];
+      if (!file) { preview.innerHTML = ''; return; }
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        preview.innerHTML = '<img src="' + ev.target.result + '" style="max-width:100%;max-height:200px;border-radius:10px;border:2px solid #333">';
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+});
+
+function submitFeedback() {
+  var desc = document.getElementById('fb-description').value.trim();
+  var page = document.getElementById('fb-page').value;
+  var statusEl = document.getElementById('fb-status');
+
+  if (!desc) {
+    statusEl.innerHTML = '<span style="color:#ff4757">Please describe the bug!</span>';
+    return;
+  }
+  if (!page) {
+    statusEl.innerHTML = '<span style="color:#ff4757">Please select which page!</span>';
+    return;
+  }
+
+  var entry = {
+    id: Date.now(),
+    player: currentPlayer,
+    date: new Date().toISOString().slice(0,10),
+    time: new Date().toLocaleTimeString('en-SG', {hour:'2-digit', minute:'2-digit'}),
+    page: page,
+    desc: desc,
+    screenshot: null,
+    status: 'pending', // pending | approved | rejected
+    coins: 0
+  };
+
+  // Handle screenshot
+  var fileInput = document.getElementById('fb-screenshot');
+  if (fileInput && fileInput.files[0]) {
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      entry.screenshot = ev.target.result;
+      feedbackData.unshift(entry);
+      saveFeedback();
+      finishSubmitFeedback(statusEl);
+    };
+    reader.readAsDataURL(fileInput.files[0]);
+  } else {
+    feedbackData.unshift(entry);
+    saveFeedback();
+    finishSubmitFeedback(statusEl);
+  }
+}
+
+function finishSubmitFeedback(statusEl) {
+  playSound('correct');
+  statusEl.innerHTML = '<span style="color:#2ed573">✅ Report submitted! Dad will review it.</span>';
+  document.getElementById('fb-description').value = '';
+  document.getElementById('fb-page').value = '';
+  document.getElementById('fb-screenshot').value = '';
+  document.getElementById('fb-preview').innerHTML = '';
+  renderFeedbackList();
+  setTimeout(function() { statusEl.innerHTML = ''; }, 3000);
+}
+
+function renderFeedbackList() {
+  var el = document.getElementById('fb-list');
+  if (!el) return;
+  var playerReports = feedbackData.filter(function(f) { return f.player === currentPlayer; });
+  if (playerReports.length === 0) {
+    el.innerHTML = '<div style="color:#555;text-align:center;padding:16px;font-size:.9em">No reports yet. Find a bug and earn 50 coins! 🐛</div>';
+    return;
+  }
+
+  var html = '';
+  playerReports.forEach(function(f) {
+    var statusBadge, statusColor;
+    if (f.status === 'approved') {
+      statusBadge = '✅ Approved (+50 coins!)';
+      statusColor = '#2ed573';
+    } else if (f.status === 'rejected') {
+      statusBadge = '❌ Not a bug';
+      statusColor = '#ff6b6b';
+    } else {
+      statusBadge = '⏳ Pending Review';
+      statusColor = '#ffa502';
+    }
+
+    html += '<div style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:12px;margin-bottom:10px">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">';
+    html += '<span style="color:#4facfe;font-size:.8em;font-weight:700">' + f.page + '</span>';
+    html += '<span style="color:' + statusColor + ';font-size:.8em;font-weight:700">' + statusBadge + '</span>';
+    html += '</div>';
+    html += '<div style="color:#ddd;font-size:.9em;line-height:1.4">' + f.desc.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
+    if (f.screenshot) {
+      html += '<div style="margin-top:8px"><img src="' + f.screenshot + '" style="max-width:100%;max-height:150px;border-radius:8px;border:1px solid #333"></div>';
+    }
+    html += '<div style="color:#555;font-size:.75em;margin-top:6px">' + f.date + ' ' + (f.time||'') + '</div>';
+    // Parent approve/reject buttons (only for pending)
+    if (f.status === 'pending') {
+      html += '<div style="display:flex;gap:8px;margin-top:8px">';
+      html += '<button onclick="feedbackAction(' + f.id + ',\'approved\')" style="padding:6px 14px;border:none;border-radius:8px;background:#2ed573;color:#1a1a2e;font-weight:700;font-size:.8em;cursor:pointer">✅ Approve (+50c)</button>';
+      html += '<button onclick="feedbackAction(' + f.id + ',\'rejected\')" style="padding:6px 14px;border:none;border-radius:8px;background:#ff6b6b;color:#fff;font-weight:700;font-size:.8em;cursor:pointer">❌ Not a Bug</button>';
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function feedbackAction(id, action) {
+  // Show PIN modal first
+  _pendingFeedbackAction = { id: id, action: action };
+  var modal = document.getElementById('pin-modal');
+  var titleEl = document.getElementById('pin-title');
+  var subEl = document.getElementById('pin-subtitle');
+  var pinInput = document.getElementById('pin-input');
+  var pinErr = document.getElementById('pin-error');
+  if (modal && titleEl && subEl && pinInput) {
+    titleEl.textContent = action === 'approved' ? '✅ Approve this report?' : '❌ Reject this report?';
+    subEl.textContent = 'Enter Parent PIN to confirm:';
+    pinInput.value = '';
+    pinInput.style.display = '';
+    pinInput.type = 'password';
+    if (pinErr) pinErr.style.display = 'none';
+    var btns = modal.querySelectorAll('button');
+    btns.forEach(function(b){ b.style.display = ''; });
+    modal.style.display = 'flex';
+    setTimeout(function(){ pinInput.focus(); }, 200);
+  }
+}
+
+var _pendingFeedbackAction = null;
+
+// Extend pinModalSubmit to handle feedback actions too
+var _origPinSubmit = pinModalSubmit;
+
+function pinModalSubmit() {
+  try {
+    var pinInput = document.getElementById('pin-input');
+    var pin = pinInput ? pinInput.value : '';
+    if (pin !== PARENT_PIN) {
+      var pinErr = document.getElementById('pin-error');
+      if (pinErr) pinErr.style.display = 'block';
+      if (pinInput) { pinInput.value = ''; pinInput.focus(); }
+      return;
+    }
+    var modal = document.getElementById('pin-modal');
+    if (modal) modal.style.display = 'none';
+
+    // Handle feedback action
+    if (_pendingFeedbackAction) {
+      var fa = _pendingFeedbackAction;
+      _pendingFeedbackAction = null;
+      var entry = feedbackData.find(function(f) { return f.id === fa.id; });
+      if (entry) {
+        entry.status = fa.action;
+        if (fa.action === 'approved') {
+          entry.coins = 50;
+          state[entry.player].coins += 50;
+          save();
+          updatePlayerCards();
+          playSound('combo');
+        }
+        saveFeedback();
+        renderFeedbackList();
+      }
+      return;
+    }
+
+    // Handle task time
+    if (_pendingTimeType) {
+      _applyTaskTimeConfirmed(_pendingTimeType);
+      _pendingTimeType = null;
+    }
+  } catch(e) {
+    console.error('pinModalSubmit error:', e);
+  }
+}
+
+// ========= DAILY TASKS AUTO-RESET =========
+// Tasks naturally reset because getTodayTaskKey() uses today's date.
+// Clean up old task data (keep last 7 days only) to save localStorage space.
+(function cleanOldTasks() {
+  var now = new Date();
+  ['yuhi','ryusei'].forEach(function(p) {
+    if (!tasksState[p]) return;
+    var keys = Object.keys(tasksState[p]);
+    keys.forEach(function(k) {
+      // k is a date string like '2026-03-29'
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+      var d = new Date(k + 'T00:00:00');
+      var daysDiff = Math.floor((now - d) / (1000*60*60*24));
+      if (daysDiff > 7) delete tasksState[p][k];
+    });
+  });
+  saveTasks();
+})();
+
 // ========= DAILY TASKS =========
 const yuhiTaskDefs = [
   {id:'grammar_mcq',  name:'Grammar MCQ',                     detail:'1 page',  time:10, coins:15, xp:30,  cat:'📝 English', gameMin:0},
@@ -7741,27 +8004,6 @@ function _showPinMsg(msg) {
 function pinModalCancel() {
   document.getElementById('pin-modal').style.display = 'none';
   _pendingTimeType = null;
-}
-
-function pinModalSubmit() {
-  try {
-    var pinInput = document.getElementById('pin-input');
-    var pin = pinInput ? pinInput.value : '';
-    if (pin !== PARENT_PIN) {
-      var pinErr = document.getElementById('pin-error');
-      if (pinErr) pinErr.style.display = 'block';
-      if (pinInput) { pinInput.value = ''; pinInput.focus(); }
-      return;
-    }
-    var modal = document.getElementById('pin-modal');
-    if (modal) modal.style.display = 'none';
-    if (_pendingTimeType) {
-      _applyTaskTimeConfirmed(_pendingTimeType);
-      _pendingTimeType = null;
-    }
-  } catch(e) {
-    console.error('pinModalSubmit error:', e);
-  }
 }
 
 // Allow Enter key to submit PIN
