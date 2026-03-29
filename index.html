@@ -1519,7 +1519,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       <button class="task-time-btn" id="task-wake-btn" onclick="applyTaskTime('wake')">🔒 Apply (Parent)</button>
     </div>
     <div class="task-time-result" id="task-wake-result"></div>
-    <div style="color:#777;font-size:.75em;margin-top:6px">Early: +30 coins +30 XP per min &nbsp;|&nbsp; Late: −30 coins −30 XP per min</div>
+    <div style="color:#777;font-size:.75em;margin-top:6px">Early: +15 coins +15 XP per min &nbsp;|&nbsp; Late: −15 coins −15 XP per min</div>
   </div>
 
   <!-- Task list -->
@@ -1534,7 +1534,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       <button class="task-time-btn" id="task-bed-btn" onclick="applyTaskTime('bed')">🔒 Apply (Parent)</button>
     </div>
     <div class="task-time-result" id="task-bed-result"></div>
-    <div style="color:#777;font-size:.75em;margin-top:6px">Early: +30 coins +30 XP per min &nbsp;|&nbsp; Late: −30 coins −30 XP per min</div>
+    <div style="color:#777;font-size:.75em;margin-top:6px">Early: +15 coins +15 XP per min &nbsp;|&nbsp; Late: −15 coins −15 XP per min</div>
   </div>
 
   <!-- Summary -->
@@ -7584,55 +7584,71 @@ const PARENT_PIN = '2410';
 let _pendingTimeType = null;
 
 function applyTaskTime(type) {
-  const player = currentTaskPlayer;
-  const today = getTodayTaskData(player);
-  const inputEl = document.getElementById('task-' + type + '-input');
-  const input = inputEl ? inputEl.value : '';
+  try {
+    var player = currentTaskPlayer;
+    var today = getTodayTaskData(player);
 
-  if (!input) {
-    // Show PIN modal as a time-entry prompt instead
+    // Check if already set today
+    var alreadySet = type === 'wake' ? today.wake : today.bed;
+    if (alreadySet) {
+      _showPinMsg('✅ Already recorded today!');
+      return;
+    }
+
+    var inputEl = document.getElementById('task-' + type + '-input');
+    var input = inputEl ? inputEl.value : '';
+
+    if (!input) {
+      _showPinMsg('⏰ Please enter the time first!');
+      return;
+    }
+
+    // Time entered, show PIN modal
     _pendingTimeType = type;
     var modal = document.getElementById('pin-modal');
-    if (modal) {
-      document.getElementById('pin-title').textContent = type === 'wake' ? '⏰ Enter Wake-up Time' : '🌙 Enter Bedtime';
-      document.getElementById('pin-subtitle').textContent = 'Enter PIN, then record the time.';
-      document.getElementById('pin-input').value = '';
-      document.getElementById('pin-error').style.display = 'none';
+    var titleEl = document.getElementById('pin-title');
+    var subEl = document.getElementById('pin-subtitle');
+    var pinInput = document.getElementById('pin-input');
+    var pinErr = document.getElementById('pin-error');
+
+    if (modal && titleEl && subEl && pinInput) {
+      titleEl.textContent = '🔒 Parent PIN Required';
+      subEl.textContent = 'Joanne or Akihiro, please enter the PIN:';
+      pinInput.value = '';
+      pinInput.style.display = '';
+      pinInput.type = 'password';
+      if (pinErr) pinErr.style.display = 'none';
+      // Show confirm/cancel buttons
+      var btns = modal.querySelectorAll('button');
+      btns.forEach(function(b){ b.style.display = ''; });
       modal.style.display = 'flex';
-      setTimeout(function(){ document.getElementById('pin-input').focus(); }, 100);
+      setTimeout(function(){ pinInput.focus(); }, 200);
     }
-    return;
-  }
-
-  // Check if already set today (once per day)
-  var alreadySet = type === 'wake' ? today.wake : today.bed;
-  if (alreadySet) {
-    _showPinMsg('Already recorded today!');
-    return;
-  }
-
-  // Show PIN modal
-  _pendingTimeType = type;
-  var modal = document.getElementById('pin-modal');
-  if (modal) {
-    document.getElementById('pin-title').textContent = '🔒 Parent PIN Required';
-    document.getElementById('pin-subtitle').textContent = 'Joanne or Akihiro, please enter the PIN:';
-    document.getElementById('pin-input').value = '';
-    document.getElementById('pin-error').style.display = 'none';
-    modal.style.display = 'flex';
-    setTimeout(function(){ document.getElementById('pin-input').focus(); }, 100);
+  } catch(e) {
+    console.error('applyTaskTime error:', e);
   }
 }
 
 function _showPinMsg(msg) {
   var modal = document.getElementById('pin-modal');
-  if (modal) {
-    document.getElementById('pin-title').textContent = msg;
-    document.getElementById('pin-subtitle').textContent = '';
-    document.getElementById('pin-input').style.display = 'none';
-    document.getElementById('pin-error').style.display = 'none';
+  var titleEl = document.getElementById('pin-title');
+  var subEl = document.getElementById('pin-subtitle');
+  var pinInput = document.getElementById('pin-input');
+  var pinErr = document.getElementById('pin-error');
+  if (modal && titleEl) {
+    titleEl.textContent = msg;
+    if (subEl) subEl.textContent = '';
+    if (pinInput) pinInput.style.display = 'none';
+    if (pinErr) pinErr.style.display = 'none';
+    // Hide confirm/cancel buttons for message-only mode
+    var btns = modal.querySelectorAll('button');
+    btns.forEach(function(b){ b.style.display = 'none'; });
     modal.style.display = 'flex';
-    setTimeout(function(){ modal.style.display = 'none'; document.getElementById('pin-input').style.display = ''; }, 2000);
+    setTimeout(function(){
+      modal.style.display = 'none';
+      if (pinInput) pinInput.style.display = '';
+      btns.forEach(function(b){ b.style.display = ''; });
+    }, 2500);
   }
 }
 
@@ -7642,17 +7658,23 @@ function pinModalCancel() {
 }
 
 function pinModalSubmit() {
-  var pin = document.getElementById('pin-input').value;
-  if (pin !== PARENT_PIN) {
-    document.getElementById('pin-error').style.display = 'block';
-    document.getElementById('pin-input').value = '';
-    document.getElementById('pin-input').focus();
-    return;
-  }
-  document.getElementById('pin-modal').style.display = 'none';
-  if (_pendingTimeType) {
-    _applyTaskTimeConfirmed(_pendingTimeType);
-    _pendingTimeType = null;
+  try {
+    var pinInput = document.getElementById('pin-input');
+    var pin = pinInput ? pinInput.value : '';
+    if (pin !== PARENT_PIN) {
+      var pinErr = document.getElementById('pin-error');
+      if (pinErr) pinErr.style.display = 'block';
+      if (pinInput) { pinInput.value = ''; pinInput.focus(); }
+      return;
+    }
+    var modal = document.getElementById('pin-modal');
+    if (modal) modal.style.display = 'none';
+    if (_pendingTimeType) {
+      _applyTaskTimeConfirmed(_pendingTimeType);
+      _pendingTimeType = null;
+    }
+  } catch(e) {
+    console.error('pinModalSubmit error:', e);
   }
 }
 
@@ -7686,12 +7708,12 @@ function _applyTaskTimeConfirmed(type) {
   let coins = 0, xp = 0;
   if (diff > 0) {
     const mins = Math.min(diff, 30);
-    coins = mins * 30;
-    xp    = mins * 30;
+    coins = mins * 15;
+    xp    = mins * 15;
   } else if (diff < 0) {
     const mins = Math.min(Math.abs(diff), 30);
-    coins = -(mins * 30);
-    xp    = -(mins * 30);
+    coins = -(mins * 15);
+    xp    = -(mins * 15);
   }
 
   if (type === 'wake') { today.wake = input; today.wakeCoins = coins; today.wakeXP = xp; }
@@ -8283,6 +8305,165 @@ function checkDeviceIdentity() {
     if (modal) modal.style.display = 'flex';
   }
 }
+
+// ============ RECORD BEDTIME: 2026-03-29 ============
+(function recordBedtime20260329() {
+  const dateKey = '2026-03-29';
+  ['yuhi','ryusei'].forEach(function(player) {
+    if (!tasksState[player]) tasksState[player] = {};
+    if (!tasksState[player][dateKey]) {
+      tasksState[player][dateKey] = {done:[], wake:null, bed:null, wakeCoins:0, wakeXP:0, bedCoins:0, bedXP:0};
+    }
+    var today = tasksState[player][dateKey];
+    if (today.bed) return; // already recorded
+
+    var bedTime = player === 'yuhi' ? '20:19' : '20:08';
+    var h = parseInt(bedTime.split(':')[0]);
+    var m = parseInt(bedTime.split(':')[1]);
+    var actualMins = h * 60 + m;
+    var targetMins = 20 * 60 + 30; // BED_TARGET = 20:30
+    var diff = targetMins - actualMins; // positive = early
+
+    var coins = 0, xp = 0;
+    if (diff > 0) {
+      var mins = Math.min(diff, 30);
+      coins = mins * 15;
+      xp    = mins * 15;
+    } else if (diff < 0) {
+      var mins2 = Math.min(Math.abs(diff), 30);
+      coins = -(mins2 * 15);
+      xp    = -(mins2 * 15);
+    }
+
+    today.bed = bedTime;
+    today.bedCoins = coins;
+    today.bedXP = xp;
+
+    state[player].coins = Math.max(0, state[player].coins + coins);
+    state[player].xp    = Math.max(0, state[player].xp    + xp);
+  });
+  save();
+  saveTasks();
+})();
+
+// ============ MORNING BEDTIME CELEBRATION ============
+// When app opens, check if last night's bedtime was early and show a celebration
+(function checkMorningCelebration() {
+  var now = new Date();
+  var hour = now.getHours();
+  // Only show between 4:00 AM and 9:00 AM
+  if (hour < 4 || hour >= 9) return;
+
+  // Check yesterday's date (bedtime was recorded yesterday evening)
+  var yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - (hour < 4 ? 1 : 0));
+  // Actually for morning check, we want the date the bedtime was recorded
+  // If it's 6 AM on March 30, we check March 29's bed record
+  // But if it's past midnight, the bedtime date is "today" minus 0 or 1
+  // The bedtime entry is stored under the date it happened (evening date)
+  var checkDate = new Date(now);
+  checkDate.setDate(checkDate.getDate()); // today for early morning before sleep
+  // Actually bedtime is evening, so the date key should be yesterday if we're past midnight
+  // For 6AM on March 30, bed was recorded on March 29
+  if (hour < 12) {
+    checkDate.setDate(checkDate.getDate() - 1);
+  }
+  var dateKey = checkDate.toISOString().slice(0,10);
+
+  // Check if celebration was already shown for this date
+  var celebKey = 'nemoto-bed-celeb-' + dateKey;
+  if (localStorage.getItem(celebKey)) return;
+
+  var players = ['yuhi', 'ryusei'];
+  var earlyPlayers = [];
+
+  players.forEach(function(p) {
+    if (!tasksState[p] || !tasksState[p][dateKey]) return;
+    var data = tasksState[p][dateKey];
+    if (!data.bed) return;
+    var parts = data.bed.split(':');
+    var bedMins = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+    var targetMins = 20 * 60 + 30;
+    if (bedMins <= targetMins) {
+      var diff = targetMins - bedMins;
+      earlyPlayers.push({
+        name: p === 'yuhi' ? 'Yuhi' : 'Ryusei',
+        time: data.bed,
+        diff: diff,
+        coins: data.bedCoins,
+        xp: data.bedXP
+      });
+    }
+  });
+
+  if (earlyPlayers.length === 0) return;
+
+  // Mark as shown
+  localStorage.setItem(celebKey, '1');
+
+  // Show celebration after a short delay so page loads first
+  setTimeout(function() {
+    // Play celebration sound
+    if (!soundMuted) {
+      try {
+        var ctx = getAudioCtx();
+        var t = ctx.currentTime;
+        var g = ctx.createGain();
+        g.connect(ctx.destination);
+        g.gain.setValueAtTime(0.2, t);
+        g.gain.linearRampToValueAtTime(0.18, t + 1.2);
+        g.gain.exponentialRampToValueAtTime(0.01, t + 2.5);
+        // Triumphant morning fanfare
+        var melody = [392, 523, 659, 784, 1047, 784, 1047, 1319];
+        melody.forEach(function(f, i) {
+          var o = ctx.createOscillator();
+          o.type = i < 4 ? 'triangle' : 'sine';
+          o.frequency.setValueAtTime(f, t + i * 0.2);
+          o.connect(g);
+          o.start(t + i * 0.2);
+          o.stop(t + i * 0.2 + 0.25);
+        });
+      } catch(e) {}
+    }
+
+    // Build overlay
+    var overlay = document.createElement('div');
+    overlay.id = 'morning-celeb-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);z-index:20000;display:flex;align-items:center;justify-content:center;animation:fadeIn .5s ease';
+
+    var msgs = [
+      "🌟 Amazing! You went to bed early last night!",
+      "🏆 Champions know that sleep = superpower!",
+      "⭐ Early to bed makes you stronger & smarter!",
+      "🎉 Great discipline! Your brain thanks you!",
+      "💪 Sleep heroes earn the best rewards!"
+    ];
+    var randomMsg = msgs[Math.floor(Math.random() * msgs.length)];
+
+    var playerCards = '';
+    earlyPlayers.forEach(function(ep) {
+      playerCards += '<div style="background:rgba(46,213,115,.15);border:2px solid #2ed573;border-radius:16px;padding:16px;margin:8px 0;min-width:220px">' +
+        '<div style="font-size:1.4em;font-weight:900;color:#2ed573">' + ep.name + '</div>' +
+        '<div style="font-size:.95em;color:#ddd;margin:6px 0">🌙 Bedtime: <strong>' + ep.time + '</strong></div>' +
+        '<div style="font-size:.9em;color:#aaa">' + ep.diff + ' minutes early!</div>' +
+        '<div style="margin-top:8px;font-size:1.1em">' +
+          '<span style="color:#ffd200;font-weight:800">+' + ep.coins + ' coins</span> &nbsp; ' +
+          '<span style="color:#4facfe;font-weight:800">+' + ep.xp + ' XP</span>' +
+        '</div>' +
+      '</div>';
+    });
+
+    overlay.innerHTML = '<div style="text-align:center;max-width:380px;padding:24px">' +
+      '<div style="font-size:3em;margin-bottom:12px">🌅</div>' +
+      '<div style="font-size:1.6em;font-weight:900;color:#ffd200;margin-bottom:8px">Good Morning!</div>' +
+      '<div style="font-size:1.1em;color:#fff;margin-bottom:16px;line-height:1.5">' + randomMsg + '</div>' +
+      playerCards +
+      '<button onclick="this.parentElement.parentElement.remove()" style="margin-top:20px;padding:14px 40px;border:none;border-radius:12px;background:linear-gradient(135deg,#ffd200,#ffa502);color:#1a1a2e;font-size:1.1em;font-weight:900;cursor:pointer;box-shadow:0 4px 15px rgba(255,165,2,.4)">🚀 Let\'s Have a Great Day!</button>' +
+    '</div>';
+
+    document.body.appendChild(overlay);
+  }, 800);
+})();
 
 // Run sync after all inits
 setTimeout(() => {
