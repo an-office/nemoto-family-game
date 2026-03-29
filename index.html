@@ -519,6 +519,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   <button class="nav-btn" onclick="showPage('oral')">Oral Quest</button>
   <button class="nav-btn" id="nav-arena" onclick="showPage('arena')">Math Arena</button>
   <button class="nav-btn" id="nav-eng-arena" onclick="showPage('eng-arena')">English Arena</button>
+  <button class="nav-btn" id="nav-ch-arena" onclick="showPage('ch-arena')">Chinese Arena</button>
   <button class="nav-btn" onclick="showPage('battle')">⚔️ Battle!</button>
   <button class="nav-btn" onclick="showPage('tasks')">✅ Tasks</button>
   <button class="nav-btn" onclick="showPage('schedule')">Weekly Plan</button>
@@ -566,8 +567,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   <div class="reward-bar">
     <div class="icon">&#127918;</div>
     <div class="info">
-      <h4>Daily Max = 10 min Gaming!</h4>
-      <p>20 quizzes = +1 min gaming. 100 quizzes = 5 min. Max 10 min/day (can accumulate!)</p>
+      <h4>Gaming Time = Shop Only! 🛒</h4>
+      <p>Earn coins from quizzes & tasks → Buy gaming time in the Reward Shop! Max 10 min/day.</p>
     </div>
     <div style="text-align:center">
       <div style="font-size:.7em;color:#aaa">GAMING BANK</div>
@@ -618,8 +619,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       </div>
     </div>
     <div style="text-align:center;color:#999;font-size:.8em">
-      Rule: 20 quizzes = +1 min. 100 quizzes = 5 min. <strong style="color:#ff6b6b">Max 10 min/day</strong> (saves up!)<br>
-      <span style="color:#ffd200">Today's limit resets at midnight. Banked minutes carry over!</span>
+      🛒 Gaming time is purchased with coins in the Reward Shop. <strong style="color:#ff6b6b">Max 10 min/day</strong> (saves up!)<br>
+      <span style="color:#ffd200">Banked minutes carry over! Earn coins from quizzes, tasks & activities.</span>
     </div>
   </div>
 
@@ -658,7 +659,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
 
   <!-- DAILY CHALLENGE -->
   <div class="challenge-card">
-    <h3>TODAY'S DAILY TASKS (Complete ALL = 5min Gaming)</h3>
+    <h3>TODAY'S DAILY TASKS (Complete ALL = Bonus Coins!)</h3>
     <ul>
       <li id="task-1"><strong>Task 1:</strong> Complete 3 Math quizzes</li>
       <li id="task-2"><strong>Task 2:</strong> Complete 3 Science quizzes</li>
@@ -852,7 +853,53 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div class="oq-stage-select" id="oq-stages"></div>
   </div>
 
-  <!-- ACTIVE QUEST -->
+  <!-- MODE SELECT (after choosing a scenario) -->
+  <div id="oq-mode-select" style="display:none">
+    <div class="oq-scenario" id="oq-scenario-preview"></div>
+    <div class="card" style="text-align:center;margin-top:12px">
+      <h3 style="color:#ffa502;margin-bottom:12px">How do you want to practice?</h3>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <button onclick="startGuidedMode()" class="btn btn-primary" style="padding:16px 24px;font-size:1em;flex:1;max-width:250px">
+          🧭 Guided Mode<br><small style="font-weight:400;opacity:.8">Step-by-step (do it yourself!)</small>
+        </button>
+        <button onclick="startFreeMode()" class="btn btn-secondary" style="padding:16px 24px;font-size:1em;flex:1;max-width:250px">
+          ✍️ Free Mode<br><small style="font-weight:400;opacity:.8">Write everything at once</small>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GUIDED MODE (step-by-step) -->
+  <div id="oq-guided-area" style="display:none">
+    <div class="oq-scenario" id="oq-guided-scenario"></div>
+
+    <!-- Progress bar -->
+    <div style="margin:12px 0;background:#1a1a2e;border-radius:8px;height:8px;overflow:hidden">
+      <div id="oq-guided-progress" style="height:100%;background:linear-gradient(90deg,#ffa502,#ffd200);width:0%;transition:width .4s"></div>
+    </div>
+    <div style="text-align:center;color:#aaa;font-size:.8em;margin-bottom:8px" id="oq-guided-step-label">Step 1 of 6</div>
+
+    <!-- Step content -->
+    <div class="card" id="oq-guided-step-card" style="border:1px solid rgba(255,165,2,.3)">
+      <div id="oq-guided-step-icon" style="font-size:2em;text-align:center;margin-bottom:8px"></div>
+      <h3 id="oq-guided-step-title" style="color:#ffa502;text-align:center"></h3>
+      <p id="oq-guided-step-help" style="color:#aaa;font-size:.9em;line-height:1.6"></p>
+      <div id="oq-guided-word-bank" style="margin:8px 0;display:none"></div>
+      <textarea id="oq-guided-input" rows="3" style="width:100%;background:#1a1a2e;color:#e0e0e0;border:1px solid #333;border-radius:8px;padding:10px;font-size:.95em;resize:vertical" placeholder="Type here..."></textarea>
+      <div style="display:flex;gap:8px;margin-top:10px;justify-content:center">
+        <button onclick="oqGuidedBack()" id="oq-guided-back-btn" class="btn btn-secondary" style="padding:10px 20px;display:none">Back</button>
+        <button onclick="oqGuidedNext()" id="oq-guided-next-btn" class="btn btn-primary" style="padding:10px 24px">Next Step +5 coins</button>
+      </div>
+    </div>
+
+    <!-- Running total -->
+    <div style="text-align:center;margin-top:8px;color:#aaa;font-size:.85em">
+      Coins earned so far: <span id="oq-guided-coins" style="color:#ffd200;font-weight:700">0</span> |
+      XP earned: <span id="oq-guided-xp" style="color:#e94560;font-weight:700">0</span>
+    </div>
+  </div>
+
+  <!-- FREE MODE (original) -->
   <div id="oq-quest-area" style="display:none">
     <div class="oq-scenario" id="oq-scenario"></div>
 
@@ -877,7 +924,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     </div>
 
     <div class="oq-response">
-      <textarea id="oq-answer" placeholder="Nathaniel talks, Dad types here...&#10;&#10;Try using PEEL:&#10;Point: I think...&#10;Example: In the photo, I can see...&#10;Experience: This reminds me of...&#10;Link: Overall, I believe..."></textarea>
+      <textarea id="oq-answer" placeholder="Type your answer here...&#10;&#10;Try using PEEL:&#10;Point: I think...&#10;Example: In the photo, I can see...&#10;Experience: This reminds me of...&#10;Link: Overall, I believe..."></textarea>
     </div>
 
     <div class="oq-submit">
@@ -936,7 +983,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div class="ma-stat"><div class="ms-val" id="ma-wins">0</div><div class="ms-lbl">Wins</div></div>
     <div class="ma-stat"><div class="ms-val" id="ma-streak">0</div><div class="ms-lbl">🔥 Streak</div></div>
     <div class="ma-stat"><div class="ms-val" id="ma-best-combo">0</div><div class="ms-lbl">Best Combo</div></div>
-    <div class="ma-stat"><div class="ms-val" id="ma-total-dmg">0</div><div class="ms-lbl">Total DMG</div></div>
+    <div class="ma-stat"><div class="ms-val" id="ma-total-dmg">0</div><div class="ms-lbl">Total Damage</div></div>
   </div>
 
   <!-- STAGE SELECT -->
@@ -970,9 +1017,9 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     </div>
 
     <div class="ma-powerups" id="ma-powerups">
-      <button class="ma-pu-btn" id="pu-5050" onclick="usePowerUp('5050')">🎯 50/50 (10c)</button>
-      <button class="ma-pu-btn" id="pu-hint" onclick="usePowerUp('hint')">💡 Hint (20c)</button>
-      <button class="ma-pu-btn" id="pu-double" onclick="usePowerUp('double')">💥 2x DMG (20c)</button>
+      <button class="ma-pu-btn" id="pu-5050" onclick="usePowerUp('5050')">🎯 50/50<br><small>10 coins</small></button>
+      <button class="ma-pu-btn" id="pu-hint" onclick="usePowerUp('hint')">💡 Show Hint<br><small>20 coins</small></button>
+      <button class="ma-pu-btn" id="pu-double" onclick="usePowerUp('double')">💥 Double Damage<br><small>20 coins</small></button>
     </div>
 
     <div class="ma-question" id="ma-question-box">
@@ -1033,8 +1080,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     </div>
 
     <div class="ma-powerups" id="ea-powerups">
-      <button class="ma-pu-btn" onclick="eaUsePowerUp('5050')">🎯 50/50 (10c)</button>
-      <button class="ma-pu-btn" onclick="eaUsePowerUp('hint')">💡 Hint (20c)</button>
+      <button class="ma-pu-btn" onclick="eaUsePowerUp('5050')">🎯 50/50<br><small>10 coins</small></button>
+      <button class="ma-pu-btn" onclick="eaUsePowerUp('hint')">💡 Show Hint<br><small>20 coins</small></button>
     </div>
 
     <div class="ma-question" id="ea-question-box">
@@ -1058,6 +1105,70 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div class="mr-btns">
       <button class="ma-btn-next" onclick="eaNextRound()">📚 Next Round!</button>
       <button class="ma-btn-back" onclick="eaShowStages()">🗺️ Stage Select</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CHINESE ARENA (Both Players) ===== -->
+<div class="page" id="pg-ch-arena">
+  <div class="ma-header" style="background:linear-gradient(135deg,#1a1a2e 0%,#2e1a1a 50%,#3e2010 100%)">
+    <h1>🏮 CHINESE ARENA 🏮</h1>
+    <div class="ma-sub" style="color:#ffa502">中文挑战 — Master Chinese with POWER!</div>
+  </div>
+
+  <div class="ma-stats" style="background:rgba(255,165,0,.08)">
+    <div class="ma-stat"><div class="ms-val" id="ca-wins">0</div><div class="ms-lbl">Wins</div></div>
+    <div class="ma-stat"><div class="ms-val" id="ca-streak">0</div><div class="ms-lbl">🔥 Streak</div></div>
+    <div class="ma-stat"><div class="ms-val" id="ca-best-combo">0</div><div class="ms-lbl">Best Combo</div></div>
+    <div class="ma-stat"><div class="ms-val" id="ca-mastery">0</div><div class="ms-lbl">Mastery %</div></div>
+  </div>
+
+  <!-- STAGE SELECT -->
+  <div id="ca-stage-area">
+    <div style="text-align:center;margin:12px 0;color:#aaa;font-size:.9em">选择你的挑战! 5 questions per round. 加油!</div>
+    <div class="ma-stages" id="ca-stages"></div>
+  </div>
+
+  <!-- BATTLE -->
+  <div id="ca-battle-area" style="display:none" class="ma-battle">
+    <div class="ma-arena" id="ca-arena-box" style="background:linear-gradient(135deg,#3e2010,#2e1a1a)">
+      <div style="text-align:center">
+        <div class="mf-sprite" style="font-size:2.5em" id="ca-stage-icon">🏮</div>
+        <div id="ca-stage-title" style="color:#ffa502;font-size:1.1em;font-weight:bold;margin:4px 0">词语填空</div>
+        <div class="mf-hp-bar" style="width:80%;margin:8px auto"><div class="mf-hp-fill hero" id="ca-progress-bar" style="width:0%;background:linear-gradient(90deg,#ffa502,#ff6348)"></div></div>
+        <div id="ca-progress-text" style="color:#aaa;font-size:.85em">0 / 5 correct</div>
+      </div>
+      <div class="ma-combo">
+        <div class="combo-text" id="ca-combo-display"></div>
+      </div>
+    </div>
+
+    <div class="ma-powerups" id="ca-powerups">
+      <button class="ma-pu-btn" onclick="caUsePowerUp('5050')">🎯 50/50<br><small>10 coins</small></button>
+      <button class="ma-pu-btn" onclick="caUsePowerUp('hint')">💡 Show Hint<br><small>20 coins</small></button>
+    </div>
+
+    <div class="ma-question" id="ca-question-box">
+      <div class="mq-num" id="ca-q-num">Q1 / 5</div>
+      <div id="ca-passage-box" style="display:none;background:rgba(255,255,255,.05);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em;color:#ddd;line-height:1.6;text-align:left;border-left:3px solid #ffa502"></div>
+      <div class="mq-text" id="ca-q-text">Loading...</div>
+    </div>
+
+    <div class="ma-answers" id="ca-answers"></div>
+
+    <div id="ca-hint-box" style="display:none;text-align:center;margin-top:8px;padding:8px;background:rgba(255,165,0,.08);border-radius:8px;color:#ffa502;font-size:.85em"></div>
+    <div id="ca-feedback" style="display:none;text-align:center;margin-top:12px;padding:12px;border-radius:10px;font-size:.95em"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="ca-result-area" style="display:none" class="ma-result">
+    <div class="mr-title" id="ca-result-title">胜利!</div>
+    <div class="mr-stars" id="ca-result-stars"></div>
+    <div style="font-size:.9em;color:#aaa" id="ca-result-msg"></div>
+    <div class="mr-rewards" id="ca-result-rewards"></div>
+    <div class="mr-btns">
+      <button class="ma-btn-next" style="background:linear-gradient(135deg,#ffa502,#ff6348)" onclick="caNextRound()">🏮 Next Round!</button>
+      <button class="ma-btn-back" onclick="caShowStages()">🗺️ Stage Select</button>
     </div>
   </div>
 </div>
@@ -2282,6 +2393,7 @@ function showPage(id) {
   if (id==='arena' && currentPlayer!=='ryusei') { showPage('dashboard'); return; }
   if (id==='eng-arena' && currentPlayer!=='yuhi') { showPage('dashboard'); return; }
   if (id==='eng-arena') eaShowStages();
+  if (id==='ch-arena') caShowStages();
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('pg-'+id).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -2290,6 +2402,8 @@ function showPage(id) {
         (id==='study'&&b.textContent==='Study Quest')||
         (id==='oral'&&b.textContent.includes('Oral'))||
         (id==='arena'&&b.textContent.includes('Math'))||
+        (id==='eng-arena'&&b.textContent.includes('English'))||
+        (id==='ch-arena'&&b.textContent.includes('Chinese'))||
         (id==='battle'&&b.textContent.includes('Battle'))||
         (id==='tasks'&&b.textContent.includes('Tasks'))||
         (id==='schedule'&&b.textContent.includes('Weekly'))||
@@ -2483,6 +2597,7 @@ function selectAnswer(idx) {
     document.getElementById('q-fb-title').textContent = 'Correct! +' + (xpMap[q.diff]||10) + ' XP, +' + (coinMap[q.diff]||3) + ' coins';
     document.getElementById('q-fb-text').textContent = q.exp;
     fb.className = 'q-feedback correct show';
+    playSound('correct');
   } else {
     btns[idx].classList.add('wrong');
     btns[q.ans].classList.add('correct');
@@ -2507,6 +2622,7 @@ function selectAnswer(idx) {
     document.getElementById('q-fb-title').textContent = 'Not quite! +2 XP for trying';
     document.getElementById('q-fb-text').textContent = q.exp;
     fb.className = 'q-feedback wrong show';
+    playSound('wrong');
   }
 
   if (state[currentPlayer].subjects[currentSubject]) {
@@ -2837,6 +2953,8 @@ function resetQuiz() {
 }
 
 // ============ PLAYER CARDS UPDATE ============
+// _prevLevels is used for level-up sound detection (initialized in sound system)
+if (typeof _prevLevels === 'undefined') var _prevLevels = {};
 function updatePlayerCards() {
   ['yuhi','ryusei'].forEach(p => {
     const s = state[p];
@@ -2845,6 +2963,12 @@ function updatePlayerCards() {
     const xpInLevel = s.xp - lvl.base;
     const xpNeeded = xpForNext - lvl.base;
     const pct = Math.min(100, (xpInLevel / xpNeeded) * 100);
+
+    // Level-up detection
+    if (_prevLevels[p] !== undefined && lvl.level > _prevLevels[p] && typeof playSound === 'function') {
+      playSound('levelup');
+    }
+    _prevLevels[p] = lvl.level;
 
     document.getElementById('xp-bar-'+p).style.width = pct + '%';
     document.getElementById('level-'+p).textContent = `Lv.${lvl.level} ${lvl.title}`;
@@ -3453,6 +3577,7 @@ updateStreakUI();
 (function(){
   const an=document.getElementById('nav-arena'); if(an) an.style.display=currentPlayer==='ryusei'?'':'none';
   const ea=document.getElementById('nav-eng-arena'); if(ea) ea.style.display=currentPlayer==='yuhi'?'':'none';
+  // Chinese Arena is visible for both players — no restriction
 })();
 
 // ============ ENGLISH ARENA (Yuhi) ============
@@ -3519,12 +3644,16 @@ function eaShowStages() {
   document.getElementById('ea-stage-area').style.display = '';
   document.getElementById('ea-battle-area').style.display = 'none';
   document.getElementById('ea-result-area').style.display = 'none';
-  if (!state.yuhi.engArena) state.yuhi.engArena = {wins:0, streak:0, bestCombo:0, stageStars:{}};
+  if (!state.yuhi.engArena) state.yuhi.engArena = {};
   const ea = state.yuhi.engArena;
+  if (!ea.wins) ea.wins = 0;
+  if (!ea.streak) ea.streak = 0;
+  if (!ea.bestCombo) ea.bestCombo = 0;
+  if (!ea.stageStars) ea.stageStars = {};
   document.getElementById('ea-wins').textContent = ea.wins;
   document.getElementById('ea-streak').textContent = ea.streak;
   document.getElementById('ea-best-combo').textContent = ea.bestCombo;
-  const totalStars = Object.values(ea.stageStars).reduce((s,v) => s+v, 0);
+  const totalStars = Object.values(ea.stageStars || {}).reduce((s,v) => s+v, 0);
   const maxStars = eaStages.length * 3;
   document.getElementById('ea-mastery').textContent = Math.round(totalStars/maxStars*100) + '%';
 
@@ -3621,13 +3750,15 @@ function eaSelectAnswer(idx) {
     eaBattle.combo++;
     if (eaBattle.combo > eaBattle.bestCombo) eaBattle.bestCombo = eaBattle.combo;
     const xp = q.diff==='hard'?20:q.diff==='medium'?12:8;
-    const coins = q.diff==='hard'?6:q.diff==='medium'?4:2;
+    const coins = q.diff==='hard'?10:q.diff==='medium'?6:4;
     state.yuhi.xp += xp;
     state.yuhi.coins += coins;
     fb.style.display = 'block';
     fb.style.background = 'rgba(46,213,115,.15)';
     fb.style.color = '#2ed573';
     fb.innerHTML = `✅ Correct! +${xp} XP, +${coins} coins<br><span style="font-size:.85em;color:#aaa">${q.exp}</span>`;
+    playSound('correct');
+    if (eaBattle.combo >= 3) playSound('combo');
     // Track in completedQs
     const cq = state.yuhi.completedQs.english;
     if (cq && !cq.includes(q.q)) cq.push(q.q);
@@ -3640,6 +3771,7 @@ function eaSelectAnswer(idx) {
     fb.style.background = 'rgba(255,71,87,.15)';
     fb.style.color = '#ff4757';
     fb.innerHTML = `❌ Not quite! +2 XP<br>Correct: ${q.opts[q.ans]}<br><span style="font-size:.85em;color:#aaa">${q.exp}</span>`;
+    playSound('wrong');
     const cq = state.yuhi.completedQs.english;
     if (cq && !cq.includes(q.q)) cq.push(q.q);
   }
@@ -3672,8 +3804,10 @@ function eaUsePowerUp(type) {
 }
 
 function eaFinish() {
-  if (!state.yuhi.engArena) state.yuhi.engArena = {wins:0, streak:0, bestCombo:0, stageStars:{}};
+  if (!state.yuhi.engArena) state.yuhi.engArena = {};
   const ea = state.yuhi.engArena;
+  if (!ea.wins) ea.wins = 0; if (!ea.streak) ea.streak = 0;
+  if (!ea.bestCombo) ea.bestCombo = 0; if (!ea.stageStars) ea.stageStars = {};
   const won = eaBattle.correct >= 3;
   let stars = 0;
   if (won) { stars = 1; ea.wins++; ea.streak++; }
@@ -3684,11 +3818,11 @@ function eaFinish() {
   const prevStars = ea.stageStars[eaBattle.stage.id] || 0;
   if (stars > prevStars) ea.stageStars[eaBattle.stage.id] = stars;
 
-  let xpReward = won ? 10 : 2;
-  let coinReward = won ? 5 : 1;
-  if (stars >= 2) { xpReward += 5; coinReward += 3; }
-  if (stars >= 3) { xpReward += 10; coinReward += 5; }
-  if (eaBattle.stage.boss && won) { xpReward += 10; coinReward += 7; }
+  let xpReward = won ? 15 : 3;
+  let coinReward = won ? 10 : 2;
+  if (stars >= 2) { xpReward += 8; coinReward += 6; }
+  if (stars >= 3) { xpReward += 12; coinReward += 8; }
+  if (eaBattle.stage.boss && won) { xpReward += 15; coinReward += 12; }
   state.yuhi.xp += xpReward;
   state.yuhi.coins += coinReward;
 
@@ -3708,6 +3842,427 @@ function eaNextRound() {
   const idx = eaStages.indexOf(eaBattle.stage);
   const next = (idx + 1) % eaStages.length;
   eaStartBattle(next);
+}
+
+// ============ SOUND EFFECTS SYSTEM ============
+var soundMuted = localStorage.getItem('nemoto-sound-muted') === 'true';
+var audioCtx = null;
+function getAudioCtx() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+function playSound(type) {
+  if (soundMuted) return;
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    const g = ctx.createGain();
+    g.connect(ctx.destination);
+    if (type === 'correct') {
+      g.gain.setValueAtTime(0.15, now); g.gain.exponentialRampToValueAtTime(0.01, now+0.3);
+      const o = ctx.createOscillator(); o.type='sine'; o.frequency.setValueAtTime(523,now); o.frequency.linearRampToValueAtTime(784,now+0.15); o.connect(g); o.start(now); o.stop(now+0.3);
+    } else if (type === 'wrong') {
+      g.gain.setValueAtTime(0.12, now); g.gain.exponentialRampToValueAtTime(0.01, now+0.35);
+      const o = ctx.createOscillator(); o.type='sawtooth'; o.frequency.setValueAtTime(400,now); o.frequency.linearRampToValueAtTime(200,now+0.3); o.connect(g); o.start(now); o.stop(now+0.35);
+    } else if (type === 'combo') {
+      g.gain.setValueAtTime(0.13, now); g.gain.exponentialRampToValueAtTime(0.01, now+0.6);
+      const notes=[523,659,784,1047]; notes.forEach((f,i)=>{ const o=ctx.createOscillator(); o.type='sine'; o.frequency.setValueAtTime(f,now+i*0.1); o.connect(g); o.start(now+i*0.1); o.stop(now+i*0.1+0.15); });
+    } else if (type === 'levelup') {
+      g.gain.setValueAtTime(0.15, now); g.gain.exponentialRampToValueAtTime(0.01, now+1);
+      const notes=[523,659,784,1047,784,1047]; notes.forEach((f,i)=>{ const o=ctx.createOscillator(); o.type='triangle'; o.frequency.setValueAtTime(f,now+i*0.12); o.connect(g); o.start(now+i*0.12); o.stop(now+i*0.12+0.2); });
+    } else if (type === 'click') {
+      g.gain.setValueAtTime(0.06, now); g.gain.exponentialRampToValueAtTime(0.01, now+0.08);
+      const o = ctx.createOscillator(); o.type='sine'; o.frequency.setValueAtTime(1200,now); o.connect(g); o.start(now); o.stop(now+0.08);
+    }
+  } catch(e) {}
+}
+function toggleSound() {
+  soundMuted = !soundMuted;
+  localStorage.setItem('nemoto-sound-muted', soundMuted);
+  document.getElementById('sound-toggle').textContent = soundMuted ? '🔇' : '🔊';
+}
+// ============ CHINESE ARENA (Both Players) ============
+function caGetStages() {
+  const isP6 = currentPlayer === 'yuhi';
+  return [
+    {id:'cloze', name:'词语填空', icon:'✏️', topic:'cloze', desc:'Fill in the correct word', diff:'easy',
+     qs: [() => {
+       const p6=[
+         ['他的成绩一直很___，老师都夸他。','优秀','安静','困难','简单','优秀 means excellent — used for academic performance!'],
+         ['这个问题太___了，我想了很久。','复杂','简单','快乐','明亮','复杂 means complicated!'],
+         ['妈妈___地看着我，脸上带着笑容。','慈爱','生气','害怕','难过','慈爱 means lovingly/kindly!'],
+         ['老师___我们要努力学习。','鼓励','批评','阻止','忽视','鼓励 means to encourage!'],
+         ['这本书的内容非常___。','丰富','贫穷','空虚','无聊','丰富 means rich/abundant (for content)!'],
+         ['春天到了，花园里的花___开放。','纷纷','慢慢','突然','偷偷','纷纷 means one after another!'],
+         ['他___地回答了老师的问题。','自信','害羞','犹豫','勉强','自信 means confidently!'],
+         ['这座城市的夜景十分___。','壮观','普通','平凡','渺小','壮观 means spectacular/magnificent!']
+       ];
+       const p4=[
+         ['小鸟在树上___地唱歌。','快乐','伤心','生气','害怕','快乐 means happy/joyfully!'],
+         ['今天的天气非常___。','晴朗','黑暗','寒冷','可怕','晴朗 means sunny and clear!'],
+         ['妈妈做的饭很___。','好吃','难看','奇怪','可怕','好吃 means delicious!'],
+         ['弟弟跑得很___。','快','慢','高','远','快 means fast!'],
+         ['这朵花真___！','漂亮','丑陋','可怕','奇怪','漂亮 means beautiful!'],
+         ['小猫___地睡着了。','安静','吵闹','生气','伤心','安静 means quietly!'],
+         ['他是一个很___的孩子。','聪明','笨','坏','懒','聪明 means clever/smart!'],
+         ['公园里有很多___的树。','高大','矮小','枯萎','丑陋','高大 means tall and big!']
+       ];
+       const items = isP6 ? p6 : p4;
+       const item = items[rand(0,items.length-1)];
+       return {q:`填空: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'✏️ '+item[5], diff:'easy'};
+     }]},
+    {id:'pinyin', name:'拼音挑战', icon:'🔤', topic:'pinyin', desc:'Match the correct pinyin', diff:'easy',
+     qs: [() => {
+       const p6=[
+         ['优秀','yōu xiù','yóu xiù','yōu xìu','yǒu xiù','优秀 (excellent) = yōu xiù!'],
+         ['鼓励','gǔ lì','gū lì','gǔ lǐ','gù lì','鼓励 (encourage) = gǔ lì!'],
+         ['环境','huán jìng','huàn jìng','huán jǐng','huān jìng','环境 (environment) = huán jìng!'],
+         ['坚持','jiān chí','jiàn chí','jiān cí','jiǎn chí','坚持 (persevere) = jiān chí!'],
+         ['责任','zé rèn','zhé rèn','zé rén','zè rèn','责任 (responsibility) = zé rèn!'],
+         ['勇敢','yǒng gǎn','yōng gǎn','yǒng gàn','yòng gǎn','勇敢 (brave) = yǒng gǎn!'],
+         ['丰富','fēng fù','féng fù','fēng fǔ','fèng fù','丰富 (rich/abundant) = fēng fù!'],
+         ['珍惜','zhēn xī','zhěn xī','zhēn xì','zhèn xī','珍惜 (cherish) = zhēn xī!']
+       ];
+       const p4=[
+         ['学校','xué xiào','xùe xiào','xué xiǎo','xuè xiào','学校 (school) = xué xiào!'],
+         ['朋友','péng yǒu','pēng yǒu','péng yòu','pèng yǒu','朋友 (friend) = péng yǒu!'],
+         ['快乐','kuài lè','kuǎi lè','kuài lé','kuāi lè','快乐 (happy) = kuài lè!'],
+         ['漂亮','piào liang','piāo liang','piǎo liang','piáo liang','漂亮 (beautiful) = piào liang!'],
+         ['老师','lǎo shī','láo shī','lǎo shì','lào shī','老师 (teacher) = lǎo shī!'],
+         ['动物','dòng wù','dōng wù','dòng wǔ','dǒng wù','动物 (animal) = dòng wù!'],
+         ['星期','xīng qī','xìng qī','xīng qì','xǐng qī','星期 (week) = xīng qī!'],
+         ['早上','zǎo shang','záo shang','zǎo shàng','zào shang','早上 (morning) = zǎo shang!']
+       ];
+       const items = isP6 ? p6 : p4;
+       const item = items[rand(0,items.length-1)];
+       return {q:`"${item[0]}" 的拼音是？`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🔤 '+item[5], diff:'easy'};
+     }]},
+    {id:'measure', name:'量词大师', icon:'📏', topic:'measure', desc:'Pick the correct measure word', diff:'medium',
+     qs: [() => {
+       const p6=[
+         ['一___文章','篇','条','张','本','文章 uses 篇 (piān) as measure word!'],
+         ['一___电影','部','篇','首','幅','电影 uses 部 (bù) as measure word!'],
+         ['一___画','幅','张','本','条','画 (painting) uses 幅 (fú)!'],
+         ['一___诗','首','篇','部','幅','诗 (poem) uses 首 (shǒu)!'],
+         ['一___新闻','则','篇','条','张','新闻 uses 则 (zé)!'],
+         ['一___比赛','场','部','首','篇','比赛 uses 场 (chǎng)!'],
+         ['一___眼泪','滴','条','颗','粒','眼泪 uses 滴 (dī) = a drop!'],
+         ['一___月光','缕','条','片','道','月光 uses 缕 (lǚ) = a strand/ray!']
+       ];
+       const p4=[
+         ['一___狗','只','个','条','头','狗 uses 只 (zhī) as measure word!'],
+         ['一___书','本','个','只','条','书 uses 本 (běn) as measure word!'],
+         ['一___花','朵','个','只','棵','花 uses 朵 (duǒ) as measure word!'],
+         ['一___树','棵','朵','只','个','树 uses 棵 (kē) as measure word!'],
+         ['一___鱼','条','只','个','本','鱼 uses 条 (tiáo) as measure word!'],
+         ['一___纸','张','本','条','个','纸 uses 张 (zhāng) as measure word!'],
+         ['一___牛','头','只','条','个','牛 uses 头 (tóu) as measure word!'],
+         ['一___衣服','件','条','只','个','衣服 uses 件 (jiàn) as measure word!']
+       ];
+       const items = isP6 ? p6 : p4;
+       const item = items[rand(0,items.length-1)];
+       return {q:`选择正确的量词: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'📏 '+item[5], diff:'medium'};
+     }]},
+    {id:'antonym', name:'反义词', icon:'🔄', topic:'antonym', desc:'Pick the opposite word', diff:'medium',
+     qs: [() => {
+       const p6=[
+         ['勤劳','懒惰','努力','辛苦','忙碌','勤劳 (diligent) ↔ 懒惰 (lazy)!'],
+         ['谦虚','骄傲','害羞','安静','善良','谦虚 (humble) ↔ 骄傲 (arrogant)!'],
+         ['勇敢','胆怯','害怕','紧张','担心','勇敢 (brave) ↔ 胆怯 (cowardly)!'],
+         ['丰富','贫乏','简单','普通','平凡','丰富 (rich) ↔ 贫乏 (poor/lacking)!'],
+         ['光明','黑暗','安静','寒冷','遥远','光明 (bright) ↔ 黑暗 (dark)!'],
+         ['团结','分裂','合作','友好','和平','团结 (united) ↔ 分裂 (divided)!'],
+         ['坚强','软弱','努力','勇敢','坚定','坚强 (strong) ↔ 软弱 (weak)!'],
+         ['诚实','虚伪','善良','真诚','老实','诚实 (honest) ↔ 虚伪 (hypocritical)!']
+       ];
+       const p4=[
+         ['大','小','高','长','重','大 (big) ↔ 小 (small)!'],
+         ['快','慢','高','远','重','快 (fast) ↔ 慢 (slow)!'],
+         ['黑','白','红','蓝','绿','黑 (black) ↔ 白 (white)!'],
+         ['开心','难过','害怕','生气','着急','开心 (happy) ↔ 难过 (sad)!'],
+         ['冷','热','暖','凉','温','冷 (cold) ↔ 热 (hot)!'],
+         ['新','旧','老','破','坏','新 (new) ↔ 旧 (old)!'],
+         ['长','短','高','低','远','长 (long) ↔ 短 (short)!'],
+         ['胖','瘦','高','矮','轻','胖 (fat) ↔ 瘦 (thin)!']
+       ];
+       const items = isP6 ? p6 : p4;
+       const item = items[rand(0,items.length-1)];
+       return {q:`"${item[0]}" 的反义词是？`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🔄 '+item[5], diff:'medium'};
+     }]},
+    {id:'idiom', name:'成语乐园', icon:'🎋', topic:'idiom', desc:'Chinese idioms & meanings', diff:'medium',
+     qs: [() => {
+       const p6=[
+         ['画蛇添足','做了多余的事','画画很好','蛇很可怕','脚很大','画蛇添足 = doing something unnecessary that ruins the result!'],
+         ['守株待兔','不劳而获','种树','养兔子','等朋友','守株待兔 = waiting for good luck without effort!'],
+         ['亡羊补牢','出了问题后补救','丢了羊','修篱笆','养动物','亡羊补牢 = better late than never to fix a problem!'],
+         ['一举两得','做一件事得到两个好处','举重','跑步','比赛','一举两得 = kill two birds with one stone!'],
+         ['半途而废','做事做到一半就放弃','走路','旅行','学习','半途而废 = give up halfway!'],
+         ['自相矛盾','自己的话互相冲突','打架','买东西','说谎','自相矛盾 = contradicting yourself!'],
+         ['刻舟求剑','不知变通','雕刻','坐船','游泳','刻舟求剑 = being rigid and not adapting to change!'],
+         ['掩耳盗铃','自欺欺人','偷东西','听音乐','戴耳机','掩耳盗铃 = deceiving yourself!']
+       ];
+       const p4=[
+         ['三心二意','做事不专心','有三颗心','数字','心情好','三心二意 = not focused, half-hearted!'],
+         ['自言自语','自己跟自己说话','大声说','唱歌','写字','自言自语 = talking to yourself!'],
+         ['七上八下','心里不安','数数字','上下楼','跳舞','七上八下 = feeling uneasy/nervous!'],
+         ['一心一意','专心做事','只有一个想法','一个人','安静','一心一意 = wholeheartedly focused!'],
+         ['五颜六色','颜色很多','五种颜色','六种颜色','彩虹','五颜六色 = colorful/multicolored!'],
+         ['千言万语','有很多话要说','一千个字','写文章','读书','千言万语 = having so much to say!'],
+         ['张灯结彩','装饰得很漂亮','开灯','买灯','修灯','张灯结彩 = decorated with lights and colors (for celebrations)!'],
+         ['大吃一惊','非常吃惊','吃很多','肚子饿','害怕','大吃一惊 = very surprised/shocked!']
+       ];
+       const items = isP6 ? p6 : p4;
+       const item = items[rand(0,items.length-1)];
+       return {q:`"${item[0]}" 的意思是？`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🎋 '+item[5], diff:'medium'};
+     }]},
+    {id:'reading', name:'阅读理解', icon:'📖', topic:'reading', desc:'Short passage questions', diff:'hard',
+     qs: [() => {
+       const p6=[
+         {p:'小明每天早上六点起床，先跑步半小时，然后回家吃早餐。他的妈妈总是准备好热腾腾的粥和包子。吃完早餐后，小明会复习功课，然后才去学校。他的成绩一直很好，老师和同学都很佩服他。',
+          q:'为什么小明的成绩一直很好？', opts:['因为他有好的学习习惯','因为他很聪明','因为老师帮他','因为妈妈教他']},
+         {p:'周末，爸爸带我们去了海边。海水蓝蓝的，沙滩上有很多贝壳。姐姐在沙滩上堆城堡，我在海里游泳。突然，天空乌云密布，我们赶紧收拾东西回家了。虽然玩的时间不长，但我们都很开心。',
+          q:'他们为什么赶紧回家？', opts:['因为要下雨了','因为时间很晚了','因为他们累了','因为海水太冷']},
+         {p:'图书馆里安安静静的，大家都在专心看书。一个小女孩找不到想要的书，图书管理员阿姨微笑着帮她找到了。小女孩高兴地说了声"谢谢"，然后坐到角落里认真地读了起来。',
+          q:'从这段话可以看出图书管理员是一个怎样的人？', opts:['热心助人','严格认真','安静内向','活泼可爱']},
+       ];
+       const p4=[
+         {p:'小白兔住在森林里。它每天早上去菜园摘萝卜吃。有一天，它发现菜园里的萝卜都被吃光了。小白兔很伤心，决定自己种萝卜。',
+          q:'小白兔为什么决定自己种萝卜？', opts:['因为萝卜被吃光了','因为它不喜欢萝卜','因为妈妈说的','因为它想卖萝卜']},
+         {p:'下雨了，小猫躲在树下。一只小鸟飞过来，也躲在树下。小猫对小鸟说："不要怕，我们一起等雨停吧。"雨停了，它们成了好朋友。',
+          q:'小猫是一个怎样的动物？', opts:['善良友好','胆小害怕','调皮捣蛋','自私自利']},
+         {p:'星期天，妈妈带我去超市买东西。我看到了一个很漂亮的玩具，想让妈妈买。妈妈说："你如果这个星期表现好，下次再买给你。"我点了点头。',
+          q:'妈妈的意思是什么？', opts:['表现好才能买玩具','不想买玩具','下次不来了','玩具太贵了']},
+       ];
+       const items = isP6 ? p6 : p4;
+       const c = items[rand(0,items.length-1)];
+       return {q:c.q, opts:c.opts, ans:0, exp:'📖 仔细阅读，答案就在文章里！', diff:'hard', passage:c.p};
+     }]},
+    {id:'grammar', name:'语法高手', icon:'📐', topic:'grammar', desc:'Sentence structure & grammar', diff:'hard',
+     qs: [() => {
+       const p6=[
+         ['选出正确的句子：','虽然他很累，但是他坚持了下来。','虽然他很累，因为他坚持了下来。','因为他很累，但是他坚持了下来。','他很累，所以他坚持了下来。','虽然...但是 is the correct pair (although...but)!'],
+         ['哪个句子使用了"把"字句？','他把作业做完了。','他做完了作业。','作业被他做完了。','他已经做完作业。','把字句: Subject + 把 + Object + Verb + Complement!'],
+         ['选出正确的"被"字句：','花瓶被弟弟打碎了。','弟弟被花瓶打碎了。','花瓶把弟弟打碎了。','打碎了花瓶被弟弟。','被字句: Object + 被 + Subject + Verb!'],
+         ['"不但...而且"用在哪个句子最合适？','他不但学习好，而且运动也好。','他不但学习好，但是运动不好。','他不但学习好，所以运动也好。','他不但学习好，因为运动也好。','不但...而且 = not only...but also!'],
+         ['哪个是比喻句？','她的笑容像阳光一样温暖。','她今天很开心。','她笑了笑。','她的笑容很好看。','比喻句 uses 像/如/仿佛 to make a comparison!'],
+         ['选出拟人句：','风儿轻轻地唱着歌。','风很大。','今天刮风了。','风把树叶吹走了。','拟人 = personification — giving human qualities to non-human things!'],
+       ];
+       const p4=[
+         ['选出正确的句子：','我和朋友一起去公园玩。','我和朋友一起去公园。完。','我朋友和去公园一起玩。','公园我和朋友一起去玩。','正确语序: 主语 + 和 + 对象 + 一起 + 动词!'],
+         ['哪个用了"因为...所以"？','因为下雨了，所以我带了伞。','下雨了，我带了伞。','虽然下雨了，我带了伞。','下雨了，所以因为我带了伞。','因为...所以 = because...therefore!'],
+         ['选出正确的句子：','妈妈给我买了一本书。','妈妈给买了一本我书。','妈妈一本书给我买了。','给妈妈我买了一本书。','给字句: Subject + 给 + Indirect Object + Verb + Object!'],
+         ['哪个是问句？','你今天开心吗？','你今天很开心。','今天你开心。','开心你今天。','问句末尾用"吗"或"？"!'],
+         ['选出正确的句子：','弟弟在房间里画画。','弟弟画画在房间里。','在房间里弟弟画画。','弟弟房间里在画画。','在 + Place + Verb: 表示地点!'],
+         ['哪个句子有错误？','他跑步得很快。','他跑得很快。','他跑步跑得很快。','他很快地跑着。','跑步得很快 is wrong — should be 跑得很快!'],
+       ];
+       const items = isP6 ? p6 : p4;
+       const item = items[rand(0,items.length-1)];
+       return {q:item[0], opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'📐 '+item[5], diff:'hard'};
+     }]},
+    {id:'boss', name:'🏮 中文大师', icon:'👑', topic:'mixed', desc:'Mixed Challenge — All categories!', diff:'hard', boss:true,
+     qs: [() => { const stages = caGetStages(); const all=[...stages[0].qs,...stages[1].qs,...stages[2].qs,...stages[3].qs,...stages[4].qs,...stages[5].qs,...stages[6].qs]; return all[rand(0,all.length-1)](); }]},
+  ];
+}
+
+let caBattle = { stage:null, qIdx:0, correct:0, combo:0, bestCombo:0, questions:[], answered:false, currentQ:null };
+
+function caShowStages() {
+  document.getElementById('ca-stage-area').style.display = '';
+  document.getElementById('ca-battle-area').style.display = 'none';
+  document.getElementById('ca-result-area').style.display = 'none';
+  if (!state[currentPlayer].chArena) state[currentPlayer].chArena = {};
+  const ca = state[currentPlayer].chArena;
+  if (!ca.wins) ca.wins = 0;
+  if (!ca.streak) ca.streak = 0;
+  if (!ca.bestCombo) ca.bestCombo = 0;
+  if (!ca.stageStars) ca.stageStars = {};
+  document.getElementById('ca-wins').textContent = ca.wins;
+  document.getElementById('ca-streak').textContent = ca.streak;
+  document.getElementById('ca-best-combo').textContent = ca.bestCombo;
+  const caStages = caGetStages();
+  const totalStars = Object.values(ca.stageStars || {}).reduce((s,v) => s+v, 0);
+  const maxStars = caStages.length * 3;
+  document.getElementById('ca-mastery').textContent = Math.round(totalStars/maxStars*100) + '%';
+
+  let html = '';
+  caStages.forEach((s, i) => {
+    const stars = ca.stageStars[s.id] || 0;
+    const starStr = '\u2B50'.repeat(stars) + '\u2606'.repeat(3-stars);
+    const locked = s.boss && totalStars < (caStages.length-1)*1;
+    html += `<div class="ma-stage-card ${locked?'locked':''}" onclick="${locked?'':'caStartBattle('+i+')'}">
+      <div class="mas-icon">${s.icon}</div>
+      <div class="mas-name">${s.name}</div>
+      <div class="mas-desc">${s.desc}</div>
+      <div class="mas-stars">${starStr}</div>
+      ${locked?'<div class="mas-lock">\uD83D\uDD12 Win more stages!</div>':''}
+    </div>`;
+  });
+  document.getElementById('ca-stages').innerHTML = html;
+}
+
+function caStartBattle(stageIdx) {
+  const caStages = caGetStages();
+  const stage = caStages[stageIdx];
+  caBattle = {stage, qIdx:0, correct:0, combo:0, bestCombo:0, questions:[], answered:false, currentQ:null};
+  if (!state[currentPlayer].completedQs) state[currentPlayer].completedQs = {};
+  const completed = state[currentPlayer].completedQs.chinese || [];
+  for (let i = 0; i < 20; i++) {
+    const q = stage.qs[rand(0, stage.qs.length-1)]();
+    if (!caBattle.questions.some(x => x.q === q.q) && !completed.includes(q.q)) {
+      caBattle.questions.push(q);
+    }
+    if (caBattle.questions.length >= 5) break;
+  }
+  if (caBattle.questions.length < 5) {
+    for (let i = caBattle.questions.length; i < 5; i++) {
+      caBattle.questions.push(stage.qs[rand(0, stage.qs.length-1)]());
+    }
+  }
+  document.getElementById('ca-stage-area').style.display = 'none';
+  document.getElementById('ca-battle-area').style.display = '';
+  document.getElementById('ca-result-area').style.display = 'none';
+  document.getElementById('ca-stage-icon').textContent = stage.icon;
+  document.getElementById('ca-stage-title').textContent = stage.name;
+  document.getElementById('ca-hint-box').style.display = 'none';
+  document.getElementById('ca-feedback').style.display = 'none';
+  caRenderQuestion();
+}
+
+function caRenderQuestion() {
+  const q = caBattle.questions[caBattle.qIdx];
+  caBattle.answered = false;
+  document.getElementById('ca-q-num').textContent = `Q${caBattle.qIdx+1} / ${caBattle.questions.length}`;
+  document.getElementById('ca-q-text').textContent = q.q;
+  document.getElementById('ca-hint-box').style.display = 'none';
+  document.getElementById('ca-feedback').style.display = 'none';
+  document.getElementById('ca-progress-bar').style.width = (caBattle.correct/5*100)+'%';
+  document.getElementById('ca-progress-text').textContent = `${caBattle.correct} / 5 correct`;
+  const passageBox = document.getElementById('ca-passage-box');
+  if (q.passage) { passageBox.style.display = 'block'; passageBox.textContent = q.passage; }
+  else { passageBox.style.display = 'none'; }
+  const correctText = q.opts[q.ans];
+  const shuffled = [...q.opts].sort(() => Math.random()-0.5);
+  const newAns = shuffled.indexOf(correctText);
+  caBattle.currentQ = {...q, opts:shuffled, ans:newAns};
+  const answersEl = document.getElementById('ca-answers');
+  answersEl.innerHTML = '';
+  shuffled.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'ma-ans-btn';
+    btn.textContent = String.fromCharCode(65+i) + '. ' + opt;
+    btn.onclick = () => caSelectAnswer(i);
+    answersEl.appendChild(btn);
+  });
+  if (caBattle.combo >= 2) {
+    document.getElementById('ca-combo-display').textContent = `${caBattle.combo}x COMBO!`;
+    document.getElementById('ca-combo-display').style.animation = 'pulse .5s';
+  } else {
+    document.getElementById('ca-combo-display').textContent = '';
+  }
+}
+
+function caSelectAnswer(idx) {
+  if (caBattle.answered) return;
+  caBattle.answered = true;
+  const q = caBattle.currentQ;
+  const btns = document.getElementById('ca-answers').querySelectorAll('.ma-ans-btn');
+  btns.forEach(b => b.style.pointerEvents = 'none');
+  const fb = document.getElementById('ca-feedback');
+
+  if (idx === q.ans) {
+    btns[idx].classList.add('correct');
+    caBattle.correct++;
+    caBattle.combo++;
+    if (caBattle.combo > caBattle.bestCombo) caBattle.bestCombo = caBattle.combo;
+    const xp = q.diff==='hard'?20:q.diff==='medium'?12:8;
+    const coins = q.diff==='hard'?10:q.diff==='medium'?6:4;
+    state[currentPlayer].xp += xp;
+    state[currentPlayer].coins += coins;
+    fb.style.display = 'block';
+    fb.style.background = 'rgba(46,213,115,.15)';
+    fb.style.color = '#2ed573';
+    fb.innerHTML = `✅ 正确! +${xp} XP, +${coins} coins<br><span style="font-size:.85em;color:#aaa">${q.exp}</span>`;
+    playSound('correct');
+    if (caBattle.combo >= 3) playSound('combo');
+    const cq = state[currentPlayer].completedQs.chinese;
+    if (cq && !cq.includes(q.q)) cq.push(q.q);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    caBattle.combo = 0;
+    state[currentPlayer].xp += 2;
+    fb.style.display = 'block';
+    fb.style.background = 'rgba(255,71,87,.15)';
+    fb.style.color = '#ff4757';
+    fb.innerHTML = `❌ 再试试! +2 XP<br>正确答案: ${q.opts[q.ans]}<br><span style="font-size:.85em;color:#aaa">${q.exp}</span>`;
+    playSound('wrong');
+    const cq = state[currentPlayer].completedQs.chinese;
+    if (cq && !cq.includes(q.q)) cq.push(q.q);
+  }
+  document.getElementById('ca-progress-bar').style.width = (caBattle.correct/5*100)+'%';
+  document.getElementById('ca-progress-text').textContent = `${caBattle.correct} / 5 correct`;
+  save(); updatePlayerCards();
+  setTimeout(() => {
+    caBattle.qIdx++;
+    if (caBattle.qIdx >= caBattle.questions.length) caFinish();
+    else caRenderQuestion();
+  }, 2000);
+}
+
+function caUsePowerUp(type) {
+  if (caBattle.answered) return;
+  const costs = {'5050':10, 'hint':20};
+  if (state[currentPlayer].coins < costs[type]) return;
+  state[currentPlayer].coins -= costs[type];
+  save(); updatePlayerCards();
+  const q = caBattle.currentQ;
+  if (type === '5050') {
+    const btns = document.getElementById('ca-answers').querySelectorAll('.ma-ans-btn');
+    let removed = 0;
+    btns.forEach((b, i) => { if (i !== q.ans && removed < 2) { b.style.opacity='0.3'; b.style.pointerEvents='none'; removed++; } });
+  } else if (type === 'hint') {
+    document.getElementById('ca-hint-box').style.display = 'block';
+    document.getElementById('ca-hint-box').textContent = '\uD83D\uDCA1 ' + q.exp;
+  }
+}
+
+function caFinish() {
+  if (!state[currentPlayer].chArena) state[currentPlayer].chArena = {};
+  const ca = state[currentPlayer].chArena;
+  if (!ca.wins) ca.wins = 0; if (!ca.streak) ca.streak = 0;
+  if (!ca.bestCombo) ca.bestCombo = 0; if (!ca.stageStars) ca.stageStars = {};
+  const won = caBattle.correct >= 3;
+  let stars = 0;
+  if (won) { stars = 1; ca.wins++; ca.streak++; }
+  else { ca.streak = 0; }
+  if (caBattle.correct >= 4) stars = 2;
+  if (caBattle.correct >= 5) stars = 3;
+  if (caBattle.bestCombo > ca.bestCombo) ca.bestCombo = caBattle.bestCombo;
+  const prevStars = ca.stageStars[caBattle.stage.id] || 0;
+  if (stars > prevStars) ca.stageStars[caBattle.stage.id] = stars;
+
+  let xpReward = won ? 15 : 3;
+  let coinReward = won ? 10 : 2;
+  if (stars >= 2) { xpReward += 8; coinReward += 6; }
+  if (stars >= 3) { xpReward += 12; coinReward += 8; }
+  if (caBattle.stage.boss && won) { xpReward += 15; coinReward += 12; }
+  state[currentPlayer].xp += xpReward;
+  state[currentPlayer].coins += coinReward;
+
+  document.getElementById('ca-battle-area').style.display = 'none';
+  document.getElementById('ca-result-area').style.display = '';
+  document.getElementById('ca-result-title').textContent = won ? '🏮 胜利!' : '📖 继续努力!';
+  document.getElementById('ca-result-title').style.color = won ? '#2ed573' : '#ffa502';
+  document.getElementById('ca-result-stars').textContent = '\u2B50'.repeat(stars) + '\u2606'.repeat(3-stars);
+  document.getElementById('ca-result-msg').textContent = `${caBattle.correct}/5 correct | Best Combo: ${caBattle.bestCombo}x`;
+  document.getElementById('ca-result-rewards').innerHTML =
+    `<span class="reward-chip" style="color:#ffa502">+${xpReward} XP</span>
+     <span class="reward-chip" style="color:#ffd200">+${coinReward} Coins</span>`;
+  save(); updatePlayerCards();
+}
+
+function caNextRound() {
+  const caStages = caGetStages();
+  const idx = caStages.findIndex(s => s.id === caBattle.stage.id);
+  const next = (idx + 1) % caStages.length;
+  caStartBattle(next);
 }
 
 // ============ ORAL QUEST SYSTEM ============
@@ -4128,26 +4683,191 @@ function startRandomOral() {
 function startOralScenario(scenario) {
   currentOralScenario = scenario;
   document.getElementById('oq-stage-area').style.display = 'none';
-  document.getElementById('oq-quest-area').style.display = 'block';
+  document.getElementById('oq-quest-area').style.display = 'none';
+  document.getElementById('oq-guided-area').style.display = 'none';
   document.getElementById('oq-score-area').classList.remove('show');
+  document.getElementById('oq-mode-select').style.display = 'block';
+
+  const scenarioHtml = `
+    <div class="sc-badge">${scenario.icon} ${scenario.theme} — Stage</div>
+    <div class="sc-title">${scenario.title}</div>
+    <div class="sc-desc">${scenario.desc}</div>
+    <div class="sc-question">❓ ${scenario.question}</div>`;
+  document.getElementById('oq-scenario-preview').innerHTML = scenarioHtml;
+}
+
+function startFreeMode() {
+  document.getElementById('oq-mode-select').style.display = 'none';
+  document.getElementById('oq-quest-area').style.display = 'block';
   document.getElementById('oq-answer').value = '';
 
+  const scenario = currentOralScenario;
   document.getElementById('oq-scenario').innerHTML = `
     <div class="sc-badge">${scenario.icon} ${scenario.theme} — Stage</div>
     <div class="sc-title">${scenario.title}</div>
     <div class="sc-desc">${scenario.desc}</div>
     <div class="sc-question">❓ ${scenario.question}</div>`;
 
-  // Reset weapon indicators
   ['w-peel','w-emotion','w-values'].forEach(id => document.getElementById(id).classList.remove('active'));
   document.getElementById('oq-triple-i').style.display = 'none';
   document.getElementById('oq-model-box').style.display = 'none';
   document.getElementById('oq-model-btn').textContent = '📖 Show Model Answer';
 }
 
+// ============ GUIDED ORAL MODE ============
+let oqGuidedState = { step: 0, answers: [], coinsEarned: 0, xpEarned: 0 };
+
+const oqGuidedSteps = [
+  {
+    icon: '👀', title: 'Step 1: Look & Identify',
+    help: 'Read the scenario above carefully. Now describe what you can see or imagine. Who is there? What are they doing? Where is it happening?\n\nStart with: "I can see..." or "In this scene, there is..."',
+    placeholder: 'I can see...',
+    wordBank: null,
+    coins: 5, xp: 8, minLength: 10
+  },
+  {
+    icon: '💭', title: 'Step 2: Feelings & Emotions',
+    help: 'How do the people in the scenario feel? Why do they feel that way? Try to use a strong emotion word instead of just "happy" or "sad".',
+    placeholder: 'The person feels... because...',
+    wordBank: ['exhilarated','grateful','overwhelmed','nostalgic','apprehensive','determined','empathetic','melancholic','frustrated','anxious','relieved','compassionate'],
+    coins: 5, xp: 8, minLength: 10
+  },
+  {
+    icon: '🗣️', title: 'Step 3: Your Opinion (Point)',
+    help: 'What do YOU think about this topic? Give your opinion clearly. This is the "P" in PEEL!\n\nStart with: "I think..." or "I believe..." or "In my opinion..."',
+    placeholder: 'I think... / I believe...',
+    wordBank: null,
+    coins: 5, xp: 8, minLength: 10
+  },
+  {
+    icon: '📸', title: 'Step 4: Give an Example',
+    help: 'Now support your opinion with an example from the scenario, or from real life. This is the "E" (Example) in PEEL!\n\nStart with: "For example..." or "In the scenario..." or "For instance..."',
+    placeholder: 'For example...',
+    wordBank: null,
+    coins: 5, xp: 8, minLength: 10
+  },
+  {
+    icon: '📖', title: 'Step 5: Your Experience',
+    help: 'Share something from YOUR own life that connects to this topic. This is the second "E" (Experience) in PEEL!\n\nStart with: "This reminds me of..." or "I remember when..." or "In my own life..."',
+    placeholder: 'This reminds me of... / I remember when...',
+    wordBank: null,
+    coins: 5, xp: 8, minLength: 10
+  },
+  {
+    icon: '🏆', title: 'Step 6: Values & Wrap Up',
+    help: 'Finish strong! Connect your answer to an important value, and give a conclusion. This is the "L" (Link) in PEEL!\n\nStart with: "Overall, I believe..." or "This shows that..." and mention a value.',
+    placeholder: 'Overall, I believe... This shows the importance of...',
+    wordBank: ['resilience','inclusivity','compassion','civic-mindedness','gratitude','responsibility','perseverance','empathy','respect','kindness','integrity','teamwork'],
+    coins: 8, xp: 12, minLength: 10
+  }
+];
+
+function startGuidedMode() {
+  document.getElementById('oq-mode-select').style.display = 'none';
+  document.getElementById('oq-guided-area').style.display = 'block';
+
+  const scenario = currentOralScenario;
+  document.getElementById('oq-guided-scenario').innerHTML = `
+    <div class="sc-badge">${scenario.icon} ${scenario.theme} — Guided Quest</div>
+    <div class="sc-title">${scenario.title}</div>
+    <div class="sc-desc">${scenario.desc}</div>
+    <div class="sc-question">❓ ${scenario.question}</div>`;
+
+  oqGuidedState = { step: 0, answers: ['','','','','',''], coinsEarned: 0, xpEarned: 0 };
+  oqRenderGuidedStep();
+}
+
+function oqRenderGuidedStep() {
+  const s = oqGuidedSteps[oqGuidedState.step];
+  const total = oqGuidedSteps.length;
+  const pct = ((oqGuidedState.step) / total) * 100;
+  document.getElementById('oq-guided-progress').style.width = pct + '%';
+  document.getElementById('oq-guided-step-label').textContent = `Step ${oqGuidedState.step + 1} of ${total}`;
+  document.getElementById('oq-guided-step-icon').textContent = s.icon;
+  document.getElementById('oq-guided-step-title').textContent = s.title;
+  document.getElementById('oq-guided-step-help').textContent = s.help;
+  document.getElementById('oq-guided-input').placeholder = s.placeholder;
+  document.getElementById('oq-guided-input').value = oqGuidedState.answers[oqGuidedState.step] || '';
+  document.getElementById('oq-guided-back-btn').style.display = oqGuidedState.step > 0 ? '' : 'none';
+
+  const isLast = oqGuidedState.step === total - 1;
+  document.getElementById('oq-guided-next-btn').textContent = isLast ? `Finish & Score! +${s.coins} coins` : `Next Step +${s.coins} coins`;
+
+  // Word bank
+  const wbEl = document.getElementById('oq-guided-word-bank');
+  if (s.wordBank) {
+    wbEl.style.display = 'block';
+    wbEl.innerHTML = '<div style="font-size:.75em;color:#aaa;margin-bottom:4px">Word Bank (tap to add):</div>' +
+      s.wordBank.map(w => `<span onclick="oqInsertWord('${w}')" style="display:inline-block;margin:3px;padding:4px 10px;background:rgba(255,165,2,.15);border:1px solid rgba(255,165,2,.3);border-radius:12px;color:#ffa502;font-size:.85em;cursor:pointer">${w}</span>`).join('');
+  } else {
+    wbEl.style.display = 'none';
+  }
+
+  document.getElementById('oq-guided-coins').textContent = oqGuidedState.coinsEarned;
+  document.getElementById('oq-guided-xp').textContent = oqGuidedState.xpEarned;
+}
+
+function oqInsertWord(word) {
+  const ta = document.getElementById('oq-guided-input');
+  const val = ta.value;
+  ta.value = val + (val && !val.endsWith(' ') ? ' ' : '') + word + ' ';
+  ta.focus();
+}
+
+function oqGuidedBack() {
+  oqGuidedState.answers[oqGuidedState.step] = document.getElementById('oq-guided-input').value;
+  if (oqGuidedState.step > 0) {
+    oqGuidedState.step--;
+    oqRenderGuidedStep();
+  }
+}
+
+function oqGuidedNext() {
+  const input = document.getElementById('oq-guided-input').value.trim();
+  const s = oqGuidedSteps[oqGuidedState.step];
+
+  if (input.length < s.minLength) {
+    alert(`Try to write a bit more! At least a short sentence. You wrote ${input.split(/\s+/).filter(Boolean).length} words.`);
+    return;
+  }
+
+  oqGuidedState.answers[oqGuidedState.step] = input;
+
+  // Award coins & XP for this step
+  state.yuhi.coins += s.coins;
+  state.yuhi.xp += s.xp;
+  oqGuidedState.coinsEarned += s.coins;
+  oqGuidedState.xpEarned += s.xp;
+  save(); updatePlayerCards();
+
+  if (typeof playSound === 'function') playSound('correct');
+
+  if (oqGuidedState.step < oqGuidedSteps.length - 1) {
+    oqGuidedState.step++;
+    oqRenderGuidedStep();
+  } else {
+    // All steps done — assemble full answer and score it
+    oqGuidedFinish();
+  }
+}
+
+function oqGuidedFinish() {
+  document.getElementById('oq-guided-area').style.display = 'none';
+  document.getElementById('oq-guided-progress').style.width = '100%';
+
+  // Combine all answers into one
+  const fullAnswer = oqGuidedState.answers.join(' ');
+  document.getElementById('oq-answer').value = fullAnswer;
+
+  // Score it using the existing scoring system
+  scoreOralResponse();
+}
+
 function showOralStages() {
   document.getElementById('oq-stage-area').style.display = 'block';
   document.getElementById('oq-quest-area').style.display = 'none';
+  document.getElementById('oq-mode-select').style.display = 'none';
+  document.getElementById('oq-guided-area').style.display = 'none';
   document.getElementById('oq-score-area').classList.remove('show');
   renderOralStages();
   renderOralHistory();
@@ -4322,11 +5042,11 @@ initOralQuest();
 
 // ============ MATH ARENA (Ryusei) ============
 const maStages = [
-  {id:'slime',name:'Slime Forest',icon:'🟢',desc:'Basic +−×÷ — warm up!',enemy:'🐸',enemyName:'Slime Frog',hp:50,unlocked:true},
-  {id:'fraction',name:'Fraction Cave',icon:'🦇',desc:'Fractions — cut them down!',enemy:'🦇',enemyName:'Bat Lord',hp:60,unlocked:true},
-  {id:'word',name:'Word Problem Castle',icon:'🏰',desc:'Story puzzles — think smart!',enemy:'🧟',enemyName:'Zombie Knight',hp:70,unlocked:true},
-  {id:'geometry',name:'Geometry Tower',icon:'🔺',desc:'Shapes & space — calculate!',enemy:'👻',enemyName:'Ghost Wizard',hp:65,unlocked:true},
-  {id:'boss',name:'MATH DRAGON',icon:'🐲',desc:'ALL topics — ultimate boss!',enemy:'🐲',enemyName:'Math Dragon',hp:100,unlocked:true,boss:true},
+  {id:'slime',name:'Slime Forest',icon:'🟢',desc:'Addition, Subtraction, Multiplication & Division — warm up!',enemy:'🐸',enemyName:'Slime Frog',hp:50,unlocked:true},
+  {id:'fraction',name:'Fraction Cave',icon:'🦇',desc:'Fractions — add, subtract & simplify!',enemy:'🦇',enemyName:'Bat Lord',hp:60,unlocked:true},
+  {id:'word',name:'Word Problem Castle',icon:'🏰',desc:'Word problems — read carefully & solve!',enemy:'🧟',enemyName:'Zombie Knight',hp:70,unlocked:true},
+  {id:'geometry',name:'Geometry Tower',icon:'🔺',desc:'Shapes, area & perimeter — calculate!',enemy:'👻',enemyName:'Ghost Wizard',hp:65,unlocked:true},
+  {id:'boss',name:'MATH DRAGON',icon:'🐲',desc:'All topics mixed — the ultimate challenge!',enemy:'🐲',enemyName:'Math Dragon',hp:100,unlocked:true,boss:true},
 ];
 
 const maQuestions = {
@@ -4664,7 +5384,7 @@ function maAnswer(idx) {
       comboEl.className = 'combo-text c1 show combo-pop';
     }
     if (maRevengeActive && b.combo === 1) {
-      comboEl.textContent = '🔥 REVENGE! +10 Bonus DMG!';
+      comboEl.textContent = '🔥 REVENGE! +10 Bonus Damage!';
       comboEl.className = 'combo-text c2 show combo-pop';
     }
 
@@ -4684,7 +5404,7 @@ function maAnswer(idx) {
 
     // XP + coins immediately
     state[maCurrentPlayer].xp += 5 * b.combo;
-    state[maCurrentPlayer].coins += 2 * b.combo;
+    state[maCurrentPlayer].coins += 4 * b.combo;
 
   } else {
     // WRONG — enemy attacks
@@ -4697,8 +5417,8 @@ function maAnswer(idx) {
 
     const comboEl = document.getElementById('ma-combo-display');
     comboEl.textContent = b.hintUsed
-      ? `💡 You had the hint! -${dmgTaken} HP penalty!`
-      : `💔 Ouch! -${dmgTaken} HP`;
+      ? `💡 You used the hint! You lose ${dmgTaken} health!`
+      : `💔 Ouch! You lose ${dmgTaken} health!`;
     comboEl.className = 'combo-text c1 show';
 
     // Hero shake
@@ -4780,12 +5500,12 @@ function maEndBattle(won) {
   arenaState.totalDmg += b.totalDmg;
 
   // Rewards
-  let xpReward = won ? 10 : 2;
-  let coinReward = won ? 5 : 1;
+  let xpReward = won ? 15 : 3;
+  let coinReward = won ? 10 : 2;
   let gameReward = 0;
-  if (stars >= 2) { xpReward += 5; coinReward += 3; }
-  if (stars >= 3) { xpReward += 10; coinReward += 5; }
-  if (b.stage.boss && won) { xpReward += 10; coinReward += 7; }
+  if (stars >= 2) { xpReward += 8; coinReward += 6; }
+  if (stars >= 3) { xpReward += 12; coinReward += 8; }
+  if (b.stage.boss && won) { xpReward += 15; coinReward += 12; }
 
   state[maCurrentPlayer].xp += xpReward;
   state[maCurrentPlayer].coins += coinReward;
@@ -4821,13 +5541,13 @@ function maEndBattle(won) {
   document.getElementById('ma-result-stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
 
   document.getElementById('ma-result-msg').textContent = won
-    ? `Defeated ${b.stage.enemyName}! Max combo: ${b.maxCombo}x | Total damage: ${b.totalDmg}`
-    : `${b.stage.enemyName} survived with ${Math.round(b.enemyHp)} HP. Try again — you'll get stronger!`;
+    ? `You defeated ${b.stage.enemyName}! Best combo: ${b.maxCombo} in a row! Total damage dealt: ${b.totalDmg}`
+    : `${b.stage.enemyName} survived with ${Math.round(b.enemyHp)} health left. Try again — you will get stronger!`;
 
   let rwHtml = `<div class="mr-reward" style="color:#ffd200">+${xpReward} XP</div>`;
   rwHtml += `<div class="mr-reward" style="color:#4facfe">+${coinReward} Coins</div>`;
-  if (gameReward > 0) rwHtml += `<div class="mr-reward" style="color:#2ed573">+${gameReward}m Gaming!</div>`;
-  if (b.maxCombo >= 3) rwHtml += `<div class="mr-reward" style="color:#ff4757">🔥 COMBO MASTER!</div>`;
+  if (gameReward > 0) rwHtml += `<div class="mr-reward" style="color:#2ed573">+${gameReward} min Gaming Time!</div>`;
+  if (b.maxCombo >= 3) rwHtml += `<div class="mr-reward" style="color:#ff4757">🔥 Combo Master!</div>`;
   document.getElementById('ma-result-rewards').innerHTML = rwHtml;
 }
 
@@ -4852,7 +5572,7 @@ function usePowerUp(type) {
 
   const costs = {'5050': 10, 'hint': 20, 'double': 20};
   if (costs[type] > 0 && state[maCurrentPlayer].coins < costs[type]) {
-    alert(`Not enough coins! Need ${costs[type]}, have ${state[maCurrentPlayer].coins}`);
+    alert(`Not enough coins! You need ${costs[type]} coins but you only have ${state[maCurrentPlayer].coins} coins.`);
     return;
   }
 
@@ -4877,7 +5597,7 @@ function usePowerUp(type) {
   } else if (type === 'double') {
     b.doubleActive = true;
     const comboEl = document.getElementById('ma-combo-display');
-    comboEl.textContent = '💥 2x DAMAGE ACTIVE!';
+    comboEl.textContent = '💥 Double Damage is ON!';
     comboEl.className = 'combo-text c2 show combo-pop';
   }
 }
@@ -5307,19 +6027,37 @@ const yuhiTaskDefs = [
   {id:'ch_words',     name:'Recognize Chinese Words',          detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
   {id:'koobits',      name:'KooBits',                          detail:'10 min',  time:10, coins:20, xp:40,  cat:'🔢 Math', gameMin:0},
   {id:'tll',          name:'TLL Math / Science',               detail:'',        time:10, coins:15, xp:30,  cat:'🔬 Academic', gameMin:0},
-  {id:'kendo',        name:'Kendo',                            detail:'',        time:3,  coins:10, xp:15,  cat:'🏅 Activity', gameMin:0},
-  {id:'golf',         name:'Golf',                             detail:'',        time:2,  coins:8,  xp:10,  cat:'🏅 Activity', gameMin:0},
-  {id:'hiit',         name:'HIIT',                             detail:'',        time:5,  coins:15, xp:25,  cat:'🏅 Activity', gameMin:0},
+  // 🏃 OFF-SCREEN ACTIVITIES
+  {id:'kendo',        name:'Kendo Practice',       detail:'',     time:3,  coins:12, xp:20,  cat:'🏃 Off-Screen', gameMin:0},
+  {id:'golf',         name:'Golf Practice',        detail:'',     time:2,  coins:10, xp:15,  cat:'🏃 Off-Screen', gameMin:0},
+  {id:'hiit',         name:'HIIT Workout',         detail:'5min', time:5,  coins:20, xp:30,  cat:'🏃 Off-Screen', gameMin:0},
+  {id:'soccer',       name:'Soccer / Football',    detail:'15min',time:15, coins:30, xp:45,  cat:'🏃 Off-Screen', gameMin:0},
+  {id:'walk',         name:'Walk Outside',         detail:'10min',time:10, coins:20, xp:30,  cat:'🏃 Off-Screen', gameMin:0},
+  {id:'stretch',      name:'Stretching',           detail:'5min', time:5,  coins:15, xp:20,  cat:'🏃 Off-Screen', gameMin:0},
+  {id:'reading',      name:'Read a Book (paper)',   detail:'15min',time:15, coins:25, xp:40,  cat:'📕 Off-Screen', gameMin:0},
+  {id:'drawing',      name:'Draw / Color',          detail:'10min',time:10, coins:20, xp:30,  cat:'🎨 Off-Screen', gameMin:0},
+  {id:'puzzle',       name:'Puzzle / Board Game',    detail:'10min',time:10, coins:20, xp:30,  cat:'🧩 Off-Screen', gameMin:0},
+  {id:'help_house',   name:'Help with Housework',   detail:'10min',time:10, coins:25, xp:35,  cat:'🏠 Off-Screen', gameMin:0},
+  {id:'cook',         name:'Help Cook / Bake',       detail:'15min',time:15, coins:30, xp:45,  cat:'🏠 Off-Screen', gameMin:0},
 ];
 
 const ryuseiTaskDefs = [
   {id:'dd_english',   name:'Daily Dose English',  detail:'',  time:15, coins:20, xp:35,  cat:'📝 English', gameMin:0},
   {id:'dd_math',      name:'Daily Dose Math',      detail:'',  time:20, coins:25, xp:45,  cat:'🔢 Math',    gameMin:0},
-  {id:'kendo',        name:'Kendo',                detail:'',  time:3,  coins:10, xp:15,  cat:'🏅 Activity', gameMin:0},
-  {id:'golf',         name:'Golf',                 detail:'',  time:2,  coins:8,  xp:10,  cat:'🏅 Activity', gameMin:0},
-  {id:'hiit',         name:'HIIT',                 detail:'',  time:5,  coins:15, xp:25,  cat:'🏅 Activity', gameMin:0},
   {id:'berries_ch',   name:'Berries Chinese',      detail:'',  time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
   {id:'learning_lab', name:'Learning Lab',         detail:'',  time:20, coins:20, xp:40,  cat:'🔬 Academic', gameMin:0},
+  // 🏃 OFF-SCREEN ACTIVITIES (physical, creative, no screen!)
+  {id:'kendo',        name:'Kendo Practice',       detail:'',  time:3,  coins:12, xp:20,  cat:'🏃 Off-Screen', gameMin:0},
+  {id:'golf',         name:'Golf Practice',        detail:'',  time:2,  coins:10, xp:15,  cat:'🏃 Off-Screen', gameMin:0},
+  {id:'hiit',         name:'HIIT Workout',         detail:'5min',time:5, coins:20, xp:30,  cat:'🏃 Off-Screen', gameMin:0},
+  {id:'soccer',       name:'Soccer / Football',    detail:'15min',time:15,coins:30, xp:45, cat:'🏃 Off-Screen', gameMin:0},
+  {id:'walk',         name:'Walk Outside',         detail:'10min',time:10,coins:20, xp:30, cat:'🏃 Off-Screen', gameMin:0},
+  {id:'stretch',      name:'Stretching',           detail:'5min',time:5, coins:15, xp:20,  cat:'🏃 Off-Screen', gameMin:0},
+  {id:'reading',      name:'Read a Book (paper)',   detail:'15min',time:15,coins:25, xp:40, cat:'📕 Off-Screen', gameMin:0},
+  {id:'drawing',      name:'Draw / Color',          detail:'10min',time:10,coins:20, xp:30, cat:'🎨 Off-Screen', gameMin:0},
+  {id:'puzzle',       name:'Puzzle / Board Game',    detail:'10min',time:10,coins:20, xp:30, cat:'🧩 Off-Screen', gameMin:0},
+  {id:'help_house',   name:'Help with Housework',   detail:'10min',time:10,coins:25, xp:35, cat:'🏠 Off-Screen', gameMin:0},
+  {id:'cook',         name:'Help Cook / Bake',       detail:'15min',time:15,coins:30, xp:45, cat:'🏠 Off-Screen', gameMin:0},
 ];
 
 // Wake targets in minutes from midnight
@@ -5937,6 +6675,11 @@ setTimeout(() => {
   initSync();
   renderRivalView();
 }, 200);
+</script>
+<button id="sound-toggle" onclick="toggleSound()" style="position:fixed;bottom:10px;right:10px;z-index:999;background:#1a1a2e;color:#aaa;border:1px solid #333;border-radius:50%;width:36px;height:36px;font-size:1.2em;cursor:pointer">🔊</button>
+<script>
+// Set initial sound icon
+if (soundMuted) document.getElementById('sound-toggle').textContent = '🔇';
 </script>
 </body>
 </html>
