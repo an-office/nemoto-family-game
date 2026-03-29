@@ -407,6 +407,13 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   color:white; font-weight:700; cursor:pointer; font-size:.88em;
 }
 .task-time-result { margin-top:8px; font-weight:600; font-size:.88em; min-height:18px; }
+.task-reaction{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;display:flex;align-items:center;justify-content:center;animation:taskReactFade 2.5s ease-out forwards}
+@keyframes taskReactFade{0%{opacity:1;transform:scale(.5)}15%{opacity:1;transform:scale(1.1)}25%{transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(1.2)}}
+.task-reaction-text{font-size:2.5em;font-weight:900;text-align:center;text-shadow:0 0 30px rgba(0,0,0,.5);line-height:1.4}
+.task-reaction-emoji{font-size:4em;display:block;animation:taskEmojiBounce 0.6s ease infinite alternate}
+@keyframes taskEmojiBounce{from{transform:translateY(0)}to{transform:translateY(-15px)}}
+.task-result-animate{animation:taskResultPop .5s ease}
+@keyframes taskResultPop{0%{transform:scale(0);opacity:0}50%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
 .task-summary {
   margin:14px 0; padding:14px;
   background:rgba(255,255,255,0.05); border-radius:12px;
@@ -623,10 +630,10 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   <div class="challenge-card">
     <h3>TODAY'S DAILY TASKS (Complete ALL = 5min Gaming)</h3>
     <ul>
-      <li id="task-1"><strong>Task 1:</strong> Complete 1 Math quiz</li>
-      <li id="task-2"><strong>Task 2:</strong> Complete 1 Science quiz</li>
-      <li id="task-3"><strong>Task 3:</strong> Complete 1 English quiz</li>
-      <li id="task-4"><strong>Task 4:</strong> Complete 1 Chinese quiz</li>
+      <li id="task-1"><strong>Task 1:</strong> Complete 3 Math quizzes</li>
+      <li id="task-2"><strong>Task 2:</strong> Complete 3 Science quizzes</li>
+      <li id="task-3"><strong>Task 3:</strong> Complete 3 English quizzes</li>
+      <li id="task-4"><strong>Task 4:</strong> Complete 3 Chinese quizzes</li>
     </ul>
     <div style="margin-top:10px;text-align:center">
       <div style="font-size:.85em;color:#aaa">Progress: <span id="daily-progress">0/4 subjects</span></div>
@@ -934,7 +941,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
 
     <div class="ma-powerups" id="ma-powerups">
       <button class="ma-pu-btn" id="pu-5050" onclick="usePowerUp('5050')">🎯 50/50 (10c)</button>
-      <button class="ma-pu-btn" id="pu-hint" onclick="usePowerUp('hint')">💡 Hint (FREE)</button>
+      <button class="ma-pu-btn" id="pu-hint" onclick="usePowerUp('hint')">💡 Hint (20c)</button>
       <button class="ma-pu-btn" id="pu-double" onclick="usePowerUp('double')">💥 2x DMG (20c)</button>
     </div>
 
@@ -1266,6 +1273,12 @@ try { state = JSON.parse(localStorage.getItem('nemoto-study-v2')) || defaultStat
   if (state[p].perfectBonuses === undefined) state[p].perfectBonuses = 0;
   if (state[p].gameBank === undefined) state[p].gameBank = 0;
   if (state[p].gameUsed === undefined) state[p].gameUsed = 0;
+  if (!state[p].completedQs) state[p].completedQs = {};
+  if (!state[p].diffProgress) state[p].diffProgress = {};
+  ['math','science','english','chinese'].forEach(s => {
+    if (!state[p].completedQs[s]) state[p].completedQs[s] = [];
+    if (state[p].diffProgress[s] === undefined) state[p].diffProgress[s] = 0;
+  });
 });
 
 // Seed baseline points (2026-03-28) — applies once per device if XP is below baseline
@@ -1382,106 +1395,179 @@ let shopPlayer = 'yuhi';
 const questions = {
   math: {
     yuhi: [ // P6 PSLE standard
-      {q:"What is 3/8 + 1/4?", opts:["5/8","1/2","7/8","3/4"], ans:0, exp:"1/4 = 2/8, so 3/8 + 2/8 = 5/8", diff:"easy"},
-      {q:"A rectangle has a perimeter of 36 cm. If the length is 12 cm, what is the width?", opts:["6 cm","8 cm","10 cm","24 cm"], ans:0, exp:"P = 2(L+W), 36 = 2(12+W), W = 6 cm", diff:"easy"},
-      {q:"What is 25% of 480?", opts:["120","96","140","110"], ans:0, exp:"25% = 1/4, so 480 / 4 = 120", diff:"easy"},
-      {q:"If 3x + 7 = 22, what is x?", opts:["5","6","4","7"], ans:0, exp:"3x = 22 - 7 = 15, x = 5", diff:"medium"},
-      {q:"A bag has 3 red, 4 blue, and 5 green balls. What is the probability of picking a blue ball?", opts:["1/3","4/12","1/4","4/7"], ans:0, exp:"4 blue out of 12 total = 4/12 = 1/3", diff:"medium"},
-      {q:"What is the volume of a cube with side 5 cm?", opts:["125 cm\u00B3","25 cm\u00B3","75 cm\u00B3","150 cm\u00B3"], ans:0, exp:"V = s\u00B3 = 5\u00B3 = 125 cm\u00B3", diff:"easy"},
-      {q:"Tom spent 2/5 of his money on books and 1/4 on food. What fraction is left?", opts:["7/20","3/20","1/3","9/20"], ans:0, exp:"2/5 + 1/4 = 8/20 + 5/20 = 13/20 spent. Left = 7/20", diff:"hard"},
-      {q:"A shop gives 20% discount. Original price is $85. What is the sale price?", opts:["$68","$65","$72","$70"], ans:0, exp:"20% of 85 = 17, sale = 85 - 17 = $68", diff:"medium"},
-      {q:"The ratio of boys to girls is 3:5. If there are 24 boys, how many girls?", opts:["40","30","35","45"], ans:0, exp:"3 parts = 24, 1 part = 8, 5 parts = 40", diff:"medium"},
-      {q:"What is the area of a triangle with base 14 cm and height 8 cm?", opts:["56 cm\u00B2","112 cm\u00B2","48 cm\u00B2","64 cm\u00B2"], ans:0, exp:"A = 1/2 \u00D7 14 \u00D7 8 = 56 cm\u00B2", diff:"easy"},
-      {q:"Ali had $120. He gave 3/8 to his brother and spent $25. How much left?", opts:["$50","$55","$45","$60"], ans:0, exp:"3/8 of 120 = 45. Left = 120 - 45 - 25 = $50", diff:"medium"},
-      {q:"Express 0.375 as a fraction in simplest form.", opts:["3/8","375/100","37/80","3/75"], ans:0, exp:"0.375 = 375/1000 = 3/8", diff:"medium"},
+      {q:"What is 3/8 + 1/4?", opts:["5/8","1/2","7/8","3/4"], ans:0, exp:"🧩 Make the denominators the same first, then add the numerators!", diff:"easy"},
+      {q:"A rectangle has a perimeter of 36 cm. If the length is 12 cm, what is the width?", opts:["6 cm","8 cm","10 cm","24 cm"], ans:0, exp:"🧩 Perimeter = 2 × (length + width). Divide perimeter by 2, then subtract the known side!", diff:"easy"},
+      {q:"What is 25% of 480?", opts:["120","96","140","110"], ans:0, exp:"💡 25% is the same as 1/4. So just divide the number by 4! Easy shortcut!", diff:"easy"},
+      {q:"If 3x + 7 = 22, what is x?", opts:["5","6","4","7"], ans:0, exp:"🔍 Move the number to the other side (subtract it), then divide both sides by the coefficient of x!", diff:"medium"},
+      {q:"A bag has 3 red, 4 blue, and 5 green balls. What is the probability of picking a blue ball?", opts:["1/3","4/12","1/4","4/7"], ans:0, exp:"🎲 Probability = favorable outcomes ÷ total outcomes. Add all the balls first, then make a fraction!", diff:"medium"},
+      {q:"What is the volume of a cube with side 5 cm?", opts:["125 cm\u00B3","25 cm\u00B3","75 cm\u00B3","150 cm\u00B3"], ans:0, exp:"📦 Volume of a cube = side × side × side. Multiply the side length by itself three times!", diff:"easy"},
+      {q:"Tom spent 2/5 of his money on books and 1/4 on food. What fraction is left?", opts:["7/20","3/20","1/3","9/20"], ans:0, exp:"🧠 Find a common denominator, add the fractions spent, then subtract from 1 (the whole)!", diff:"hard"},
+      {q:"A shop gives 20% discount. Original price is $85. What is the sale price?", opts:["$68","$65","$72","$70"], ans:0, exp:"🛍️ Find the discount amount (percentage × price), then subtract it from the original price!", diff:"medium"},
+      {q:"The ratio of boys to girls is 3:5. If there are 24 boys, how many girls?", opts:["40","30","35","45"], ans:0, exp:"⚖️ Find the value of 1 part first (divide the known amount by its ratio number), then multiply by the other ratio!", diff:"medium"},
+      {q:"What is the area of a triangle with base 14 cm and height 8 cm?", opts:["56 cm\u00B2","112 cm\u00B2","48 cm\u00B2","64 cm\u00B2"], ans:0, exp:"📐 Triangle area = ½ × base × height. Multiply base by height, then halve it!", diff:"easy"},
+      {q:"Ali had $120. He gave 3/8 to his brother and spent $25. How much left?", opts:["$50","$55","$45","$60"], ans:0, exp:"💰 Find the fraction of the total first, then subtract both amounts from the original!", diff:"medium"},
+      {q:"Express 0.375 as a fraction in simplest form.", opts:["3/8","375/100","37/80","3/75"], ans:0, exp:"🔢 Write the decimal as a fraction over 1000, then simplify by finding the greatest common factor!", diff:"medium"},
       // P6 PSLE — Data Analysis
-      {q:"The average height of 6 students is 145 cm. If a new student of 159 cm joins, what is the new average?", opts:["147 cm","148 cm","146 cm","149 cm"], ans:0, exp:"Total = 145 × 6 = 870. New total = 870 + 159 = 1029. New average = 1029 ÷ 7 = 147 cm", diff:"medium"},
-      {q:"In a pie chart, the Maths sector is 90°. What percentage chose Maths?", opts:["25%","30%","20%","50%"], ans:0, exp:"Percentage = 90 ÷ 360 × 100 = 25%", diff:"easy"},
+      {q:"The average height of 6 students is 145 cm. If a new student of 159 cm joins, what is the new average?", opts:["147 cm","148 cm","146 cm","149 cm"], ans:0, exp:"📊 Find the old total (average × count), add the new value, then divide by the new count!", diff:"medium"},
+      {q:"In a pie chart, the Maths sector is 90°. What percentage chose Maths?", opts:["25%","30%","20%","50%"], ans:0, exp:"🥧 A full circle = 360°. Divide the sector angle by 360, then convert to percentage!", diff:"easy"},
       // P6 PSLE — Algebra
-      {q:"If 2y − 5 = 11, what is y?", opts:["8","6","7","9"], ans:0, exp:"2y = 11 + 5 = 16, y = 8", diff:"medium"},
-      {q:"Simplify: 6a + 3b − 2a + b", opts:["4a + 4b","8a + 4b","4a + 2b","8a + 2b"], ans:0, exp:"6a − 2a = 4a, 3b + b = 4b → 4a + 4b", diff:"medium"},
+      {q:"If 2y − 5 = 11, what is y?", opts:["8","6","7","9"], ans:0, exp:"🔍 Move the constant to the other side (change its sign), then divide by the coefficient!", diff:"medium"},
+      {q:"Simplify: 6a + 3b − 2a + b", opts:["4a + 4b","8a + 4b","4a + 2b","8a + 2b"], ans:0, exp:"🧩 Group like terms together! Combine all the a-terms, then combine all the b-terms!", diff:"medium"},
       // P6 PSLE — Percentage
-      {q:"A shirt costs $40. After a 15% discount, what is the price?", opts:["$34","$35","$36","$32"], ans:0, exp:"15% of 40 = 6. Sale price = 40 − 6 = $34", diff:"medium"},
-      {q:"There are 200 students. 45% are girls. How many boys?", opts:["110","90","100","120"], ans:0, exp:"45% girls = 90. Boys = 200 − 90 = 110", diff:"medium"},
+      {q:"A shirt costs $40. After a 15% discount, what is the price?", opts:["$34","$35","$36","$32"], ans:0, exp:"🛍️ Calculate the discount (percentage × original price), then subtract from the original!", diff:"medium"},
+      {q:"There are 200 students. 45% are girls. How many boys?", opts:["110","90","100","120"], ans:0, exp:"👤 Find the number of girls (percentage × total), then subtract from the total to get boys!", diff:"medium"},
       // P6 PSLE — Geometry
-      {q:"What is the area of a circle with radius 7 cm? (Use π = 22/7)", opts:["154 cm²","44 cm²","77 cm²","308 cm²"], ans:0, exp:"A = πr² = 22/7 × 7 × 7 = 154 cm²", diff:"hard"},
-      {q:"Two angles of a triangle are 65° and 55°. What is the third angle?", opts:["60°","70°","50°","80°"], ans:0, exp:"180 − 65 − 55 = 60°", diff:"easy"},
-      {q:"A cuboid is 8 cm long, 5 cm wide, 3 cm high. What is its volume?", opts:["120 cm³","80 cm³","100 cm³","150 cm³"], ans:0, exp:"V = l × w × h = 8 × 5 × 3 = 120 cm³", diff:"medium"},
+      {q:"What is the area of a circle with radius 7 cm? (Use π = 22/7)", opts:["154 cm²","44 cm²","77 cm²","308 cm²"], ans:0, exp:"⭕ Area = π × r × r. Plug in the radius and use 22/7 for π — see if numbers cancel!", diff:"hard"},
+      {q:"Two angles of a triangle are 65° and 55°. What is the third angle?", opts:["60°","70°","50°","80°"], ans:0, exp:"📐 All triangle angles add up to 180°. Subtract the two known angles from 180!", diff:"easy"},
+      {q:"A cuboid is 8 cm long, 5 cm wide, 3 cm high. What is its volume?", opts:["120 cm³","80 cm³","100 cm³","150 cm³"], ans:0, exp:"📦 Volume of a cuboid = length × width × height. Multiply all three dimensions together!", diff:"medium"},
       // P6 PSLE — Fractions & Ratio (model method)
-      {q:"John and Mary share $480 in the ratio 3:5. How much does Mary get?", opts:["$300","$288","$320","$180"], ans:0, exp:"Total parts = 8. Mary = 5/8 × 480 = $300", diff:"medium"},
-      {q:"3/4 of a number is 36. What is the number?", opts:["48","27","42","54"], ans:0, exp:"Number = 36 ÷ 3/4 = 36 × 4/3 = 48", diff:"medium"},
-      {q:"What is 5/6 − 1/3?", opts:["1/2","2/3","1/6","2/6"], ans:0, exp:"1/3 = 2/6. So 5/6 − 2/6 = 3/6 = 1/2", diff:"easy"},
+      {q:"John and Mary share $480 in the ratio 3:5. How much does Mary get?", opts:["$300","$288","$320","$180"], ans:0, exp:"💰 Add the ratio parts to get the total. Find one part’s value, then multiply by the person’s share!", diff:"medium"},
+      {q:"3/4 of a number is 36. What is the number?", opts:["48","27","42","54"], ans:0, exp:"🔄 To find the whole when you know a fraction of it, divide by the fraction (flip and multiply)!", diff:"medium"},
+      {q:"What is 5/6 − 1/3?", opts:["1/2","2/3","1/6","2/6"], ans:0, exp:"🧩 Make the denominators match first, then subtract the numerators and simplify!", diff:"easy"},
       // P6 PSLE — Data & Average
-      {q:"The average of 5 numbers is 12. What is their sum?", opts:["60","50","55","65"], ans:0, exp:"Sum = Average × Count = 12 × 5 = 60", diff:"easy"},
-      {q:"Marks: 78, 85, 92, 65. What is the average?", opts:["80","75","82","78"], ans:0, exp:"Sum = 320. Average = 320 ÷ 4 = 80", diff:"medium"},
+      {q:"The average of 5 numbers is 12. What is their sum?", opts:["60","50","55","65"], ans:0, exp:"💡 Sum = Average × Count. Multiply the average by how many numbers there are!", diff:"easy"},
+      {q:"Marks: 78, 85, 92, 65. What is the average?", opts:["80","75","82","78"], ans:0, exp:"📊 Average = total ÷ count. Add all the numbers up, then divide by how many there are!", diff:"medium"},
       // P6 PSLE — Rate
-      {q:"A tap fills 3 litres per minute. How long to fill a 45-litre tank?", opts:["15 min","12 min","18 min","20 min"], ans:0, exp:"Time = 45 ÷ 3 = 15 minutes", diff:"easy"},
+      {q:"A tap fills 3 litres per minute. How long to fill a 45-litre tank?", opts:["15 min","12 min","18 min","20 min"], ans:0, exp:"🚰 Time = Total amount ÷ Rate. Divide the total by the amount per minute!", diff:"easy"},
       // P6 PSLE — Remainder concept (branching)
-      {q:"John spent 3/5 of his money on books and 1/3 of the remainder on a wallet. He had $16 left. How much did he start with?", opts:["$60","$48","$80","$40"], ans:0, exp:"After books: 2/5 left. After wallet: 2/3 of 2/5 = 4/15 left. 4/15 = $16, so 1/15 = $4, total = $60", diff:"hard"},
-      {q:"Mary spent 2/5 of her money on a dress and 1/4 of the remainder on shoes. She had $90 left. How much money did she have at first?", opts:["$200","$180","$240","$150"], ans:0, exp:"After dress: 3/5 left. After shoes: 3/4 of 3/5 = 9/20 left. 9/20 = $90, total = $200", diff:"hard"},
+      {q:"John spent 3/5 of his money on books and 1/3 of the remainder on a wallet. He had $16 left. How much did he start with?", opts:["$60","$48","$80","$40"], ans:0, exp:"🧠 Find the remainder after spending, then find the fraction of remainder left after the second purchase. Set that equal to $16 and solve!", diff:"hard"},
+      {q:"Mary spent 2/5 of her money on a dress and 1/4 of the remainder on shoes. She had $90 left. How much money did she have at first?", opts:["$200","$180","$240","$150"], ans:0, exp:"👗 Find what fraction remains after each purchase. The final remainder fraction equals the amount left — use it to find the original!", diff:"hard"},
       // P6 PSLE — Ratio constant part
-      {q:"Ali and Ben have money in ratio 5:6. After Ben spent $16, the ratio became 3:2. How much does Ben have now?", opts:["$20","$24","$16","$30"], ans:0, exp:"Ali constant: 5→15, 6→18. Ben: 18-2k=10 where diff=16. 15:10=3:2. Ben now=2 units, 1 unit=$10, Ben=$20", diff:"hard"},
-      {q:"Ratio of red to blue beads is 3:5. After removing 12 blue beads, ratio becomes 3:2. How many red beads?", opts:["36","24","18","30"], ans:0, exp:"Red constant at 3. Blue: 5→2, diff=3 units=12, so 1 unit=4. Red=3×4×3=36", diff:"hard"},
+      {q:"Ali and Ben have money in ratio 5:6. After Ben spent $16, the ratio became 3:2. How much does Ben have now?", opts:["$20","$24","$16","$30"], ans:0, exp:"🧠 The unchanged person’s ratio must be equal in both ratios. Make that part the same, then find the difference to get 1 unit’s value!", diff:"hard"},
+      {q:"Ratio of red to blue beads is 3:5. After removing 12 blue beads, ratio becomes 3:2. How many red beads?", opts:["36","24","18","30"], ans:0, exp:"🔴 The unchanged color keeps the same ratio. Make it equal in both ratios, find 1 unit from the difference, then calculate!", diff:"hard"},
       // P6 PSLE — Constant total
-      {q:"Ali and Ben share $360 in ratio 5:4. After Ali gives Ben some money, they have equal amounts. How much did Ali give?", opts:["$20","$40","$36","$30"], ans:0, exp:"Ali=5/9×360=$200, Ben=4/9×360=$160. Equal=$180 each. Ali gave $200-$180=$20", diff:"hard"},
+      {q:"Ali and Ben share $360 in ratio 5:4. After Ali gives Ben some money, they have equal amounts. How much did Ali give?", opts:["$20","$40","$36","$30"], ans:0, exp:"🤝 Find each person's original share using the ratio. Equal means total ÷ 2. The difference is what was given!", diff:"hard"},
       // P6 PSLE — Working backwards
-      {q:"A bus started with some passengers. At stop 1, 1/4 got off and 5 boarded. At stop 2, 1/2 got off and 20 boarded. Now there are 60. How many at the start?", opts:["100","80","120","90"], ans:0, exp:"Before stop 2: (60-20)×2=80. Before stop 1: (80-5)×4/3=100", diff:"hard"},
+      {q:"A bus started with some passengers. At stop 1, 1/4 got off and 5 boarded. At stop 2, 1/2 got off and 20 boarded. Now there are 60. How many at the start?", opts:["100","80","120","90"], ans:0, exp:"⏪ Work backwards from the end! Undo each step in reverse — subtract the boarded, then reverse the fraction that got off!", diff:"hard"},
       // P6 PSLE — Excess & shortage
-      {q:"Tom packs 5 balls per bag with 8 left over. If he packs 7 per bag, he needs 4 more. How many bags?", opts:["6","8","5","7"], ans:0, exp:"Difference per bag: 7-5=2. Total diff: 8+4=12. Bags = 12÷2 = 6", diff:"hard"},
+      {q:"Tom packs 5 balls per bag with 8 left over. If he packs 7 per bag, he needs 4 more. How many bags?", opts:["6","8","5","7"], ans:0, exp:"💡 Find the difference per bag between the two pack sizes. Total excess + shortage = total difference. Divide to find the number of bags!", diff:"hard"},
       // P6 PSLE — Assumption method
-      {q:"A farm has chickens and cows. There are 30 heads and 80 legs. How many cows?", opts:["10","15","12","8"], ans:0, exp:"If all chickens: 30×2=60 legs. Extra=80-60=20. Each cow adds 2 legs. Cows=20÷2=10", diff:"hard"},
+      {q:"A farm has chickens and cows. There are 30 heads and 80 legs. How many cows?", opts:["10","15","12","8"], ans:0, exp:"🐔 Assume all are one type! Count the legs. The difference from the actual tells you how many of the other type!", diff:"hard"},
       // P6 PSLE — Data Analysis (more)
-      {q:"5 test scores: 72, 85, 90, 68, 95. What is the median?", opts:["85","80","82","90"], ans:0, exp:"Arrange: 68, 72, 85, 90, 95. Middle value = 85", diff:"medium"},
-      {q:"A bar graph shows: Mon=15, Tue=20, Wed=10, Thu=25, Fri=30. What fraction of total is Friday?", opts:["3/10","1/5","1/4","2/5"], ans:0, exp:"Total=100. Friday=30. Fraction=30/100=3/10", diff:"medium"},
+      {q:"5 test scores: 72, 85, 90, 68, 95. What is the median?", opts:["85","80","82","90"], ans:0, exp:"📊 Arrange the numbers from smallest to largest. The middle value is the median!", diff:"medium"},
+      {q:"A bar graph shows: Mon=15, Tue=20, Wed=10, Thu=25, Fri=30. What fraction of total is Friday?", opts:["3/10","1/5","1/4","2/5"], ans:0, exp:"📊 Add all values for the total. Then put Friday's value over the total and simplify the fraction!", diff:"medium"},
       // P6 PSLE — Percentage of percentage
-      {q:"A bag costs $80. First a 25% discount, then a further 10% off the discounted price. What is the final price?", opts:["$54","$52","$56","$50"], ans:0, exp:"After 25% off: $60. After 10% off $60: $60-$6=$54", diff:"hard"},
-      {q:"A town has 40,000 people. Population increases by 10% in Year 1, then decreases by 10% in Year 2. What is the population now?", opts:["39,600","40,000","38,000","39,000"], ans:0, exp:"Year 1: 40000×1.1=44000. Year 2: 44000×0.9=39600. NOT back to 40000!", diff:"hard"},
+      {q:"A bag costs $80. First a 25% discount, then a further 10% off the discounted price. What is the final price?", opts:["$54","$52","$56","$50"], ans:0, exp:"🛍️ Apply discounts one at a time! First discount changes the price, then the second discount is on the NEW price!", diff:"hard"},
+      {q:"A town has 40,000 people. Population increases by 10% in Year 1, then decreases by 10% in Year 2. What is the population now?", opts:["39,600","40,000","38,000","39,000"], ans:0, exp:"📈 Apply each percentage change to the NEW amount, not the original. Tricky — going up then down by the same % does NOT return to the start!", diff:"hard"},
       // P6 PSLE — Angles
-      {q:"In a parallelogram, one angle is 65°. What is the opposite angle?", opts:["65°","115°","90°","125°"], ans:0, exp:"Opposite angles in a parallelogram are equal. So opposite=65°", diff:"medium"},
-      {q:"Angle X and Angle Y are supplementary. Angle X is 3 times Angle Y. What is Angle X?", opts:["135°","120°","150°","108°"], ans:0, exp:"X+Y=180, X=3Y. 3Y+Y=180, 4Y=180, Y=45, X=135°", diff:"hard"},
+      {q:"In a parallelogram, one angle is 65°. What is the opposite angle?", opts:["65°","115°","90°","125°"], ans:0, exp:"📐 In a parallelogram, opposite angles are always equal! Use this property!", diff:"medium"},
+      {q:"Angle X and Angle Y are supplementary. Angle X is 3 times Angle Y. What is Angle X?", opts:["135°","120°","150°","108°"], ans:0, exp:"🧩 Supplementary angles add to 180°. Write one angle in terms of the other, then solve the equation!", diff:"hard"},
+      // P6 PSLE — Speed, Distance, Time
+      {q:"A car travels at 60 km/h for 2.5 hours. What distance does it cover?", opts:["150 km","120 km","180 km","135 km"], ans:0, exp:"🚗 Distance = Speed × Time. Multiply the speed by the number of hours!", diff:"easy"},
+      {q:"Ali cycles 24 km in 3 hours. What is his average speed?", opts:["8 km/h","6 km/h","10 km/h","12 km/h"], ans:0, exp:"🚲 Speed = Distance ÷ Time. Divide the total distance by the total time!", diff:"easy"},
+      {q:"A train travels at 80 km/h. How long does it take to travel 200 km?", opts:["2.5 h","2 h","3 h","2.25 h"], ans:0, exp:"🚂 Time = Distance ÷ Speed. Divide the distance by the speed to get hours!", diff:"medium"},
+      {q:"Car A travels at 70 km/h and Car B at 50 km/h in the same direction from the same point. After 3 hours, how far apart are they?", opts:["60 km","90 km","45 km","75 km"], ans:0, exp:"🚗 Find the speed difference between the two cars, then multiply by time to get the gap!", diff:"medium"},
+      {q:"Ben left home at 8:00 am and reached school at 8:45 am. If the school is 6 km away, what was his speed?", opts:["8 km/h","6 km/h","10 km/h","12 km/h"], ans:0, exp:"⏰ Convert minutes to hours first (divide by 60). Then Speed = Distance ÷ Time!", diff:"hard"},
+      // P6 PSLE — More Ratio & Proportion
+      {q:"The ratio of boys to girls in a class is 3:5. If there are 40 students, how many boys are there?", opts:["15","20","24","12"], ans:0, exp:"👦 Add ratio parts for total parts. Divide total students by total parts to get 1 part, then multiply!", diff:"easy"},
+      {q:"Tom and Jerry share $270 in the ratio 4:5. How much does Jerry get?", opts:["$150","$120","$135","$180"], ans:0, exp:"💰 Total parts = sum of ratio numbers. Find one part's value, then multiply by Jerry's share!", diff:"medium"},
+      {q:"The ratio of flour to sugar in a recipe is 5:2. If 350 g of flour is used, how much sugar is needed?", opts:["140 g","100 g","175 g","120 g"], ans:0, exp:"🧁 Find the value of 1 part (divide known quantity by its ratio number), then multiply by the other ratio!", diff:"medium"},
+      // P6 PSLE — More Percentage
+      {q:"A shirt costs $60. After a 15% discount, what is the selling price?", opts:["$51","$45","$54","$48"], ans:0, exp:"🛍️ Find the discount amount (percentage × price), then subtract it from the original!", diff:"easy"},
+      {q:"A meal costs $40. GST of 9% is added. What is the total bill?", opts:["$43.60","$44.00","$43.20","$42.80"], ans:0, exp:"💳 Calculate the tax (percentage × price), then add it to the original price!", diff:"medium"},
+      {q:"A shop increased prices by 20%, then gave a 20% discount. If the original price was $50, what is the final price?", opts:["$48","$50","$45","$52"], ans:0, exp:"💡 Apply each percentage change step by step. The base changes after the first change — that's the trick!", diff:"hard"},
+      // P6 PSLE — More Fraction Word Problems
+      {q:"Jane has 120 beads. She uses 2/5 for a necklace and 1/3 of the remainder for a bracelet. How many beads are left?", opts:["48","40","56","36"], ans:0, exp:"📿 Find the first fraction used, get the remainder, then find the fraction of the remainder used. Subtract both from original!", diff:"medium"},
+      {q:"A tank is 3/4 full. After using 18 litres, it is 1/2 full. What is the full capacity of the tank?", opts:["72 litres","54 litres","64 litres","80 litres"], ans:0, exp:"💧 The litres used equals the difference between the two fractions. Find that fraction, then work out the full capacity!", diff:"medium"},
+      {q:"Peter read 2/7 of a book on Monday and 3/7 on Tuesday. He has 60 pages left. How many pages does the book have?", opts:["210","180","150","240"], ans:0, exp:"📚 Add the fractions read. The remaining fraction equals the pages left. Use that to find the whole!", diff:"hard"},
+      // P6 PSLE — Algebra (Simple Equations)
+      {q:"Solve: 3x + 7 = 22. What is x?", opts:["5","6","4","7"], ans:0, exp:"🔍 Move the constant to the other side, then divide both sides by the coefficient of x!", diff:"easy"},
+      {q:"Solve: 5y − 8 = 27. What is y?", opts:["7","8","6","9"], ans:0, exp:"🔍 Move the constant to the other side (change the sign), then divide by the coefficient!", diff:"easy"},
+      {q:"The sum of two numbers is 56. One number is 3 times the other. What is the larger number?", opts:["42","36","48","28"], ans:0, exp:"🧩 Let the smaller number be x. The bigger is 3x. Add them to equal the sum, solve for x, then find the bigger one!", diff:"medium"},
+      // P6 PSLE — More Geometry (Composite Figures)
+      {q:"A rectangle 12 cm by 8 cm has a square of side 3 cm cut from one corner. What is the remaining area?", opts:["87 cm²","93 cm²","84 cm²","90 cm²"], ans:0, exp:"✂️ Find the rectangle area, find the cut-out area, then subtract the cut-out from the whole!", diff:"medium"},
+      {q:"A semicircle has a diameter of 14 cm. What is its area? (Use π = 22/7)", opts:["77 cm²","154 cm²","44 cm²","88 cm²"], ans:0, exp:"🌝 First find the radius (half the diameter). Then area of semicircle = ½ × π × r × r!", diff:"medium"},
+      {q:"Two angles of a triangle are 48° and 67°. What is the third angle?", opts:["65°","75°","55°","70°"], ans:0, exp:"📐 Triangle angles always add to 180°! Subtract the two known angles from 180!", diff:"easy"},
+      // P6 PSLE — Number Patterns
+      {q:"What is the next number: 3, 7, 15, 31, ___?", opts:["63","47","55","59"], ans:0, exp:"🔮 Look at how each number relates to the previous one. Is it multiplying and adding? Find the rule!", diff:"hard"},
+      {q:"What is the 8th term: 4, 9, 14, 19, ...?", opts:["39","44","34","49"], ans:0, exp:"🔢 Find the common difference! nth term = first term + (n-1) × difference. Count the jumps!", diff:"medium"},
+      // P6 PSLE — Average / Mean
+      {q:"The average of 5 numbers is 24. If one number is removed, the average becomes 22. What number was removed?", opts:["32","28","30","26"], ans:0, exp:"🧠 Find the old total (avg × count) and the new total. The removed number is the difference!", diff:"hard"},
+      {q:"Amy scored 75, 82, 90 and 93 in 4 tests. What score does she need in the 5th test to get an average of 85?", opts:["85","80","88","82"], ans:0, exp:"🎯 Find the total needed (target avg × count). Subtract the current total to find the missing score!", diff:"medium"},
+      // P6 PSLE — Volume & Capacity
+      {q:"A rectangular tank is 25 cm long, 20 cm wide and 30 cm high. What is its volume?", opts:["15,000 cm³","12,000 cm³","18,000 cm³","10,000 cm³"], ans:0, exp:"📦 Volume = length × width × height. Multiply all three dimensions together!", diff:"easy"},
+      {q:"A cube has volume 512 cm³. What is the length of one edge?", opts:["8 cm","6 cm","10 cm","7 cm"], ans:0, exp:"🧠 Cube root! What number × itself × itself equals the volume? Try small numbers until you find it!", diff:"hard"},
+      {q:"A tank holds 12 litres. If 1 litre = 1000 cm³, what is its capacity in cm³?", opts:["12,000 cm³","1,200 cm³","120 cm³","120,000 cm³"], ans:0, exp:"💧 Remember: 1 litre = 1,000 cm³. Multiply the litres by 1,000!", diff:"easy"},
+      // P6 PSLE — Model Drawing Word Problems
+      {q:"Amy has 3 times as many stickers as Ben. Together they have 120 stickers. How many does Amy have?", opts:["90","80","60","100"], ans:0, exp:"📊 Draw a model! If one person has 3 times as many, total = 4 parts. Find 1 part, then multiply!", diff:"easy"},
+      {q:"David had twice as much money as Emily. After David spent $30, they had the same amount. How much did Emily have?", opts:["$30","$60","$45","$20"], ans:0, exp:"💡 Let the smaller amount be x. Write an equation: twice x minus the spent amount equals x. Solve for x!", diff:"medium"},
     ],
     ryusei: [ // P4 standard
-      {q:"What is 567 + 348?", opts:["915","905","925","895"], ans:0, exp:"567 + 348 = 915", diff:"easy"},
-      {q:"What is 8 \u00D7 7?", opts:["56","54","48","63"], ans:0, exp:"8 \u00D7 7 = 56", diff:"easy"},
-      {q:"Round 4,678 to the nearest hundred.", opts:["4,700","4,600","4,680","5,000"], ans:0, exp:"678 rounds up to 700, so 4,700", diff:"easy"},
-      {q:"What is 1/2 + 1/4?", opts:["3/4","2/4","1/3","2/6"], ans:0, exp:"1/2 = 2/4, so 2/4 + 1/4 = 3/4", diff:"medium"},
-      {q:"A rectangle is 9 cm long and 4 cm wide. What is its area?", opts:["36 cm\u00B2","26 cm\u00B2","13 cm\u00B2","32 cm\u00B2"], ans:0, exp:"Area = 9 \u00D7 4 = 36 cm\u00B2", diff:"easy"},
-      {q:"756 \u00F7 6 = ?", opts:["126","116","136","124"], ans:0, exp:"756 \u00F7 6 = 126", diff:"medium"},
-      {q:"What is 3/5 of 40?", opts:["24","20","15","30"], ans:0, exp:"40 \u00F7 5 = 8, 8 \u00D7 3 = 24", diff:"medium"},
-      {q:"How many minutes are in 2 hours 15 minutes?", opts:["135","130","125","145"], ans:0, exp:"2 \u00D7 60 + 15 = 135 minutes", diff:"easy"},
-      {q:"What is the perimeter of a square with side 8 cm?", opts:["32 cm","24 cm","64 cm","16 cm"], ans:0, exp:"P = 4 \u00D7 8 = 32 cm", diff:"easy"},
-      {q:"Samy has 48 stickers. He gives 1/4 to his friend. How many does he have left?", opts:["36","24","12","40"], ans:0, exp:"1/4 of 48 = 12. Left = 48 - 12 = 36", diff:"medium"},
-      {q:"What number is 1,000 more than 6,543?", opts:["7,543","7,643","6,643","7,443"], ans:0, exp:"6,543 + 1,000 = 7,543", diff:"easy"},
-      {q:"Which is greater: 3/4 or 2/3?", opts:["3/4","2/3","They are equal","Cannot tell"], ans:0, exp:"3/4 = 9/12, 2/3 = 8/12. 9/12 > 8/12", diff:"hard"},
+      {q:"What is 567 + 348?", opts:["915","905","925","895"], ans:0, exp:"💪 Line up the numbers and add column by column, starting from the right. Don't forget to carry!", diff:"easy"},
+      {q:"What is 8 \u00D7 7?", opts:["56","54","48","63"], ans:0, exp:"⭐ Use your times tables! Think of it as repeated addition if you need to!", diff:"easy"},
+      {q:"Round 4,678 to the nearest hundred.", opts:["4,700","4,600","4,680","5,000"], ans:0, exp:"🎯 Look at the tens digit. If it's 5 or more, round up. If it's less than 5, round down!", diff:"easy"},
+      {q:"What is 1/2 + 1/4?", opts:["3/4","2/4","1/3","2/6"], ans:0, exp:"🍰 Make the denominators the same first, then add the numerators! Like matching pizza slices!", diff:"medium"},
+      {q:"A rectangle is 9 cm long and 4 cm wide. What is its area?", opts:["36 cm\u00B2","26 cm\u00B2","13 cm\u00B2","32 cm\u00B2"], ans:0, exp:"📏 Area of a rectangle = length × width. Multiply the two sides together!", diff:"easy"},
+      {q:"756 \u00F7 6 = ?", opts:["126","116","136","124"], ans:0, exp:"🧩 Use long division! Divide digit by digit from left to right!", diff:"medium"},
+      {q:"What is 3/5 of 40?", opts:["24","20","15","30"], ans:0, exp:"🍰 To find a fraction of a number: divide by the bottom, multiply by the top!", diff:"medium"},
+      {q:"How many minutes are in 2 hours 15 minutes?", opts:["135","130","125","145"], ans:0, exp:"⏰ Each hour = 60 minutes. Multiply the hours by 60, then add the extra minutes!", diff:"easy"},
+      {q:"What is the perimeter of a square with side 8 cm?", opts:["32 cm","24 cm","64 cm","16 cm"], ans:0, exp:"🟨 A square has 4 equal sides! Perimeter = 4 × side length!", diff:"easy"},
+      {q:"Samy has 48 stickers. He gives 1/4 to his friend. How many does he have left?", opts:["36","24","12","40"], ans:0, exp:"🌟 Find the fraction given away (divide by the denominator), then subtract from the total!", diff:"medium"},
+      {q:"What number is 1,000 more than 6,543?", opts:["7,543","7,643","6,643","7,443"], ans:0, exp:"🚀 Just add 1,000! The thousands digit goes up by 1, everything else stays the same!", diff:"easy"},
+      {q:"Which is greater: 3/4 or 2/3?", opts:["3/4","2/3","They are equal","Cannot tell"], ans:0, exp:"💡 Make the denominators the same, then compare the numerators! The bigger numerator wins!", diff:"hard"},
       // P4 — Multiplication & Division
-      {q:"What is 23 × 4?", opts:["92","82","96","84"], ans:0, exp:"23 × 4 = 92", diff:"easy"},
-      {q:"What is 840 ÷ 7?", opts:["120","130","110","140"], ans:0, exp:"840 ÷ 7 = 120", diff:"medium"},
-      {q:"What is 36 × 5?", opts:["180","175","185","170"], ans:0, exp:"36 × 5 = 180", diff:"easy"},
+      {q:"What is 23 × 4?", opts:["92","82","96","84"], ans:0, exp:"⭐ Break it into parts! Multiply the tens, multiply the ones, then add them together!", diff:"easy"},
+      {q:"What is 840 ÷ 7?", opts:["120","130","110","140"], ans:0, exp:"🧩 Use long division or think: what number times the divisor gives you this?", diff:"medium"},
+      {q:"What is 36 × 5?", opts:["180","175","185","170"], ans:0, exp:"💪 Pro tip: to multiply by 5, multiply by 10 first then halve it!", diff:"easy"},
       // P4 — Fractions
-      {q:"What is 2/5 of 35?", opts:["14","12","15","10"], ans:0, exp:"35 ÷ 5 = 7, 7 × 2 = 14", diff:"medium"},
-      {q:"Which fraction is equivalent to 2/3?", opts:["4/6","3/4","2/4","3/6"], ans:0, exp:"2/3 = 4/6 (multiply top and bottom by 2)", diff:"medium"},
-      {q:"Arrange from smallest: 1/2, 1/4, 3/4", opts:["1/4, 1/2, 3/4","1/2, 1/4, 3/4","3/4, 1/2, 1/4","1/4, 3/4, 1/2"], ans:0, exp:"1/4 = 0.25, 1/2 = 0.5, 3/4 = 0.75", diff:"medium"},
+      {q:"What is 2/5 of 35?", opts:["14","12","15","10"], ans:0, exp:"🍰 Divide by the bottom number, then multiply by the top number!", diff:"medium"},
+      {q:"Which fraction is equivalent to 2/3?", opts:["4/6","3/4","2/4","3/6"], ans:0, exp:"💡 Multiply both top AND bottom by the same number to get an equivalent fraction!", diff:"medium"},
+      {q:"Arrange from smallest: 1/2, 1/4, 3/4", opts:["1/4, 1/2, 3/4","1/2, 1/4, 3/4","3/4, 1/2, 1/4","1/4, 3/4, 1/2"], ans:0, exp:"🔢 Convert fractions to decimals or find a common denominator, then sort from smallest to biggest!", diff:"medium"},
       // P4 — Money & Measurement
-      {q:"Tom buys 3 books at $8 each and pays with $50. What is his change?", opts:["$26","$24","$28","$22"], ans:0, exp:"3 × 8 = 24, change = 50 − 24 = $26", diff:"easy"},
-      {q:"How many metres are in 3.5 km?", opts:["3,500 m","350 m","35,000 m","3,050 m"], ans:0, exp:"1 km = 1,000 m. 3.5 × 1,000 = 3,500 m", diff:"medium"},
-      {q:"What is 2 kg 300 g in grams?", opts:["2,300 g","2,030 g","230 g","23,000 g"], ans:0, exp:"2 kg = 2,000 g + 300 g = 2,300 g", diff:"easy"},
+      {q:"Tom buys 3 books at $8 each and pays with $50. What is his change?", opts:["$26","$24","$28","$22"], ans:0, exp:"💰 Find the total cost first (quantity × price), then subtract from the amount paid!", diff:"easy"},
+      {q:"How many metres are in 3.5 km?", opts:["3,500 m","350 m","35,000 m","3,050 m"], ans:0, exp:"📏 1 km = 1,000 m. Multiply the km by 1,000 to convert to metres!", diff:"medium"},
+      {q:"What is 2 kg 300 g in grams?", opts:["2,300 g","2,030 g","230 g","23,000 g"], ans:0, exp:"⚖️ 1 kg = 1,000 g. Convert the kg to grams first, then add the extra grams!", diff:"easy"},
       // P4 — Time
-      {q:"A movie starts at 2:45 pm and lasts 1 hour 30 minutes. When does it end?", opts:["4:15 pm","4:30 pm","3:45 pm","4:00 pm"], ans:0, exp:"2:45 + 1h30m = 4:15 pm", diff:"medium"},
+      {q:"A movie starts at 2:45 pm and lasts 1 hour 30 minutes. When does it end?", opts:["4:15 pm","4:30 pm","3:45 pm","4:00 pm"], ans:0, exp:"⏰ Add the hours first, then add the minutes. If minutes go past 60, add another hour!", diff:"medium"},
       // P4 — Geometry
-      {q:"How many faces does a cube have?", opts:["6","4","8","12"], ans:0, exp:"A cube has 6 square faces.", diff:"easy"},
-      {q:"How many lines of symmetry does a square have?", opts:["4","2","1","8"], ans:0, exp:"A square has 4 lines of symmetry.", diff:"medium"},
+      {q:"How many faces does a cube have?", opts:["6","4","8","12"], ans:0, exp:"🎲 Think of a dice! Count: top, bottom, front, back, left, right!", diff:"easy"},
+      {q:"How many lines of symmetry does a square have?", opts:["4","2","1","8"], ans:0, exp:"✂️ Think about all the ways you can fold a square so both halves match perfectly!", diff:"medium"},
       // P4 — Patterns
-      {q:"What is the next number: 2, 6, 18, 54, ___?", opts:["162","108","148","172"], ans:0, exp:"Each number × 3: 54 × 3 = 162", diff:"hard"},
-      {q:"What is the next number: 5, 12, 19, 26, ___?", opts:["33","34","32","35"], ans:0, exp:"Pattern: +7 each time. 26 + 7 = 33", diff:"medium"},
+      {q:"What is the next number: 2, 6, 18, 54, ___?", opts:["162","108","148","172"], ans:0, exp:"🔮 Look at how each number relates to the one before it. What are you multiplying by each time?", diff:"hard"},
+      {q:"What is the next number: 5, 12, 19, 26, ___?", opts:["33","34","32","35"], ans:0, exp:"🔢 Find the difference between each number. Add that difference to the last number!", diff:"medium"},
       // P4 — Multi-step word problems
-      {q:"A baker bakes 156 muffins. He packs them equally into 12 boxes. He sells 9 boxes. How many muffins are left?", opts:["39","36","42","48"], ans:0, exp:"Each box: 156÷12=13. Sold: 9×13=117. Left: 156-117=39", diff:"hard"},
-      {q:"Sarah has $45. She buys 3 pens at $4 each and 2 notebooks at $7 each. How much change?", opts:["$19","$17","$21","$15"], ans:0, exp:"Pens: 3×4=$12. Books: 2×7=$14. Total: $26. Change: 45-26=$19", diff:"medium"},
-      {q:"A rope is 5 m 40 cm long. It is cut into 6 equal pieces. How long is each piece in cm?", opts:["90 cm","85 cm","95 cm","80 cm"], ans:0, exp:"5m 40cm = 540 cm. 540÷6 = 90 cm", diff:"medium"},
+      {q:"A baker bakes 156 muffins. He packs them equally into 12 boxes. He sells 9 boxes. How many muffins are left?", opts:["39","36","42","48"], ans:0, exp:"🧁 First find how many per box (divide). Then find how many were sold (multiply). Subtract from total!", diff:"hard"},
+      {q:"Sarah has $45. She buys 3 pens at $4 each and 2 notebooks at $7 each. How much change?", opts:["$19","$17","$21","$15"], ans:0, exp:"💰 Find each item's total cost, add them up, then subtract from the money you started with!", diff:"medium"},
+      {q:"A rope is 5 m 40 cm long. It is cut into 6 equal pieces. How long is each piece in cm?", opts:["90 cm","85 cm","95 cm","80 cm"], ans:0, exp:"📏 Convert everything to cm first (1 m = 100 cm), then divide the total by the number of pieces!", diff:"medium"},
       // P4 — Challenging fractions
-      {q:"A tank is 1/3 full. After adding 8 litres, it becomes 5/6 full. What is the full capacity?", opts:["16 litres","24 litres","12 litres","20 litres"], ans:0, exp:"5/6 - 1/3 = 5/6 - 2/6 = 3/6 = 1/2. So 1/2 = 8L. Full = 16L", diff:"hard"},
-      {q:"Ali ate 1/4 of a pizza. Ben ate 1/3 of the same pizza. What fraction was left?", opts:["5/12","1/2","7/12","1/4"], ans:0, exp:"Eaten: 1/4+1/3 = 3/12+4/12 = 7/12. Left: 1-7/12 = 5/12", diff:"hard"},
+      {q:"A tank is 1/3 full. After adding 8 litres, it becomes 5/6 full. What is the full capacity?", opts:["16 litres","24 litres","12 litres","20 litres"], ans:0, exp:"💧 Find the fraction difference between the two levels. That fraction equals the litres added. Use it to find the whole!", diff:"hard"},
+      {q:"Ali ate 1/4 of a pizza. Ben ate 1/3 of the same pizza. What fraction was left?", opts:["5/12","1/2","7/12","1/4"], ans:0, exp:"🍕 Find a common denominator, add the fractions eaten, then subtract from 1 whole!", diff:"hard"},
       // P4 — Area & perimeter challenging
-      {q:"A square has the same perimeter as a rectangle with length 10 cm and width 6 cm. What is the area of the square?", opts:["64 cm²","48 cm²","36 cm²","56 cm²"], ans:0, exp:"Rectangle P=2(10+6)=32. Square side=32÷4=8. Area=8×8=64", diff:"hard"},
+      {q:"A square has the same perimeter as a rectangle with length 10 cm and width 6 cm. What is the area of the square?", opts:["64 cm²","48 cm²","36 cm²","56 cm²"], ans:0, exp:"🟨 Find the rectangle's perimeter first. The square has the same perimeter — divide by 4 to get its side, then find the area!", diff:"hard"},
+      // P4 — More Multiplication & Division
+      {q:"What is 45 × 6?", opts:["270","260","280","250"], ans:0, exp:"💪 Break it into parts! Multiply tens × 6, then ones × 6, then add together!", diff:"easy"},
+      {q:"What is 972 ÷ 4?", opts:["243","234","253","224"], ans:0, exp:"🧩 Pro tip: dividing by 4 is the same as halving twice! Half it, then half again!", diff:"medium"},
+      {q:"What is 125 × 8?", opts:["1,000","1,025","975","1,050"], ans:0, exp:"⭐ Fun fact: 125 × 8 is a famous pair! Break it down: 100×8 + 25×8!", diff:"medium"},
+      {q:"A farmer packs 648 eggs equally into 9 trays. How many eggs in each tray?", opts:["72","68","78","64"], ans:0, exp:"🥚 Divide the total equally! Use long division or think: what times the divisor gives the total?", diff:"medium"},
+      // P4 — More Fraction Basics
+      {q:"What is 3/8 + 1/8?", opts:["4/8","3/16","2/8","5/8"], ans:0, exp:"🍰 Same denominator? Just add the numerators! Then simplify if you can!", diff:"easy"},
+      {q:"Which is greater: 5/6 or 7/9?", opts:["5/6","7/9","They are equal","Cannot tell"], ans:0, exp:"💡 Find a common denominator and compare the numerators! The bigger numerator wins!", diff:"hard"},
+      {q:"What fraction is equivalent to 3/4?", opts:["9/12","6/9","4/5","8/10"], ans:0, exp:"🔄 Multiply both top and bottom by the same number to get equivalent fractions!", diff:"medium"},
+      {q:"What is 5/6 − 1/3?", opts:["1/2","2/3","1/3","2/6"], ans:0, exp:"🧩 Make the denominators the same first, then subtract the numerators and simplify!", diff:"medium"},
+      // P4 — More Measurement Conversions
+      {q:"How many grams are in 4.2 kg?", opts:["4,200 g","420 g","42,000 g","4,020 g"], ans:0, exp:"⚖️ 1 kg = 1,000 g. Multiply by 1,000 — just move the decimal point 3 places right!", diff:"easy"},
+      {q:"How many millilitres are in 2.5 litres?", opts:["2,500 ml","250 ml","25,000 ml","2,050 ml"], ans:0, exp:"💧 1 litre = 1,000 ml. Multiply by 1,000 — move the decimal point 3 places right!", diff:"easy"},
+      {q:"Convert 3 m 45 cm to cm.", opts:["345 cm","3,045 cm","3,450 cm","304 cm"], ans:0, exp:"📏 1 m = 100 cm. Convert the metres to cm, then add the remaining cm!", diff:"easy"},
+      // P4 — More Time Problems
+      {q:"A lesson starts at 10:40 am and ends at 11:25 am. How long is the lesson?", opts:["45 minutes","40 minutes","50 minutes","35 minutes"], ans:0, exp:"⏰ Count from start to the next hour, then from that hour to the end time. Add them up!", diff:"easy"},
+      {q:"What is 15:30 in 12-hour format?", opts:["3:30 pm","3:30 am","5:30 pm","1:30 pm"], ans:0, exp:"⏰ For 24-hour time after 12:00, subtract 12 and add PM!", diff:"easy"},
+      {q:"A train departs at 9:15 am and arrives at 11:50 am. How long is the journey?", opts:["2 h 35 min","2 h 25 min","2 h 45 min","3 h 35 min"], ans:0, exp:"⏰ Count the full hours first, then count the remaining minutes separately!", diff:"medium"},
+      // P4 — More Money Word Problems
+      {q:"Lisa buys 4 drinks at $1.50 each and 3 sandwiches at $3.20 each. How much does she pay?", opts:["$15.60","$14.80","$16.20","$15.00"], ans:0, exp:"💰 Find each item's total (quantity × price), then add all the totals together!", diff:"medium"},
+      {q:"A toy costs $12.80. John pays with a $20 note. How much change does he receive?", opts:["$7.20","$8.20","$7.80","$6.20"], ans:0, exp:"💵 Change = amount paid minus the price. Subtract carefully with decimals!", diff:"easy"},
+      // P4 — More Geometry
+      {q:"How many right angles does a rectangle have?", opts:["4","2","3","1"], ans:0, exp:"📐 Think about each corner of a rectangle. What kind of angle is each one?", diff:"easy"},
+      {q:"The perimeter of a rectangle is 36 cm. If the length is 12 cm, what is the width?", opts:["6 cm","8 cm","10 cm","9 cm"], ans:0, exp:"📏 Perimeter = 2 × (length + width). Divide perimeter by 2, then subtract the known side!", diff:"medium"},
+      {q:"What is the area of a triangle with base 10 cm and height 6 cm?", opts:["30 cm²","60 cm²","16 cm²","36 cm²"], ans:0, exp:"📐 Triangle area = ½ × base × height. Multiply base by height, then halve it!", diff:"medium"},
+      // P4 — More Multi-step Word Problems
+      {q:"A shop sold 245 apples on Monday and 198 on Tuesday. On Wednesday it sold twice as many as Tuesday. How many apples were sold in total?", opts:["839","841","835","843"], ans:0, exp:"🍎 Find Wednesday's amount (twice Tuesday), then add all three days together!", diff:"hard"},
+      {q:"Mary has 360 stamps. She gives 1/3 to Tom and 1/4 of the remainder to Sue. How many stamps does Mary have left?", opts:["180","160","200","120"], ans:0, exp:"📮 Find the first fraction given away, get the remainder, then find the fraction of the remainder given next!", diff:"hard"},
+      // P4 — Tables and Graphs
+      {q:"A table shows: Apples=25, Oranges=18, Pears=12, Bananas=15. How many fruits in total?", opts:["70","68","72","65"], ans:0, exp:"🍎 Just add all the values together to get the total!", diff:"easy"},
+      {q:"A pictograph shows each symbol = 5 books. If Lily has 7 symbols, how many books does she have?", opts:["35","30","40","25"], ans:0, exp:"📚 In a pictograph, multiply the number of symbols by the value each symbol represents!", diff:"easy"},
+      // P4 — Number Patterns
+      {q:"What is the next number: 100, 91, 82, 73, ___?", opts:["64","63","65","62"], ans:0, exp:"🔢 Find the difference between each pair of numbers. Subtract that from the last number!", diff:"medium"},
+      {q:"What is the 6th term: 3, 8, 13, 18, 23, ___?", opts:["28","27","29","26"], ans:0, exp:"🔢 Find the common difference between numbers. Add it to the last number to get the next!", diff:"easy"},
     ]
   },
   science: {
@@ -1520,6 +1606,41 @@ const questions = {
       {q:"A ball is thrown upwards. At the highest point, what is its speed?", opts:["Zero","Maximum","Same as when thrown","Half of original"], ans:0, exp:"At the highest point, the ball momentarily stops before gravity pulls it back down. Speed = 0.", diff:"hard"},
       {q:"Which of these changes is reversible?", opts:["Melting ice","Burning paper","Cooking an egg","Rusting iron"], ans:0, exp:"Melting ice → can freeze back. Burning, cooking, rusting are irreversible changes.", diff:"medium"},
       {q:"Plant X has colourful petals and nectar. Plant Y has long dangling stamens. How are they likely pollinated?", opts:["X by insects, Y by wind","X by wind, Y by insects","Both by insects","Both by wind"], ans:0, exp:"Colourful petals + nectar = insect-pollinated. Long dangling stamens = wind-pollinated.", diff:"hard"},
+      // P6 — Energy conversions & conservation (additional)
+      {q:"A solar panel on a calculator converts:", opts:["Light energy to electrical energy","Heat energy to light energy","Electrical energy to sound energy","Chemical energy to light energy"], ans:0, exp:"Solar panels convert light energy into electrical energy.", diff:"easy"},
+      {q:"When a battery-operated toy car moves, the energy conversion is:", opts:["Chemical → electrical → kinetic","Kinetic → chemical → electrical","Light → chemical → kinetic","Electrical → chemical → heat"], ans:0, exp:"Battery stores chemical energy → converted to electrical → drives motor for kinetic energy.", diff:"medium"},
+      {q:"A hydroelectric dam converts which form of energy to electricity?", opts:["Kinetic energy of flowing water","Chemical energy of water","Light energy from the sun","Heat energy from the earth"], ans:0, exp:"Flowing water has kinetic energy which spins turbines to generate electricity.", diff:"medium"},
+      // P6 — Forces (friction, gravity)
+      {q:"A cyclist applies brakes to stop. What force slows the bicycle down?", opts:["Friction","Gravity","Magnetic force","Elastic force"], ans:0, exp:"Brake pads press against the wheel, creating friction that slows the bicycle.", diff:"easy"},
+      {q:"Why does a ball thrown upwards eventually come back down?", opts:["Gravitational force pulls it downward","Air pushes it down","It runs out of energy","Friction stops it"], ans:0, exp:"Gravity is a force that pulls all objects toward the centre of the Earth.", diff:"easy"},
+      {q:"On which surface will a toy car travel the shortest distance after a push?", opts:["Rough carpet","Smooth tile floor","Polished marble","Ice rink"], ans:0, exp:"Rough carpet has the most friction, which slows and stops the car sooner.", diff:"medium"},
+      // P6 — Human body systems (circulatory, respiratory, nervous)
+      {q:"What is the main function of red blood cells?", opts:["To carry oxygen around the body","To fight germs","To help blood clot","To digest food"], ans:0, exp:"Red blood cells contain haemoglobin which binds to oxygen and transports it.", diff:"medium"},
+      {q:"In the human respiratory system, gas exchange takes place in the:", opts:["Air sacs (alveoli) in the lungs","Windpipe (trachea)","Nose","Bronchi"], ans:0, exp:"Oxygen enters the blood and CO₂ leaves the blood at the alveoli in the lungs.", diff:"hard"},
+      {q:"Which part of the nervous system coordinates body balance and movement?", opts:["Cerebellum (part of the brain)","Spinal cord","Heart","Lungs"], ans:0, exp:"The cerebellum coordinates balance, posture, and smooth movements.", diff:"hard"},
+      {q:"Blood that flows from the lungs back to the heart is rich in:", opts:["Oxygen","Carbon dioxide","Food nutrients","White blood cells"], ans:0, exp:"Blood picks up oxygen in the lungs and returns oxygen-rich blood to the heart.", diff:"medium"},
+      // P6 — Plant biology (transport of water, photosynthesis conditions)
+      {q:"Water moves from the roots to the leaves through the:", opts:["Xylem vessels in the stem","Phloem vessels","Petals","Sepals"], ans:0, exp:"Xylem vessels transport water and minerals upward from roots to leaves.", diff:"medium"},
+      {q:"Which gas do plants absorb from the air during photosynthesis?", opts:["Carbon dioxide","Oxygen","Nitrogen","Hydrogen"], ans:0, exp:"Plants take in CO₂ through stomata on leaves and use it in photosynthesis.", diff:"easy"},
+      {q:"A plant is given plenty of water and CO₂ but kept in complete darkness. Will it photosynthesise?", opts:["No, because light is needed","Yes, water and CO₂ are enough","Yes, darkness helps photosynthesis","Only if the temperature is high"], ans:0, exp:"Photosynthesis requires light energy. Without light, the process cannot occur.", diff:"medium"},
+      // P6 — Electrical circuits (series vs parallel)
+      {q:"In a series circuit with two bulbs, if one bulb blows, what happens?", opts:["Both bulbs go off","Only the blown bulb goes off","Both bulbs get brighter","Nothing changes"], ans:0, exp:"In a series circuit, current flows through one path. If one bulb breaks, the circuit is broken.", diff:"medium"},
+      {q:"In a parallel circuit with two bulbs, if one bulb is removed, the other bulb:", opts:["Continues to light up","Also goes off","Gets dimmer","Flickers"], ans:0, exp:"In a parallel circuit each bulb has its own path, so removing one doesn't affect the other.", diff:"medium"},
+      {q:"Adding more batteries in series to a circuit makes the bulb:", opts:["Brighter","Dimmer","Stay the same","Flash on and off"], ans:0, exp:"More batteries in series increase voltage, pushing more current and making the bulb brighter.", diff:"easy"},
+      // P6 — Food chains/webs, ecology
+      {q:"In a food web, what would happen if all the frogs were removed?", opts:["Insects would increase and snakes would decrease","Insects would decrease","Snakes would increase","Plants would die"], ans:0, exp:"Without frogs to eat insects, insects increase. Snakes lose a food source, so they decrease.", diff:"hard"},
+      {q:"Decomposers like fungi and bacteria are important because they:", opts:["Break down dead matter and return nutrients to the soil","Produce oxygen","Eat other animals","Make food from sunlight"], ans:0, exp:"Decomposers recycle nutrients from dead organisms back into the soil for plants to use.", diff:"medium"},
+      {q:"In a food chain, which level has the most energy?", opts:["Producers (plants)","Primary consumers","Secondary consumers","Tertiary consumers"], ans:0, exp:"Energy decreases at each level. Producers have the most energy.", diff:"medium"},
+      // P6 — Matter (states, properties, changes)
+      {q:"Which of the following is a chemical change?", opts:["Rusting of iron","Melting of ice","Dissolving sugar in water","Cutting paper"], ans:0, exp:"Rusting forms a new substance (iron oxide). The others are physical changes.", diff:"medium"},
+      {q:"When naphthalene balls become smaller over time, they undergo:", opts:["Sublimation","Melting","Evaporation","Condensation"], ans:0, exp:"Naphthalene changes directly from solid to gas — this is sublimation.", diff:"hard"},
+      // P6 — Heat transfer
+      {q:"Which method of heat transfer does NOT require a medium (material)?", opts:["Radiation","Conduction","Convection","All need a medium"], ans:0, exp:"Radiation can travel through empty space (vacuum). Conduction and convection need particles.", diff:"hard"},
+      {q:"In a pot of boiling water, the water at the bottom rises because:", opts:["Hot water is less dense and rises (convection)","Hot water is heavier","Cold water pushes it up","The pot pushes it up"], ans:0, exp:"Heated water expands, becomes less dense, and rises. Cooler water sinks — this is convection.", diff:"hard"},
+      // P6 — Water cycle
+      {q:"What process changes water vapour in the air into tiny water droplets forming clouds?", opts:["Condensation","Evaporation","Precipitation","Transpiration"], ans:0, exp:"When water vapour cools, it condenses into tiny droplets that form clouds.", diff:"medium"},
+      // P6 — PSLE application questions
+      {q:"A pupil wraps a thermometer bulb with wet cotton and fans it. The temperature reading will:", opts:["Decrease because evaporation causes cooling","Increase because of friction","Stay the same","Fluctuate up and down"], ans:0, exp:"Evaporation of water from the cotton absorbs heat, causing the temperature to drop.", diff:"hard"},
     ],
     ryusei: [
       {q:"Which of these is a living thing?", opts:["A plant","A rock","Water","Air"], ans:0, exp:"Plants are living things - they grow, reproduce, and need food and water.", diff:"easy"},
@@ -1547,6 +1668,41 @@ const questions = {
       {q:"Heat flows from a ___ object to a ___ object.", opts:["hot, cold","cold, hot","big, small","light, heavy"], ans:0, exp:"Heat always flows from hotter objects to cooler objects.", diff:"medium"},
       // P4 — Light
       {q:"Which of these is a source of light?", opts:["The Sun","The Moon","A mirror","A white wall"], ans:0, exp:"The Sun produces its own light. The Moon only reflects sunlight.", diff:"easy"},
+      // P4 — More about magnets
+      {q:"Which end of a magnet is strongest?", opts:["The poles (ends)","The middle","All parts are equal","The back"], ans:0, exp:"A magnet is strongest at its two poles (North and South ends).", diff:"easy"},
+      {q:"What happens when you bring two North poles of magnets together?", opts:["They push apart (repel)","They pull together (attract)","Nothing happens","They stick sideways"], ans:0, exp:"Like poles (N-N or S-S) repel each other. Unlike poles (N-S) attract.", diff:"easy"},
+      {q:"Which of these objects will a magnet NOT attract?", opts:["A wooden ruler","A steel paper clip","An iron nail","A steel spoon"], ans:0, exp:"Magnets only attract objects made of iron or steel. Wood is not magnetic.", diff:"easy"},
+      // P4 — Life cycles
+      {q:"What is the correct order of a frog's life cycle?", opts:["Egg → Tadpole → Froglet → Adult frog","Egg → Froglet → Tadpole → Adult frog","Tadpole → Egg → Froglet → Adult","Adult → Tadpole → Egg → Froglet"], ans:0, exp:"Frogs start as eggs, hatch into tadpoles, grow legs as froglets, then become adults.", diff:"easy"},
+      {q:"A chicken's life cycle begins as:", opts:["An egg","A chick","A hen","A rooster"], ans:0, exp:"Chickens begin life as eggs, then hatch into chicks, and grow into adult chickens.", diff:"easy"},
+      {q:"What does a seed need to start growing (germinate)?", opts:["Water, air, and warmth","Only sunlight","Only soil","Rocks and sand"], ans:0, exp:"Seeds need water, air, and the right temperature to germinate. Sunlight is not needed yet.", diff:"medium"},
+      // P4 — Materials
+      {q:"Which material is the strongest for building a bridge?", opts:["Steel","Paper","Cloth","Rubber"], ans:0, exp:"Steel is very strong and can hold heavy loads, making it good for bridges.", diff:"easy"},
+      {q:"Which material bends easily without breaking?", opts:["Rubber","Glass","Ceramic","Stone"], ans:0, exp:"Rubber is flexible — it bends and stretches without breaking.", diff:"easy"},
+      {q:"Why do we use glass for windows?", opts:["Because glass is transparent (see-through)","Because glass is soft","Because glass is the cheapest","Because glass is the strongest"], ans:0, exp:"Glass is transparent, so light can pass through and we can see outside.", diff:"easy"},
+      // P4 — Human body (digestion, skeleton, muscles)
+      {q:"Where does digestion begin in the human body?", opts:["The mouth","The stomach","The intestines","The throat"], ans:0, exp:"Digestion starts in the mouth where teeth break food and saliva begins digestion.", diff:"easy"},
+      {q:"What is the main job of the skeleton?", opts:["To support and protect the body","To digest food","To pump blood","To breathe air"], ans:0, exp:"The skeleton gives the body its shape, supports it, and protects organs like the brain and heart.", diff:"easy"},
+      {q:"Muscles work in pairs to move bones. When one muscle contracts (gets shorter), the other:", opts:["Relaxes (gets longer)","Also contracts","Disappears","Stays the same"], ans:0, exp:"Muscles work in pairs — when one contracts to pull the bone, the other relaxes.", diff:"medium"},
+      // P4 — Plants (parts, what they need)
+      {q:"What is the main job of a plant's roots?", opts:["To absorb water and minerals from the soil","To make food","To attract insects","To produce seeds"], ans:0, exp:"Roots anchor the plant and absorb water and minerals from the soil.", diff:"easy"},
+      {q:"Which part of the plant carries water from the roots to the leaves?", opts:["The stem","The flower","The fruit","The petal"], ans:0, exp:"The stem transports water and minerals from the roots up to the leaves.", diff:"easy"},
+      {q:"Why are most leaves green?", opts:["They contain chlorophyll which is green","They are painted green","Green leaves taste better","Insects make them green"], ans:0, exp:"Leaves contain chlorophyll, a green substance that helps capture sunlight for making food.", diff:"medium"},
+      // P4 — Simple machines
+      {q:"A seesaw in a playground is an example of a:", opts:["Lever","Wheel","Magnet","Pulley"], ans:0, exp:"A seesaw is a lever — it has a pivot (fulcrum) in the middle and effort on both sides.", diff:"easy"},
+      {q:"Wheels help us move heavy objects more easily because they reduce:", opts:["Friction","Weight","Size","Temperature"], ans:0, exp:"Wheels reduce the friction between the object and the ground, making it easier to move.", diff:"medium"},
+      // P4 — Heat and temperature
+      {q:"If you hold an ice cube in your hand, heat moves from:", opts:["Your hand to the ice cube","The ice cube to your hand","Neither — no heat moves","Both directions equally"], ans:0, exp:"Heat always flows from the warmer object (hand) to the cooler object (ice).", diff:"medium"},
+      {q:"Which material is a good conductor of heat?", opts:["Metal","Wood","Plastic","Cloth"], ans:0, exp:"Metals are good heat conductors — heat travels through them quickly.", diff:"easy"},
+      // P4 — Light and shadows
+      {q:"A shadow is formed when an object ___ light.", opts:["Blocks","Creates","Absorbs","Bends"], ans:0, exp:"When an opaque object blocks light, a shadow forms on the other side.", diff:"easy"},
+      {q:"At noon when the Sun is directly overhead, your shadow is:", opts:["Very short","Very long","Not there at night","The same length as you"], ans:0, exp:"When the Sun is overhead, light comes from above so shadows are very short.", diff:"medium"},
+      // P4 — Sound and vibration
+      {q:"Sound is made when an object:", opts:["Vibrates","Melts","Freezes","Grows"], ans:0, exp:"All sounds are produced by vibrations. When an object vibrates, it makes sound.", diff:"easy"},
+      {q:"Sound travels fastest through:", opts:["Solids","Liquids","Gases","Outer space (vacuum)"], ans:0, exp:"Particles in solids are packed tightly, so sound vibrations travel fastest through solids.", diff:"medium"},
+      // P4 — Weather and environment
+      {q:"What causes rain?", opts:["Water vapour in clouds cools and forms droplets that fall","The sun melts the clouds","Wind pushes water from the sea","Trees release water into the sky"], ans:0, exp:"Water vapour condenses in clouds to form droplets. When heavy enough, they fall as rain.", diff:"medium"},
+      {q:"Which human activity can harm the environment?", opts:["Cutting down forests (deforestation)","Planting trees","Recycling waste","Using less electricity"], ans:0, exp:"Deforestation destroys habitats, reduces oxygen production, and causes soil erosion.", diff:"easy"},
     ]
   },
   english: {
@@ -1581,6 +1737,36 @@ const questions = {
       {type:'synthesis',q:'Combine: "The book was interesting. I finished it in one day." Which connector is best?',opts:['The book was so interesting that I finished it in one day.','The book was interesting but I finished it in one day.','Although the book was interesting, I finished it in one day.','The book was interesting therefore I finished it in one day.'],ans:0,exp:'"So...that" shows result/degree. The book\'s quality (so interesting) led to a result (finished it fast).',diff:'hard'},
       {type:'synthesis',q:'Combine: "She practised daily. She eventually became the best dancer."',opts:['By practising daily, she eventually became the best dancer.','She practised daily but she became the best dancer.','She became the best dancer although she practised daily.','Since she practised daily, she was a dancer.'],ans:0,exp:'Using a participle phrase "By practising daily" is an elegant, high-level PSLE synthesis.',diff:'hard'},
       {type:'synthesis',q:'Combine: "Tom was exhausted. Tom completed the marathon." Use "despite".',opts:['Despite being exhausted, Tom completed the marathon.','Tom was exhausted but completed the marathon despite.','Despite Tom was exhausted, he completed the marathon.','Tom despite exhausted completed the marathon.'],ans:0,exp:'"Despite + verb-ing" is a key PSLE structure showing contrast.',diff:'hard'},
+      // ===== NEW GRAMMAR CLOZE =====
+      {type:'grammar_cloze',q:'Fill in: "The news ___ shocking to everyone in the room."',opts:['was','were','are','have been'],ans:0,exp:'"News" is an uncountable noun and takes a singular verb: was.',diff:'medium'},
+      {type:'grammar_cloze',q:'Fill in: "She insisted that he ___ on time for the meeting."',opts:['be','is','was','will be'],ans:0,exp:'Subjunctive mood after "insisted that": use base form "be".',diff:'hard'},
+      {type:'grammar_cloze',q:'Fill in: "The children, along with their teacher, ___ visiting the museum today."',opts:['are','is','was','has been'],ans:0,exp:'When "along with" separates subject from verb, the verb agrees with the main subject "children" (plural).',diff:'hard'},
+      {type:'grammar_cloze',q:'Fill in: "If she ___ earlier, she would have caught the bus."',opts:['had left','left','has left','leaves'],ans:0,exp:'Third conditional (past unreal): If + had + past participle.',diff:'hard'},
+      {type:'grammar_cloze',q:'Fill in: "He is interested ___ learning about space."',opts:['in','on','at','for'],ans:0,exp:'"Interested in" is the correct preposition collocation.',diff:'easy'},
+      {type:'grammar_cloze',q:'Fill in: "We need to arrive ___ the airport by 6 a.m."',opts:['at','in','on','to'],ans:0,exp:'"Arrive at" is used for specific locations like airports and stations.',diff:'easy'},
+      {type:'grammar_cloze',q:'Fill in: "___ umbrella you left behind is still at the reception."',opts:['The','A','An','No article'],ans:0,exp:'Use "The" for a specific umbrella already mentioned or known.',diff:'medium'},
+      {type:'grammar_cloze',q:'Fill in: "She would rather ___ at home than go to the party."',opts:['stay','stays','stayed','staying'],ans:0,exp:'"Would rather" is followed by the base form of the verb.',diff:'medium'},
+      // ===== NEW VOCAB CLOZE =====
+      {type:'vocab_cloze',q:'Choose the best word: "Her voice ___ with anger as she confronted him."',opts:['trembled','laughed','whispered','sang'],ans:0,exp:'Trembled = shook slightly, often from strong emotion. Great for compositions!',diff:'medium'},
+      {type:'vocab_cloze',q:'Choose the best word: "The ___ sunset painted the sky in shades of orange and purple."',opts:['breathtaking','boring','cold','loud'],ans:0,exp:'Breathtaking = astonishingly beautiful. A vivid descriptive word.',diff:'medium'},
+      {type:'vocab_cloze',q:'"After hours of searching, they finally ___ the missing cat in the drain." (found)',opts:['located','created','ignored','lost'],ans:0,exp:'Located = found the position of. More precise than "found" in formal writing.',diff:'medium'},
+      {type:'vocab_cloze',q:'Choose the best word: "The students were ___ when the trip was cancelled." (very disappointed)',opts:['crestfallen','relieved','indifferent','amused'],ans:0,exp:'Crestfallen = deeply sad and disappointed. An advanced PSLE vocabulary word.',diff:'hard'},
+      {type:'vocab_cloze',q:'"She ___ through the crowd to reach the stage." (pushed roughly)',opts:['elbowed','walked','danced','crawled'],ans:0,exp:'Elbowed = pushed past using elbows. A strong action verb for compositions.',diff:'medium'},
+      // ===== NEW COMPREHENSION =====
+      {type:'comprehension',passage:'Siti stared at the mathematics paper on her desk. She had studied all week, yet the numbers seemed to swim before her eyes. Her hands were cold and clammy. She closed her eyes, took three deep breaths, and picked up her pencil. "I can do this," she whispered.',q:'What is Siti most likely feeling at the start of the passage?',opts:['Anxious and nervous','Excited and eager','Bored and uninterested','Angry and frustrated'],ans:0,exp:'Clues: numbers "swim before her eyes", cold clammy hands, needing to calm herself — all signs of anxiety.',diff:'medium'},
+      {type:'comprehension',passage:'The charity food drive had collected over five hundred cans. Mr Lee, the organiser, smiled as he watched volunteers sort the donations. "Last year we barely managed two hundred," he told a reporter. "The community has really come together this time."',q:'What can we infer about the community from the passage?',opts:['They have become more generous and involved','They do not care about charity','They prefer giving money instead of food','They were forced to donate'],ans:0,exp:'The increase from 200 to 500+ cans and Mr Lee\'s comment show the community has become more generous.',diff:'medium'},
+      {type:'comprehension',passage:'Grandma always kept a small tin box under her bed. She never let anyone touch it. One day, after she passed away, the family opened it and found dozens of handwritten letters from Grandpa, tied with a faded ribbon. At the bottom was a note: "My greatest treasure."',q:'Why did Grandma call the letters "my greatest treasure"?',opts:['They held precious memories of someone she loved deeply','They were worth a lot of money','She wanted to keep secrets from her family','She collected letters as a hobby'],ans:0,exp:'The letters from Grandpa, carefully kept and called her "greatest treasure", show they held deep sentimental and emotional value.',diff:'hard'},
+      {type:'comprehension',passage:'The new student, Ravi, sat alone at recess every day. One afternoon, Wei Jie walked over with his tray. "Mind if I sit here?" he asked. Ravi looked up, surprised, then smiled. "Not at all." From that day on, they were inseparable.',q:'What does "inseparable" suggest about Wei Jie and Ravi?',opts:['They became very close friends','They sat together only once','They argued frequently','They were in the same class'],ans:0,exp:'"Inseparable" means always together — they became best friends after that small act of kindness.',diff:'easy'},
+      // ===== NEW SYNTHESIS =====
+      {type:'synthesis',q:'Combine: "The boy was punished. He had cheated in the test."',opts:['The boy was punished for cheating in the test.','The boy was punished and he had cheated.','Although the boy cheated, he was punished.','The boy cheated but was punished.'],ans:0,exp:'"Punished for + verb-ing" shows the reason concisely.',diff:'medium'},
+      {type:'synthesis',q:'Combine: "The girl won the race. She trained every morning." Use a relative clause.',opts:['The girl who trained every morning won the race.','The girl won the race but trained every morning.','The girl trained every morning and she won the race.','The girl won the race despite training every morning.'],ans:0,exp:'A relative clause "who trained every morning" adds detail about the girl within one sentence.',diff:'hard'},
+      {type:'synthesis',q:'Combine: "Ali forgot his wallet. He could not buy lunch."',opts:['Having forgotten his wallet, Ali could not buy lunch.','Ali forgot his wallet and he could not buy lunch.','Ali could not buy lunch but he forgot his wallet.','Although Ali forgot his wallet, he could not buy lunch.'],ans:0,exp:'"Having + past participle" is a sophisticated PSLE participial phrase showing cause.',diff:'hard'},
+      // ===== NEW EDITING / PROOFREADING =====
+      {type:'grammar_cloze',q:'Find the error: "The childrens toys were scattered all over the floor."',opts:["childrens → children's","toys → toy's","were → was","floor → floors"],ans:0,exp:'Children is already plural. The possessive is children\'s (add apostrophe + s).',diff:'medium'},
+      {type:'grammar_cloze',q:'Find the error: "Me and my friend went to the park yesterday."',opts:["Me and my friend → My friend and I","went → goes","to the → at the","yesterday → today"],ans:0,exp:'"My friend and I" is correct as the subject. "Me" is used as an object, not a subject.',diff:'easy'},
+      {type:'grammar_cloze',q:'Find the error: "Everyone of the students have completed their assignments."',opts:["have → has","their → his","completed → complete","of the → in the"],ans:0,exp:'"Everyone" is singular and takes "has", not "have".',diff:'hard'},
+      {type:'grammar_cloze',q:'Find the error: "She was suppose to arrive at noon but came late."',opts:["suppose → supposed","was → is","at noon → on noon","came → come"],ans:0,exp:'The correct phrase is "supposed to" (past participle), not "suppose to".',diff:'medium'},
+      {type:'grammar_cloze',q:'Find the error: "The amount of people at the concert was surprising."',opts:["amount → number","people → persons","was → were","surprising → surprised"],ans:0,exp:'"Number" is used for countable nouns (people). "Amount" is for uncountable nouns.',diff:'hard'},
     ],
     ryusei: [
       {q:'Choose the correct word: "I ___ to school every day."', opts:["go","goes","going","gone"], ans:0, exp:"'I' takes the base form of the verb: I go.", diff:"easy"},
@@ -1609,68 +1795,225 @@ const questions = {
       // P4 — Composition vocabulary
       {q:'Which word means "very angry"?', opts:["Furious","Curious","Nervous","Generous"], ans:0, exp:"Furious = extremely angry. A strong vocabulary word for compositions!", diff:"medium"},
       {q:'Which word means "very happy"?', opts:["Delighted","Exhausted","Terrified","Puzzled"], ans:0, exp:"Delighted = very pleased and happy.", diff:"medium"},
+      // ===== NEW GRAMMAR =====
+      {q:'Choose the correct word: "She ___ her homework before dinner yesterday."',opts:["finished","finishes","finishing","finish"],ans:0,exp:"'Yesterday' tells us it is past tense: finished.",diff:"easy"},
+      {q:'Choose the correct word: "The dogs ___ barking loudly."',opts:["are","is","am","was"],ans:0,exp:"'Dogs' is plural, so we use 'are': The dogs are barking.",diff:"easy"},
+      {q:'Fill in: "He gave the book to ___ ."',opts:["her","she","hers","herself"],ans:0,exp:"After a preposition (to), we use the object pronoun: her.",diff:"medium"},
+      {q:'Fill in: "There are many ___ in the pond."',opts:["fish","fishes","fishs","fishies"],ans:0,exp:"'Fish' stays the same for plural (irregular noun).",diff:"medium"},
+      {q:'Fill in: "We will go to the park ___ it does not rain."',opts:["if","but","so","because"],ans:0,exp:"'If' introduces a condition: we will go IF it does not rain.",diff:"medium"},
+      {q:'Choose the correct word: "Each student ___ a pencil."',opts:["has","have","having","had"],ans:0,exp:"'Each' is singular, so it takes 'has'.",diff:"hard"},
+      {q:'Fill in: "The ball rolled ___ the table."',opts:["under","over","at","in"],ans:0,exp:"'Under' means below — the ball rolled beneath the table.",diff:"easy"},
+      // ===== NEW VOCABULARY =====
+      {q:'What is a synonym for "big"?',opts:["Enormous","Tiny","Narrow","Short"],ans:0,exp:"Enormous means very, very big. It is a synonym for big.",diff:"easy"},
+      {q:'What is the opposite of "difficult"?',opts:["Easy","Hard","Tricky","Tough"],ans:0,exp:"The opposite of difficult is easy.",diff:"easy"},
+      {q:'"The boy was ___." Which word means scared?',opts:["Frightened","Excited","Cheerful","Relaxed"],ans:0,exp:"Frightened = feeling afraid or scared.",diff:"easy"},
+      {q:'What does "seldom" mean?',opts:["Rarely / not often","Always","Sometimes","Never"],ans:0,exp:"Seldom means it does not happen very often.",diff:"medium"},
+      {q:'Choose the word that best fits: "She ___ the door quietly so as not to wake the baby."',opts:["closed","slammed","kicked","broke"],ans:0,exp:"Closed quietly makes sense — she was being careful not to wake the baby.",diff:"easy"},
+      // ===== NEW PUNCTUATION =====
+      {q:'Which sentence has correct punctuation?',opts:["\"Where are you going?\" asked Tom.","Where are you going? asked Tom.","\"Where are you going\" asked Tom.","Where are you going asked Tom?"],ans:0,exp:"Speech marks around the spoken words, question mark inside, comma or question mark before closing.",diff:"medium"},
+      {q:'Where should the apostrophe go? "The girls bag is red."',opts:["girl's","girls'","girls","girl"],ans:0,exp:"One girl owns the bag, so it is girl's (singular possessive).",diff:"medium"},
+      {q:'Add the correct punctuation: "Wow that was amazing___"',opts:["!",".",",","?"],ans:0,exp:"'Wow that was amazing' expresses excitement, so use an exclamation mark!",diff:"easy"},
+      {q:'Which sentence uses commas correctly?',opts:["I bought apples, oranges, and bananas.","I bought, apples oranges, and bananas.","I, bought apples oranges and bananas.","I bought apples oranges and, bananas."],ans:0,exp:"Commas separate items in a list: apples, oranges, and bananas.",diff:"easy"},
+      // ===== NEW SENTENCE COMPLETION =====
+      {q:'Fill in: "The sun ___ in the east every morning."',opts:["rises","rise","rising","rose"],ans:0,exp:"A general fact uses simple present tense. 'The sun' is singular: rises.",diff:"easy"},
+      {q:'Fill in: "Mother told us to be ___ in the library."',opts:["quiet","quietly","noisy","loudly"],ans:0,exp:"'Be' is followed by an adjective: be quiet.",diff:"easy"},
+      {q:'Fill in: "He ran ___ to catch the bus."',opts:["quickly","quick","quicker","quickest"],ans:0,exp:"'Quickly' is an adverb that describes how he ran.",diff:"medium"},
+      // ===== NEW SIMPLE COMPREHENSION =====
+      {q:'Read: "Tom woke up late. He skipped breakfast and ran to school. He was still late." Why did Tom skip breakfast?',opts:["He did not have time because he woke up late.","He was not hungry.","His mother forgot to cook.","He wanted to exercise."],ans:0,exp:"The passage says he woke up late, so he had no time for breakfast.",diff:"easy"},
+      {q:'Read: "Sara practised the piano every day for a month. At the concert, she played perfectly." What does this tell us about Sara?',opts:["Hard work leads to good results.","She is naturally talented.","She does not like piano.","The concert was easy."],ans:0,exp:"Sara practised daily and then played perfectly — this shows effort leads to success.",diff:"medium"},
+      // ===== NEW SPELLING =====
+      {q:'Which word is spelled correctly?',opts:["beautiful","beautful","beutiful","beatiful"],ans:0,exp:"B-E-A-U-T-I-F-U-L. Remember: Big Elephants Are Ugly To Insects For Undoing Locks!",diff:"medium"},
+      {q:'Which word is spelled correctly?',opts:["Wednesday","Wensday","Wendsday","Wednsday"],ans:0,exp:"W-E-D-N-E-S-D-A-Y. The silent 'd' and 'e' make it tricky!",diff:"medium"},
+      {q:'Which word is spelled correctly?',opts:["disappear","dissapear","disapear","disappeer"],ans:0,exp:"dis + appear = disappear. One 's', two 'p's.",diff:"medium"},
+      {q:'Choose the correct spelling:',opts:["necessary","neccessary","necesary","neccesary"],ans:0,exp:"N-E-C-E-S-S-A-R-Y. One 'c', two 's'. Remember: one Collar, two Socks!",diff:"hard"},
     ]
   },
   chinese: {
     yuhi: [
-      {q:'"Thank you" in Chinese is:', opts:["\u8C22\u8C22 (xi\u00E8xie)","\u4F60\u597D (n\u01D0 h\u01CEo)","\u518D\u89C1 (z\u00E0iji\u00E0n)","\u5BF9\u4E0D\u8D77 (du\u00ECbuq\u01D0)"], ans:0, exp:"\u8C22\u8C22 (xi\u00E8xie) means thank you.", diff:"easy"},
-      {q:'What does \u56FE\u4E66\u9986 (t\u00FA sh\u016B gu\u01CEn) mean?', opts:["Library","Bookstore","School","Museum"], ans:0, exp:"\u56FE=picture, \u4E66=book, \u9986=building. Together: library.", diff:"easy"},
-      {q:'Choose the correct measure word: \u4E00___\u4E66', opts:["\u672C (b\u011Bn)","\u4E2A (g\u00E8)","\u53EA (zh\u012B)","\u6761 (ti\u00E1o)"], ans:0, exp:"\u672C is the measure word for books: \u4E00\u672C\u4E66.", diff:"medium"},
-      {q:'\u201C\u6211\u6BCF\u5929\u65E9\u4E0A\u4E03\u70B9\u8D77\u5E8A\u201D means:', opts:["I wake up at 7am every day","I go to school at 7am","I eat breakfast at 7am","I sleep at 7pm"], ans:0, exp:"\u6BCF\u5929=every day, \u65E9\u4E0A=morning, \u4E03\u70B9=7 o'clock, \u8D77\u5E8A=wake up.", diff:"easy"},
-      {q:'Which character means "big"?', opts:["\u5927","\u5C0F","\u591A","\u5C11"], ans:0, exp:"\u5927 (d\u00E0) = big. \u5C0F = small, \u591A = many, \u5C11 = few.", diff:"easy"},
-      {q:'Complete: \u4ED6\u559C\u6B22___\u8DB3\u7403\u3002(He likes ___ football.)', opts:["\u8E22 (t\u012B)","\u5403 (ch\u012B)","\u770B (k\u00E0n)","\u5199 (xi\u011B)"], ans:0, exp:"\u8E22 means to kick. \u8E22\u8DB3\u7403 = play/kick football.", diff:"medium"},
-      {q:'What is the radical of \u6E38 (y\u00F3u, swim)?', opts:["\u6C35 (water radical)","\u4EBB (person radical)","\u65E5 (sun radical)","\u6728 (wood radical)"], ans:0, exp:"\u6E38 has the water radical \u6C35 on the left, because swimming involves water.", diff:"hard"},
-      {q:'\u201C\u65B0\u52A0\u5761\u7684\u5929\u6C14\u5F88\u70ED\u201D means:', opts:["Singapore's weather is very hot","Singapore is very big","Singapore has many people","Singapore is very far"], ans:0, exp:"\u5929\u6C14=weather, \u5F88=very, \u70ED=hot.", diff:"easy"},
-      {q:'Which is the correct stroke order principle?', opts:["Top to bottom, left to right","Bottom to top, right to left","Inside first, then outside","Any order is fine"], ans:0, exp:"Chinese characters are written top-to-bottom and left-to-right.", diff:"medium"},
-      {q:'Reorder: \u6211/\u5728/\u5B66\u6821/\u4E0A\u8BFE', opts:["\u6211\u5728\u5B66\u6821\u4E0A\u8BFE","\u6211\u4E0A\u8BFE\u5728\u5B66\u6821","\u5728\u5B66\u6821\u6211\u4E0A\u8BFE","\u4E0A\u8BFE\u6211\u5728\u5B66\u6821"], ans:0, exp:"Subject + place + verb: \u6211\u5728\u5B66\u6821\u4E0A\u8BFE (I attend class at school).", diff:"medium"},
-      // P6 — Comprehension & Grammar
-      {q:'What does 虽然...但是... mean?', opts:["Although...but...","Because...so...","If...then...","Not only...but also..."], ans:0, exp:"虽然...但是... expresses contrast: Although X, but Y.", diff:"medium"},
-      {q:'"他不但会唱歌，而且会跳舞" means:', opts:["He can not only sing, but also dance","He can only sing","He cannot dance","He likes singing more than dancing"], ans:0, exp:"不但...而且... = not only...but also...", diff:"hard"},
-      {q:'Choose the correct 的/地/得: 他跑___很快', opts:["得","的","地","了"], ans:0, exp:"得 follows a verb to describe the degree/result: 跑得很快 = runs very fast.", diff:"hard"},
-      {q:'What is the opposite (反义词) of 危险?', opts:["安全","困难","容易","害怕"], ans:0, exp:"危险 (dangerous) ↔ 安全 (safe).", diff:"medium"},
-      {q:'"因为下雨了，___我们不能出去玩" — fill in:', opts:["所以","但是","虽然","如果"], ans:0, exp:"因为...所以... = because...therefore... (cause and effect).", diff:"medium"},
-      {q:'Which sentence uses 把 correctly?', opts:["请你把门关上","请你关把门上","把请你门关上","请把你门上关"], ans:0, exp:"把 structure: Subject + 把 + Object + Verb + Complement.", diff:"hard"},
-      {q:'"环保" means:', opts:["Environmental protection","Recycling only","Cleaning up","Planting trees"], ans:0, exp:"环保 = 环境保护 (environmental protection). A common PSLE topic!", diff:"medium"},
-      {q:'Complete the 成语: 一___两得', opts:["举","个","手","只"], ans:0, exp:"一举两得 = one action, two gains (kill two birds with one stone).", diff:"hard"},
+      // ===== CLOZE / FILL-IN-BLANK (20 questions) =====
+      {type:'cloze',q:'选择正确的词语：妈妈___地看着我，让我感到很温暖。', opts:['慈祥','严厉','愤怒','冷漠'], ans:0, exp:'慈祥 (cíxiáng) = kind and loving. 妈妈慈祥地看着我。', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：经过不断___，他终于学会了游泳。', opts:['练习','休息','放弃','犹豫'], ans:0, exp:'练习 (liànxí) = practice. 经过不断练习 = through continuous practice.', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：同学们在教室里___地讨论问题。', opts:['热烈','安静','冷淡','随便'], ans:0, exp:'热烈 (rèliè) = enthusiastic/lively. 热烈地讨论 = discuss enthusiastically.', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：这道数学题很难，但他___想出了答案。', opts:['终于','忽然','一直','从来'], ans:0, exp:'终于 (zhōngyú) = finally. 表示经过努力后的结果。', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：我们应该___环境，不乱丢垃圾。', opts:['保护','破坏','污染','忽视'], ans:0, exp:'保护 (bǎohù) = protect. 保护环境 = protect the environment.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：弟弟___地跑过来告诉我这个好消息。', opts:['兴奋','伤心','害怕','无聊'], ans:0, exp:'兴奋 (xīngfèn) = excited. 兴奋地跑过来 = ran over excitedly.', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：春天到了，公园里的花___了。', opts:['开','关','飞','跳'], ans:0, exp:'开 (kāi) = bloom/open. 花开了 = the flowers bloomed.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：他每天坚持跑步，身体变得越来越___。', opts:['健康','虚弱','疲惫','懒惰'], ans:0, exp:'健康 (jiànkāng) = healthy. 越来越健康 = healthier and healthier.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：老师___地给我们讲解这篇课文。', opts:['耐心','急躁','粗心','马虎'], ans:0, exp:'耐心 (nàixīn) = patiently. 耐心地讲解 = explain patiently.', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：这本书的内容很___，我一口气读完了。', opts:['精彩','无聊','困难','简单'], ans:0, exp:'精彩 (jīngcǎi) = wonderful/brilliant. 内容很精彩 = the content is wonderful.', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：中秋节，全家人___在一起吃月饼。', opts:['团聚','分开','争吵','离开'], ans:0, exp:'团聚 (tuánjù) = reunite. 全家人团聚 = the whole family reunites.', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：她___地完成了所有的作业。', opts:['认真','马虎','随便','慢慢'], ans:0, exp:'认真 (rènzhēn) = seriously/carefully. 认真地完成 = complete carefully.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：运动会上，同学们都___地为选手加油。', opts:['大声','小声','安静','冷淡'], ans:0, exp:'大声 (dàshēng) = loudly. 大声地加油 = cheer loudly.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：爸爸___我说："你要好好学习。"', opts:['鼓励','批评','嘲笑','忽视'], ans:0, exp:'鼓励 (gǔlì) = encourage. 爸爸鼓励我 = Dad encouraged me.', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：新加坡的天气又___又闷热。', opts:['潮湿','干燥','寒冷','凉爽'], ans:0, exp:'潮湿 (cháoshī) = humid. 新加坡的天气又潮湿又闷热。', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：图书馆里很安静，大家都在___地看书。', opts:['专心','吵闹','随意','勉强'], ans:0, exp:'专心 (zhuānxīn) = attentively/with concentration. 专心地看书 = read attentively.', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：下课了，同学们___地跑到操场上玩。', opts:['迫不及待','慢慢','犹豫','勉强'], ans:0, exp:'迫不及待 (pòbùjídài) = can\'t wait / eagerly. 迫不及待地跑出去。', diff:'hard'},
+      {type:'cloze',q:'选择正确的词语：他的成绩一直在___，老师很高兴。', opts:['进步','退步','变化','下降'], ans:0, exp:'进步 (jìnbù) = progress/improve. 成绩在进步 = grades are improving.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：端午节的时候，我们会吃___。', opts:['粽子','月饼','饺子','汤圆'], ans:0, exp:'粽子 (zòngzi) = rice dumpling. 端午节吃粽子是传统习俗。', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：这件事让我感到非常___，不知道该怎么办。', opts:['为难','开心','轻松','无聊'], ans:0, exp:'为难 (wéinán) = in a difficult position. 感到为难 = feel troubled.', diff:'hard'},
+      // ===== COMPREHENSION (10 questions) =====
+      {type:'comprehension',passage:'小明每天早上六点起床跑步。不管刮风下雨，他从不间断。',q:'从这段话中，我们可以知道小明是一个怎样的人？', opts:['坚持不懈的人','懒惰的人','害怕困难的人','不喜欢运动的人'], ans:0, exp:'不管刮风下雨从不间断 shows 坚持不懈 (jiānchí bùxiè) = perseverance.', diff:'medium'},
+      {type:'comprehension',passage:'妈妈下班回到家，看到桌上摆着一碗热腾腾的面条和一张小纸条，上面写着："妈妈辛苦了！"',q:'谁煮了面条？', opts:['妈妈的孩子','妈妈自己','邻居','爸爸的同事'], ans:0, exp:'从"妈妈辛苦了"这张纸条可以推断是孩子为妈妈煮的面。', diff:'medium'},
+      {type:'comprehension',passage:'李伯伯的花园里种满了各种各样的花。每天早晨，他都会给花浇水、施肥。邻居们都很羡慕他的花园。',q:'邻居们为什么羡慕李伯伯？', opts:['因为他的花园很漂亮','因为他很有钱','因为他家很大','因为他做饭好吃'], ans:0, exp:'花园种满花，每天照顾，所以花园很漂亮，邻居羡慕 (xiànmù) = envious.', diff:'easy'},
+      {type:'comprehension',passage:'考试成绩公布了。小华看了看分数，低下了头，一句话也没说。',q:'小华的考试成绩最可能是怎样的？', opts:['不太理想','非常好','跟平时一样','满分'], ans:0, exp:'低下头、一句话没说 = 表示失望/不满意。说明成绩不理想。', diff:'medium'},
+      {type:'comprehension',passage:'爷爷虽然已经七十多岁了，但他每天还坚持读报纸、练书法。他说："活到老，学到老。"',q:'"活到老，学到老"这句话的意思是什么？', opts:['人应该不断学习','老人不需要学习','学习很辛苦','只有年轻人才要学习'], ans:0, exp:'活到老学到老 (huó dào lǎo, xué dào lǎo) = one is never too old to learn.', diff:'medium'},
+      {type:'comprehension',passage:'小美把自己的零用钱存了三个月，终于买到了那本她一直想要的故事书。',q:'从这段话可以看出小美是个怎样的孩子？', opts:['有耐心、会存钱的孩子','浪费钱的孩子','不喜欢看书的孩子','很有钱的孩子'], ans:0, exp:'存了三个月零用钱 shows 有耐心 (yǒu nàixīn) = patient, and 节约 = thrifty.', diff:'medium'},
+      {type:'comprehension',passage:'张叔叔每次去超市，都会自己带购物袋。他从来不用塑料袋。',q:'张叔叔这样做的原因最可能是什么？', opts:['为了保护环境','为了省钱','因为超市没有袋子','因为他喜欢收集袋子'], ans:0, exp:'自带购物袋、不用塑料袋 = 环保意识 (huánbǎo yìshí) = environmental awareness.', diff:'medium'},
+      {type:'comprehension',passage:'放学后，天突然下起了大雨。小文没带伞，正着急的时候，同桌小丽跑过来说："我们一起打伞吧！"',q:'这段话主要告诉我们什么？', opts:['小丽乐于助人','小文不喜欢下雨','学校没有雨伞','天气预报不准'], ans:0, exp:'小丽主动分享雨伞 = 乐于助人 (lè yú zhù rén) = willing to help others.', diff:'easy'},
+      {type:'comprehension',passage:'弟弟把妈妈最喜欢的花瓶打碎了。他想了想，决定主动告诉妈妈，并说了"对不起"。',q:'弟弟的做法说明他是一个怎样的孩子？', opts:['诚实勇敢的孩子','调皮捣蛋的孩子','胆小怕事的孩子','不听话的孩子'], ans:0, exp:'主动承认错误并道歉 = 诚实 (chéngshí) = honest, 勇敢 (yǒnggǎn) = brave.', diff:'medium'},
+      {type:'comprehension',passage:'学校组织了义卖会。同学们把自己做的手工品和旧书拿来卖，把赚到的钱全部捐给了慈善机构。',q:'义卖会的目的是什么？', opts:['筹款帮助有需要的人','让同学们赚零用钱','清理旧物品','锻炼同学们的买卖能力'], ans:0, exp:'捐给慈善机构 = 义卖会 (yìmài huì) is a charity bazaar to raise money for charity.', diff:'hard'},
+      // ===== PINYIN (10 questions) =====
+      {type:'pinyin',q:'选择正确的拼音：图书馆', opts:['tú shū guǎn','tú shū guān','tù shū guǎn','tú sū guǎn'], ans:0, exp:'图(tú)书(shū)馆(guǎn) = library', diff:'medium'},
+      {type:'pinyin',q:'选择正确的拼音：环境', opts:['huán jìng','huàn jìng','huán jǐng','huān jìng'], ans:0, exp:'环(huán)境(jìng) = environment', diff:'medium'},
+      {type:'pinyin',q:'选择正确的拼音：坚持', opts:['jiān chí','jiàn chí','jiān cí','jiǎn chí'], ans:0, exp:'坚(jiān)持(chí) = persevere/insist', diff:'medium'},
+      {type:'pinyin',q:'选择正确的拼音：鼓励', opts:['gǔ lì','gū lì','gǔ lǐ','gù lì'], ans:0, exp:'鼓(gǔ)励(lì) = encourage', diff:'hard'},
+      {type:'pinyin',q:'选择正确的拼音：准备', opts:['zhǔn bèi','zǔn bèi','zhūn bèi','zhǔn béi'], ans:0, exp:'准(zhǔn)备(bèi) = prepare', diff:'medium'},
+      {type:'pinyin',q:'选择正确的拼音：尊敬', opts:['zūn jìng','zūn jǐng','zhūn jìng','cūn jìng'], ans:0, exp:'尊(zūn)敬(jìng) = respect', diff:'hard'},
+      {type:'pinyin',q:'选择正确的拼音：收获', opts:['shōu huò','sōu huò','shōu hòu','shōu guò'], ans:0, exp:'收(shōu)获(huò) = harvest/gains', diff:'medium'},
+      {type:'pinyin',q:'哪个字的拼音是 "lǎn duò"？', opts:['懒惰','勤劳','努力','认真'], ans:0, exp:'懒惰 (lǎn duò) = lazy', diff:'hard'},
+      {type:'pinyin',q:'选择正确的拼音：传统', opts:['chuán tǒng','zhuàn tǒng','chuán tōng','cuán tǒng'], ans:0, exp:'传(chuán)统(tǒng) = tradition', diff:'hard'},
+      {type:'pinyin',q:'选择正确的拼音：批评', opts:['pī píng','bī píng','pī pín','pì píng'], ans:0, exp:'批(pī)评(píng) = criticize', diff:'medium'},
+      // ===== GRAMMAR (10 questions) =====
+      {type:'grammar',q:'选择正确的：他跑___很快。', opts:['得','的','地','了'], ans:0, exp:'动词+得+形容词: 跑得很快 = runs very fast.', diff:'medium'},
+      {type:'grammar',q:'选择正确的：她高兴___跳了起来。', opts:['地','的','得','着'], ans:0, exp:'形容词+地+动词: 高兴地跳 = happily jumped. 地 modifies the verb.', diff:'medium'},
+      {type:'grammar',q:'选择正确的：这是一个美丽___花园。', opts:['的','地','得','着'], ans:0, exp:'形容词+的+名词: 美丽的花园 = beautiful garden. 的 modifies the noun.', diff:'easy'},
+      {type:'grammar',q:'选择正确的关联词：___他很累，___他还是坚持跑完了。', opts:['虽然...但是...','因为...所以...','如果...就...','不但...而且...'], ans:0, exp:'虽然...但是... = although...but... 表示转折关系。', diff:'medium'},
+      {type:'grammar',q:'选择正确的关联词：___下雨了，___我们不去公园了。', opts:['因为...所以...','虽然...但是...','不但...而且...','如果...就...'], ans:0, exp:'因为...所以... = because...therefore... 表示因果关系。', diff:'easy'},
+      {type:'grammar',q:'选择正确的把字句：请你___。', opts:['把窗户打开','打开把窗户','窗户把打开','把打开窗户'], ans:0, exp:'把字句: 主语 + 把 + 宾语 + 动词补语。把窗户打开。', diff:'medium'},
+      {type:'grammar',q:'选择正确的被字句：花瓶___弟弟打碎了。', opts:['被','把','让给','对于'], ans:0, exp:'被字句: 受事者 + 被 + 施事者 + 动词。花瓶被弟弟打碎了。', diff:'medium'},
+      {type:'grammar',q:'选择正确的量词：一___铅笔', opts:['支','本','张','条'], ans:0, exp:'支 (zhī) is the measure word for pens/pencils: 一支铅笔。', diff:'easy'},
+      {type:'grammar',q:'选择正确的关联词：他___会弹钢琴，___会拉小提琴。', opts:['不但...而且...','虽然...但是...','因为...所以...','如果...就...'], ans:0, exp:'不但...而且... = not only...but also... 表示递进关系。', diff:'medium'},
+      {type:'grammar',q:'选择正确的：___你努力学习，___一定能考好。', opts:['只要...就...','虽然...但是...','因为...所以...','不但...而且...'], ans:0, exp:'只要...就... = as long as...then... 表示条件关系。', diff:'hard'},
+      // ===== IDIOMS 成语 (5 questions) =====
+      {q:'一心一意 的意思是：', opts:['专心做一件事','同时做很多事','三心二意','心情不好'], ans:0, exp:'一心一意 (yī xīn yī yì) = wholeheartedly, focused on one thing.', diff:'medium'},
+      {q:'Complete the 成语: 一___两得', opts:['举','个','手','只'], ans:0, exp:'一举两得 (yī jǔ liǎng dé) = one action, two gains (kill two birds with one stone).', diff:'hard'},
+      {q:'自相矛盾 的意思是：', opts:['自己说的话前后不一致','自己跟自己打架','没有武器','矛和盾很厉害'], ans:0, exp:'自相矛盾 (zì xiāng máo dùn) = self-contradictory.', diff:'hard'},
+      {q:'守株待兔 这个成语告诉我们：', opts:['不能靠运气，要努力','要保护兔子','种树很重要','等待是好事'], ans:0, exp:'守株待兔 (shǒu zhū dài tù) = waiting for a rabbit by a tree stump. Means: don\'t rely on luck.', diff:'hard'},
+      {q:'半途而废 的反义词成语是：', opts:['坚持不懈','三心二意','一事无成','碌碌无为'], ans:0, exp:'半途而废 (bàn tú ér fèi) = give up halfway. 反义词: 坚持不懈 = persevere.', diff:'hard'},
+      // ===== SENTENCE ORDERING (5 questions) =====
+      {q:'排列句子：①就在家里看书 ②因为外面下大雨 ③小明今天没出去', opts:['③②①','①②③','②③①','③①②'], ans:0, exp:'小明今天没出去，因为外面下大雨，就在家里看书。事情→原因→结果。', diff:'medium'},
+      {q:'排列句子：①他终于爬到了山顶 ②小强决定去爬山 ③虽然很累', opts:['②③①','①②③','③②①','②①③'], ans:0, exp:'小强决定去爬山，虽然很累，他终于爬到了山顶。', diff:'medium'},
+      {q:'排列句子：①她高兴得跳了起来 ②小美打开信封 ③发现自己被录取了', opts:['②③①','①②③','③②①','②①③'], ans:0, exp:'小美打开信封，发现自己被录取了，她高兴得跳了起来。按时间顺序。', diff:'medium'},
+      {q:'排列句子：①请大家保护环境 ②地球是我们的家园 ③不要乱丢垃圾', opts:['②①③','①②③','③②①','②③①'], ans:0, exp:'地球是我们的家园，请大家保护环境，不要乱丢垃圾。总→分→具体。', diff:'hard'},
+      {q:'排列句子：①原来是一只小猫 ②他走过去一看 ③树丛里传来奇怪的声音', opts:['③②①','①②③','②③①','③①②'], ans:0, exp:'树丛里传来奇怪的声音，他走过去一看，原来是一只小猫。按事件顺序。', diff:'easy'},
+      // ===== KEPT BEST EXISTING (5 questions) =====
+      {q:'Choose the correct measure word: 一___书', opts:['本 (běn)','个 (gè)','只 (zhī)','条 (tiáo)'], ans:0, exp:'本 is the measure word for books: 一本书。', diff:'medium'},
+      {q:'Which sentence uses 把 correctly?', opts:['请你把门关上','请你关把门上','把请你门关上','请把你门上关'], ans:0, exp:'把 structure: Subject + 把 + Object + Verb + Complement.', diff:'hard'},
+      {q:'What is the opposite (反义词) of 危险?', opts:['安全','困难','容易','害怕'], ans:0, exp:'危险 (wēixiǎn, dangerous) ↔ 安全 (ānquán, safe).', diff:'medium'},
+      {q:'Reorder: 我/在/学校/上课', opts:['我在学校上课','我上课在学校','在学校我上课','上课我在学校'], ans:0, exp:'Subject + place + verb: 我在学校上课 (I attend class at school).', diff:'medium'},
+      {q:'"环保" means:', opts:['Environmental protection','Recycling only','Cleaning up','Planting trees'], ans:0, exp:'环保 = 环境保护 (huánbǎo) = environmental protection. A common PSLE topic!', diff:'medium'},
     ],
     ryusei: [
-      {q:'"Hello" in Chinese is:', opts:["\u4F60\u597D (n\u01D0 h\u01CEo)","\u8C22\u8C22 (xi\u00E8xie)","\u518D\u89C1 (z\u00E0iji\u00E0n)","\u5BF9\u4E0D\u8D77 (du\u00ECbuq\u01D0)"], ans:0, exp:"\u4F60\u597D (n\u01D0 h\u01CEo) means hello!", diff:"easy"},
-      {q:'What number is \u4E03 (q\u012B)?', opts:["7","3","8","4"], ans:0, exp:"\u4E03 (q\u012B) = 7. It looks like an upside-down 7!", diff:"easy"},
-      {q:'Which animal is \u732B (m\u0101o)?', opts:["Cat","Dog","Fish","Bird"], ans:0, exp:"\u732B (m\u0101o) = cat. \u72D7 = dog, \u9C7C = fish, \u9E1F = bird.", diff:"easy"},
-      {q:'\u201C\u6211\u559C\u6B22\u5403\u82F9\u679C\u201D means:', opts:["I like eating apples","I like playing football","I like reading books","I like drinking water"], ans:0, exp:"\u559C\u6B22=like, \u5403=eat, \u82F9\u679C=apple.", diff:"easy"},
-      {q:'How do you say "Monday" in Chinese?', opts:["\u661F\u671F\u4E00","\u661F\u671F\u4E8C","\u661F\u671F\u4E09","\u661F\u671F\u56DB"], ans:0, exp:"\u661F\u671F\u4E00 = Monday (star-period-one). Days are numbered 1-6, Sunday is special.", diff:"easy"},
-      {q:'Which color is \u7EA2 (h\u00F3ng)?', opts:["Red","Blue","Green","Yellow"], ans:0, exp:"\u7EA2 (h\u00F3ng) = red. Like Hong Bao (red packet)!", diff:"easy"},
-      {q:'Complete: \u4ECA\u5929\u662F___\u6708\u4E09\u53F7 (Today is March 3rd)', opts:["\u4E09","\u56DB","\u4E94","\u4E8C"], ans:0, exp:"\u4E09\u6708 = March (month 3). \u4E09\u53F7 = 3rd.", diff:"medium"},
-      {q:'\u201C\u5B66\u751F\u201D means:', opts:["Student","Teacher","Doctor","Police"], ans:0, exp:"\u5B66\u751F = student. \u5B66=learn, \u751F=life/person.", diff:"easy"},
-      {q:'Which is correct? "I have a younger sister"', opts:["\u6211\u6709\u4E00\u4E2A\u59B9\u59B9","\u6211\u662F\u4E00\u4E2A\u59B9\u59B9","\u6211\u53BB\u4E00\u4E2A\u59B9\u59B9","\u6211\u5403\u4E00\u4E2A\u59B9\u59B9"], ans:0, exp:"\u6709 = have. \u6211\u6709\u4E00\u4E2A\u59B9\u59B9 = I have a younger sister.", diff:"easy"},
-      {q:'What does \u8001\u5E08 (l\u01CEo sh\u012B) mean?', opts:["Teacher","Doctor","Father","Friend"], ans:0, exp:"\u8001\u5E08 (l\u01CEo sh\u012B) = teacher. A very important word in school!", diff:"easy"},
-      // P4 — Daily life vocabulary
-      {q:'What does 早上好 mean?', opts:["Good morning","Good night","Good afternoon","Goodbye"], ans:0, exp:"早上 = morning, 好 = good. 早上好 = Good morning!", diff:"easy"},
-      {q:'How do you say "I am 10 years old" in Chinese?', opts:["我十岁","我十年","我是十","我有十"], ans:0, exp:"我十岁 = I am 10 years old. 岁 = years old (for age).", diff:"easy"},
-      {q:'What does 好吃 (hǎo chī) mean?', opts:["Delicious","Good looking","Interesting","Fun"], ans:0, exp:"好吃 = delicious / tastes good. 好 = good, 吃 = eat.", diff:"easy"},
-      {q:'Which is the correct way to say "Where is the toilet?"', opts:["厕所在哪里？","哪里厕所在？","在厕所哪里？","厕所哪里在？"], ans:0, exp:"Place + 在哪里？= Where is [place]? 厕所在哪里？", diff:"medium"},
-      // P4 — Measure words
-      {q:'Choose the correct measure word: 一___狗', opts:["只 (zhī)","本 (běn)","条 (tiáo)","张 (zhāng)"], ans:0, exp:"只 is used for small animals: 一只狗 = one dog.", diff:"medium"},
-      {q:'Choose the correct measure word: 一___桌子', opts:["张 (zhāng)","只 (zhī)","本 (běn)","个 (gè)"], ans:0, exp:"张 is used for flat things like tables and paper: 一张桌子.", diff:"medium"},
-      // P4 — Family members
-      {q:'What is 爷爷 (yéye)?', opts:["Grandfather (paternal)","Father","Uncle","Grandmother"], ans:0, exp:"爷爷 = grandfather on father's side (paternal grandfather).", diff:"easy"},
-      {q:'What is 妈妈的妈妈?', opts:["外婆 (wàipó)","奶奶 (nǎinai)","阿姨 (āyí)","姐姐 (jiějie)"], ans:0, exp:"Mother's mother = 外婆 (maternal grandmother).", diff:"medium"},
-      // P4 — Common phrases
-      {q:'"请问" means:', opts:["May I ask / Excuse me","Please sit","Please eat","Thank you"], ans:0, exp:"请问 = May I ask / Excuse me (polite way to ask a question).", diff:"easy"},
-      {q:'"不客气" means:', opts:["You're welcome","Not angry","Not happy","Don't eat"], ans:0, exp:"不客气 = You're welcome (reply to 谢谢).", diff:"easy"},
+      // ===== CLOZE / FILL-IN-BLANK (15 questions) =====
+      {type:'cloze',q:'选择正确的词语：我每天早上___牛奶。', opts:['喝','吃','写','跑'], ans:0, exp:'喝 (hē) = drink. 喝牛奶 = drink milk.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：弟弟在操场上___步。', opts:['跑','喝','看','写'], ans:0, exp:'跑 (pǎo) = run. 跑步 = running/jogging.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：我喜欢___故事书。', opts:['看','吃','喝','跳'], ans:0, exp:'看 (kàn) = read/look. 看故事书 = read storybooks.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：妈妈在厨房里___饭。', opts:['做','看','玩','写'], ans:0, exp:'做 (zuò) = make/do. 做饭 = cook food.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：同学们在教室里___地听老师讲课。', opts:['认真','吵闹','害怕','难过'], ans:0, exp:'认真 (rènzhēn) = attentively. 认真地听 = listen attentively.', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：今天的天气很___，我们去公园玩吧。', opts:['好','坏','冷','黑'], ans:0, exp:'好 (hǎo) = good. 天气很好 = the weather is good.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：小狗在花园里___地跑来跑去。', opts:['开心','伤心','生气','害怕'], ans:0, exp:'开心 (kāixīn) = happy. 开心地跑 = run happily.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：我用铅笔___字。', opts:['写','吃','听','跑'], ans:0, exp:'写 (xiě) = write. 写字 = write characters.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：放学后，我和朋友一起___足球。', opts:['踢','吃','喝','写'], ans:0, exp:'踢 (tī) = kick. 踢足球 = play football.', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：奶奶___地对我笑了。', opts:['温柔','生气','大声','快速'], ans:0, exp:'温柔 (wēnróu) = gently/tenderly. 温柔地笑 = smile gently.', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：我们要___父母，帮他们做家务。', opts:['孝顺','欺负','忘记','讨厌'], ans:0, exp:'孝顺 (xiàoshùn) = filial/respectful to parents. 孝顺父母。', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：考试前，我___了很多遍。', opts:['复习','玩耍','睡觉','忘记'], ans:0, exp:'复习 (fùxí) = revise/review. 复习了很多遍 = revised many times.', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：妹妹___唱歌___跳舞。', opts:['一边...一边...','虽然...但是...','因为...所以...','不但...而且...'], ans:0, exp:'一边...一边... (yībiān...yībiān...) = doing X while doing Y simultaneously.', diff:'medium'},
+      {type:'cloze',q:'选择正确的词语：这朵花很___，我很喜欢。', opts:['漂亮','难看','可怕','无聊'], ans:0, exp:'漂亮 (piàoliang) = beautiful/pretty. 花很漂亮。', diff:'easy'},
+      {type:'cloze',q:'选择正确的词语：哥哥___我做功课。', opts:['教','骂','打','丢'], ans:0, exp:'教 (jiāo) = teach. 哥哥教我做功课 = Brother teaches me to do homework.', diff:'easy'},
+      // ===== PINYIN (10 questions) =====
+      {type:'pinyin',q:'学校 的正确拼音是：', opts:['xué xiào','xué jiào','xuè xiào','xūe xiào'], ans:0, exp:'学(xué)校(xiào) = school', diff:'easy'},
+      {type:'pinyin',q:'选择正确的拼音：朋友', opts:['péng yǒu','péng yōu','pén yǒu','féng yǒu'], ans:0, exp:'朋(péng)友(yǒu) = friend', diff:'easy'},
+      {type:'pinyin',q:'选择正确的拼音：老师', opts:['lǎo shī','láo shī','lǎo sī','lào shī'], ans:0, exp:'老(lǎo)师(shī) = teacher', diff:'easy'},
+      {type:'pinyin',q:'选择正确的拼音：高兴', opts:['gāo xìng','gāo xīng','gào xìng','gāo xǐng'], ans:0, exp:'高(gāo)兴(xìng) = happy', diff:'easy'},
+      {type:'pinyin',q:'选择正确的拼音：漂亮', opts:['piào liang','piāo liàng','piào liàng','biào liang'], ans:0, exp:'漂(piào)亮(liang) = beautiful. Note: 亮 is neutral tone here.', diff:'medium'},
+      {type:'pinyin',q:'哪个字的拼音是 "māo"？', opts:['猫','毛','帽','冒'], ans:0, exp:'猫 (māo) = cat. 毛(máo), 帽(mào), 冒(mào) have different tones.', diff:'medium'},
+      {type:'pinyin',q:'选择正确的拼音：作业', opts:['zuò yè','zuō yè','zuò yé','zhuò yè'], ans:0, exp:'作(zuò)业(yè) = homework', diff:'easy'},
+      {type:'pinyin',q:'选择正确的拼音：早上', opts:['zǎo shang','zào shang','zǎo sàng','záo shang'], ans:0, exp:'早(zǎo)上(shang) = morning. 上 is neutral tone here.', diff:'easy'},
+      {type:'pinyin',q:'哪个字的拼音是 "niú"？', opts:['牛','鸟','女','年'], ans:0, exp:'牛 (niú) = cow/bull. 鸟(niǎo), 女(nǚ), 年(nián).', diff:'medium'},
+      {type:'pinyin',q:'选择正确的拼音：感谢', opts:['gǎn xiè','gǎn xié','gān xiè','gàn xiè'], ans:0, exp:'感(gǎn)谢(xiè) = thankful/grateful', diff:'medium'},
+      // ===== COMPREHENSION (8 questions) =====
+      {type:'comprehension',passage:'小白是一只小狗。它最喜欢在花园里跑来跑去。',q:'小白是什么？', opts:['一只小狗','一只小猫','一个小朋友','一只小鸟'], ans:0, exp:'文中说"小白是一只小狗"。', diff:'easy'},
+      {type:'comprehension',passage:'今天是星期天，妈妈带我去动物园。我看到了大象、猴子和长颈鹿。',q:'他们去了哪里？', opts:['动物园','公园','学校','超市'], ans:0, exp:'文中说"妈妈带我去动物园"。', diff:'easy'},
+      {type:'comprehension',passage:'下雨了，小明没带伞。他跑得很快，还是被雨淋湿了。',q:'小明为什么被淋湿了？', opts:['因为他没带伞','因为他走得太慢','因为他喜欢下雨','因为他在游泳'], ans:0, exp:'没带伞 (méi dài sǎn) = didn\'t bring an umbrella, so he got wet.', diff:'easy'},
+      {type:'comprehension',passage:'姐姐每天放学后都去图书馆看书。她最喜欢看童话故事。',q:'姐姐最喜欢看什么书？', opts:['童话故事','漫画书','课本','报纸'], ans:0, exp:'文中说"她最喜欢看童话故事" (tónghuà gùshi) = fairy tales.', diff:'easy'},
+      {type:'comprehension',passage:'奶奶做的红烧肉最好吃了。每次去奶奶家，我都要吃两碗饭。',q:'为什么"我"要吃两碗饭？', opts:['因为奶奶做的菜很好吃','因为"我"很饿','因为妈妈要求的','因为没有其他东西吃'], ans:0, exp:'奶奶做的红烧肉最好吃 = Grandma\'s braised pork is the most delicious, so he eats more.', diff:'medium'},
+      {type:'comprehension',passage:'小丽把自己的橡皮借给了同学。同学说了"谢谢"，小丽说"不客气"。',q:'小丽是一个怎样的人？', opts:['乐于助人的人','自私的人','害羞的人','调皮的人'], ans:0, exp:'把橡皮借给同学 = lent her eraser to a classmate. 乐于助人 = helpful.', diff:'medium'},
+      {type:'comprehension',passage:'弟弟的房间很乱。地上有玩具，床上有衣服，桌子上有零食。',q:'弟弟的房间怎么样？', opts:['很不整齐','很干净','很大','很小'], ans:0, exp:'地上有玩具、床上有衣服、桌上有零食 = 很乱 (luàn) = messy/untidy.', diff:'easy'},
+      {type:'comprehension',passage:'爸爸下班回来，看到我考了100分，笑着说："好孩子！"',q:'爸爸的心情怎样？', opts:['很高兴','很生气','很伤心','很害怕'], ans:0, exp:'笑着说"好孩子" = smiling + praising. 爸爸很高兴 (gāoxìng) = happy.', diff:'easy'},
+      // ===== MEASURE WORDS (7 questions) =====
+      {q:'选择正确的量词：一___猫', opts:['只 (zhī)','本 (běn)','条 (tiáo)','张 (zhāng)'], ans:0, exp:'只 (zhī) is for small animals: 一只猫 = one cat.', diff:'easy'},
+      {q:'选择正确的量词：一___纸', opts:['张 (zhāng)','只 (zhī)','本 (běn)','条 (tiáo)'], ans:0, exp:'张 (zhāng) is for flat things: 一张纸 = one piece of paper.', diff:'easy'},
+      {q:'选择正确的量词：一___鱼', opts:['条 (tiáo)','只 (zhī)','张 (zhāng)','本 (běn)'], ans:0, exp:'条 (tiáo) is for long/thin things: 一条鱼 = one fish.', diff:'easy'},
+      {q:'选择正确的量词：一___花', opts:['朵 (duǒ)','条 (tiáo)','本 (běn)','只 (zhī)'], ans:0, exp:'朵 (duǒ) is for flowers and clouds: 一朵花 = one flower.', diff:'easy'},
+      {q:'选择正确的量词：一___树', opts:['棵 (kē)','条 (tiáo)','朵 (duǒ)','张 (zhāng)'], ans:0, exp:'棵 (kē) is for trees and plants: 一棵树 = one tree.', diff:'medium'},
+      {q:'选择正确的量词：一___伞', opts:['把 (bǎ)','条 (tiáo)','只 (zhī)','朵 (duǒ)'], ans:0, exp:'把 (bǎ) is for things with handles: 一把伞 = one umbrella.', diff:'medium'},
+      {q:'选择正确的量词：一___书', opts:['本 (běn)','张 (zhāng)','只 (zhī)','条 (tiáo)'], ans:0, exp:'本 (běn) is for books: 一本书 = one book.', diff:'easy'},
+      // ===== GRAMMAR BASICS (5 questions) =====
+      {type:'grammar',q:'选择正确的：书包___桌子上。', opts:['在','是','有','到'], ans:0, exp:'在 (zài) = at/on. 书包在桌子上 = The bag is on the table.', diff:'easy'},
+      {type:'grammar',q:'选择正确的：教室里___很多学生。', opts:['有','在','是','去'], ans:0, exp:'有 (yǒu) = there is/there are. 教室里有很多学生。', diff:'easy'},
+      {type:'grammar',q:'选择正确的：她___我的好朋友。', opts:['是','在','有','去'], ans:0, exp:'是 (shì) = is. 她是我的好朋友 = She is my good friend.', diff:'easy'},
+      {type:'grammar',q:'选择正确的：我想___公园玩。', opts:['去','在','是','有'], ans:0, exp:'去 (qù) = go. 去公园玩 = go to the park to play.', diff:'easy'},
+      {type:'grammar',q:'选择正确的：这个苹果___那个大。', opts:['比','和','在','是'], ans:0, exp:'比 (bǐ) = compared to. A比B大 = A is bigger than B.', diff:'medium'},
+      // ===== VOCABULARY MATCHING (5 questions) =====
+      {q:'哪个词语形容天气很好？', opts:['晴天','下雨','刮风','阴天'], ans:0, exp:'晴天 (qíngtiān) = sunny day. 晴 = clear/sunny.', diff:'easy'},
+      {q:'哪个词语是动物？', opts:['兔子','桌子','房子','杯子'], ans:0, exp:'兔子 (tùzi) = rabbit. The others are: table, house, cup.', diff:'easy'},
+      {q:'哪个词语跟"学习"有关？', opts:['课本','食物','衣服','玩具'], ans:0, exp:'课本 (kèběn) = textbook. 课本跟学习有关。', diff:'easy'},
+      {q:'哪个词语形容人很开心？', opts:['快乐','难过','害怕','生气'], ans:0, exp:'快乐 (kuàilè) = happy/joyful. 难过=sad, 害怕=scared, 生气=angry.', diff:'easy'},
+      {q:'哪个词语是水果？', opts:['西瓜','白菜','米饭','面条'], ans:0, exp:'西瓜 (xīguā) = watermelon. 白菜=cabbage, 米饭=rice, 面条=noodles.', diff:'easy'},
+      // ===== KEPT BEST EXISTING (5 questions) =====
+      {q:'Choose the correct measure word: 一___狗', opts:['只 (zhī)','本 (běn)','条 (tiáo)','张 (zhāng)'], ans:0, exp:'只 is used for small animals: 一只狗 = one dog.', diff:'medium'},
+      {q:'Which is the correct way to say "Where is the toilet?"', opts:['厕所在哪里？','哪里厕所在？','在厕所哪里？','厕所哪里在？'], ans:0, exp:'Place + 在哪里？= Where is [place]? 厕所在哪里？', diff:'medium'},
+      {q:'What is 妈妈的妈妈?', opts:['外婆 (wàipó)','奶奶 (nǎinai)','阿姨 (āyí)','姐姐 (jiějie)'], ans:0, exp:'Mother\'s mother = 外婆 (wàipó, maternal grandmother).', diff:'medium'},
+      {q:'Complete: 今天是___月三号 (Today is March 3rd)', opts:['三','四','五','二'], ans:0, exp:'三月 = March (month 3). 三月三号 = March 3rd.', diff:'medium'},
+      {q:'Which is correct? "I have a younger sister"', opts:['我有一个妹妹','我是一个妹妹','我去一个妹妹','我吃一个妹妹'], ans:0, exp:'有 (yǒu) = have. 我有一个妹妹 = I have a younger sister.', diff:'easy'},
     ]
   }
 };
 
+// ============ PROCEDURAL MATH GENERATOR ============
+function generateMathQ(player) {
+  const isP6 = player === 'yuhi';
+  const templates = isP6 ? [
+    // P6 templates
+    () => { const a=rand(2,9),b=rand(2,9),c=a*b; return {q:`What is ${c} ÷ ${a}?`, opts:[`${b}`,`${b+1}`,`${b-1}`,`${b+2}`], ans:0, exp:'Divide the number by the divisor!', diff:'easy'}; },
+    () => { const n=rand(2,8),d=rand(n+1,12),n2=rand(1,d-n); return {q:`What is ${n}/${d} + ${n2}/${d}?`, opts:[`${n+n2}/${d}`,`${n*n2}/${d}`,`${n+n2}/${d*2}`,`${n-n2}/${d}`], ans:0, exp:'Same denominator? Just add the numerators!', diff:'easy'}; },
+    () => { const pct=rand(1,4)*10,price=rand(2,20)*10,disc=price*pct/100; return {q:`A $${price} item has ${pct}% discount. What is the sale price?`, opts:[`$${price-disc}`,`$${price-disc+5}`,`$${price-disc-5}`,`$${disc}`], ans:0, exp:'Find the discount amount (percentage × price), then subtract from original!', diff:'medium'}; },
+    () => { const spd=rand(3,12)*10,t=rand(2,5),d=spd*t; return {q:`A car travels at ${spd} km/h for ${t} hours. How far does it go?`, opts:[`${d} km`,`${d+spd} km`,`${d-spd} km`,`${d*2} km`], ans:0, exp:'Distance = Speed × Time. Multiply speed by hours!', diff:'easy'}; },
+    () => { const d=rand(50,200)*2,spd=rand(2,8)*10,t=d/spd; return {q:`A cyclist covers ${d} km at ${spd} km/h. How many hours?`, opts:[`${t}`,`${t+1}`,`${t-1}`,`${t+2}`], ans:0, exp:'Time = Distance ÷ Speed. Divide distance by speed!', diff:'medium'}; },
+    () => { const a=rand(2,6),b=rand(a+1,9),total=rand(50,200); const pa=Math.round(total*a/(a+b)); return {q:`Divide ${total} in ratio ${a}:${b}. What is the smaller share?`, opts:[`${pa}`,`${pa+5}`,`${total-pa+5}`,`${pa-5}`], ans:0, exp:'Add ratio parts for total parts. Multiply total by smaller ratio ÷ total parts!', diff:'medium'}; },
+    () => { const s=rand(3,12),v=s*s*s; return {q:`What is the volume of a cube with side ${s} cm?`, opts:[`${v} cm³`,`${s*s} cm³`,`${v+s} cm³`,`${s*6} cm³`], ans:0, exp:'Volume of a cube = side × side × side!', diff:'easy'}; },
+    () => { const a=rand(3,15),b=rand(3,15),area=a*b; return {q:`A rectangle is ${a} cm by ${b} cm. What is its area?`, opts:[`${area} cm²`,`${2*(a+b)} cm²`,`${area+a} cm²`,`${area-b} cm²`], ans:0, exp:'Area of rectangle = length × width!', diff:'easy'}; },
+    () => { const x=rand(2,15),coeff=rand(2,9),rhs=coeff*x+rand(1,10); const c=rhs-coeff*x; return {q:`Solve: ${coeff}x + ${c} = ${rhs}`, opts:[`x = ${x}`,`x = ${x+1}`,`x = ${x-1}`,`x = ${coeff}`], ans:0, exp:'Move the constant to the other side, then divide by the coefficient!', diff:'medium'}; },
+    () => { const n=rand(5,12),avg=rand(60,95),total=n*avg; return {q:`The average of ${n} numbers is ${avg}. What is their total?`, opts:[`${total}`,`${total+avg}`,`${total-avg}`,`${n+avg}`], ans:0, exp:'Total = Average × Count. Multiply the average by how many numbers!', diff:'medium'}; },
+    () => { const base=rand(5,20),h=rand(4,15),area=base*h/2; return {q:`Triangle: base ${base} cm, height ${h} cm. Area?`, opts:[`${area} cm²`,`${base*h} cm²`,`${area+base} cm²`,`${base+h} cm²`], ans:0, exp:'Triangle area = ½ × base × height!', diff:'easy'}; },
+    () => { const pct=rand(1,3)*5+5,orig=rand(200,500); const inc=Math.round(orig*pct/100); return {q:`A population of ${orig} increases by ${pct}%. New population?`, opts:[`${orig+inc}`,`${orig+inc+10}`,`${orig-inc}`,`${orig+pct}`], ans:0, exp:'Find the increase (percentage × original), then add it to the original!', diff:'hard'}; },
+    () => { const parts=[rand(2,5),rand(2,5)]; const whole=parts[0]+parts[1]; const money=whole*rand(5,15); const share0=money*parts[0]/whole; return {q:`$${money} shared in ratio ${parts[0]}:${parts[1]}. Larger share?`, opts:[`$${Math.max(share0,money-share0)}`,`$${Math.min(share0,money-share0)}`,`$${money}`,`$${Math.round(money/2)}`], ans:0, exp:'Add ratio parts for total. Larger share = larger ratio ÷ total parts × amount!', diff:'hard'}; },
+  ] : [
+    // P4 templates
+    () => { const a=rand(10,99),b=rand(10,99),s=a+b; return {q:`What is ${a} + ${b}?`, opts:[`${s}`,`${s+1}`,`${s-1}`,`${s+10}`], ans:0, exp:'Add the two numbers together!', diff:'easy'}; },
+    () => { const a=rand(100,999),b=rand(100,a),d=a-b; return {q:`What is ${a} - ${b}?`, opts:[`${d}`,`${d+1}`,`${d-1}`,`${d+10}`], ans:0, exp:'Subtract the smaller from the bigger! Line up the digits!', diff:'easy'}; },
+    () => { const a=rand(2,12),b=rand(2,12),p=a*b; return {q:`What is ${a} × ${b}?`, opts:[`${p}`,`${p+a}`,`${p-b}`,`${p+1}`], ans:0, exp:'Use your times tables! Multiply the two numbers!', diff:'easy'}; },
+    () => { const b=rand(2,12),a=b*rand(2,12),q_val=a/b; return {q:`What is ${a} ÷ ${b}?`, opts:[`${q_val}`,`${q_val+1}`,`${q_val-1}`,`${q_val+b}`], ans:0, exp:'Think: what number times the divisor gives you this? Use long division!', diff:'medium'}; },
+    () => { const n=rand(2,5),price=rand(2,15),total=n*price; return {q:`${n} toys cost $${price} each. Total cost?`, opts:[`$${total}`,`$${total+price}`,`$${total-price}`,`$${n+price}`], ans:0, exp:'Total cost = quantity × price per item!', diff:'easy'}; },
+    () => { const side=rand(3,15),p=4*side; return {q:`Perimeter of square with side ${side} cm?`, opts:[`${p} cm`,`${side*side} cm`,`${p+side} cm`,`${2*side} cm`], ans:0, exp:'Perimeter of a square = 4 × side length!', diff:'easy'}; },
+    () => { const l=rand(5,20),w=rand(3,l),area=l*w; return {q:`Area of rectangle ${l} cm × ${w} cm?`, opts:[`${area} cm²`,`${2*(l+w)} cm²`,`${area+l} cm²`,`${l+w} cm²`], ans:0, exp:'Area of rectangle = length × width!', diff:'easy'}; },
+    () => { const hr=rand(1,5),min=rand(1,5)*15,total=hr*60+min; return {q:`How many minutes in ${hr} hours ${min} minutes?`, opts:[`${total}`,`${total+10}`,`${total-10}`,`${hr+min}`], ans:0, exp:'Multiply the hours by 60, then add the extra minutes!', diff:'medium'}; },
+    () => { const kg=rand(1,9),g=rand(1,9)*100,totalG=kg*1000+g; return {q:`Convert ${kg} kg ${g} g to grams.`, opts:[`${totalG} g`,`${kg*100+g} g`,`${totalG+100} g`,`${kg+g} g`], ans:0, exp:'1 kg = 1,000 g. Convert kg to grams first, then add the extra grams!', diff:'medium'}; },
+    () => { const n=rand(2,4),d=rand(n+1,8); const wd=[...new Set([`${n}/${d}`,`${n+1}/${d}`,`${n}/${d+1}`,`${n-1>0?n-1:n+2}/${d}`])]; while(wd.length<4) wd.push(`${rand(1,d)}/${d+rand(1,3)}`); return {q:`Which fraction equals ${n*2}/${d*2}?`, opts:[`${n}/${d}`,wd[1],wd[2],wd[3]], ans:0, exp:'Simplify by dividing both top and bottom by the same number!', diff:'medium'}; },
+  ];
+  return templates[Math.floor(Math.random()*templates.length)]();
+}
+function rand(min,max) { return Math.floor(Math.random()*(max-min+1))+min; }
+
 // ============ SHOP ITEMS ============
 const shopItems = [
-  {id:'game5', emoji:'🎮', name:'5 Min Gaming',        desc:'Quick 5 minutes of video games!',      cost:100, gameMins:5},
-  {id:'game10',emoji:'🕹️', name:'10 Min Gaming',       desc:'10 minute gaming session!',            cost:180, gameMins:10},
-  {id:'movie', emoji:'🎬', name:'Movie Pick',           desc:'YOU choose the family movie!',         cost:120},
-  {id:'snack', emoji:'🍭', name:'Snack of Choice',      desc:'Pick any snack from the store!',       cost:60},
-  {id:'dessert',emoji:'🎂',name:'Special Dessert',      desc:'Mama makes your favorite dessert!',    cost:150},
-  {id:'outing',emoji:'🏖️', name:'Choose Family Outing', desc:'Pick where the family goes next!',    cost:250},
-  {id:'freeze',emoji:'🛡️', name:'Streak Freeze',       desc:'Protect your streak for 1 missed day!', cost:50, isFreeze:true},
+  {id:'game5', emoji:'🎮', name:'5 Min Gaming',        desc:'Quick 5 minutes of video games!',      cost:1500, gameMins:5},
+  {id:'game10',emoji:'🕹️', name:'10 Min Gaming',       desc:'10 minute gaming session!',            cost:2800, gameMins:10},
+  {id:'movie', emoji:'🎬', name:'Movie Pick',           desc:'YOU choose the family movie!',         cost:2000},
+  {id:'snack', emoji:'🍭', name:'Snack of Choice',      desc:'Pick any snack from the store!',       cost:800},
+  {id:'dessert',emoji:'🎂',name:'Special Dessert',      desc:'Mama makes your favorite dessert!',    cost:2500},
+  {id:'outing',emoji:'🏖️', name:'Choose Family Outing', desc:'Pick where the family goes next!',    cost:5000},
+  {id:'freeze',emoji:'🛡️', name:'Streak Freeze',       desc:'Protect your streak for 1 missed day!', cost:500, isFreeze:true},
 ];
 
 // ============ NAVIGATION ============
@@ -1716,10 +2059,59 @@ function selectPlayer(p) {
 function startSubject(subj) {
   currentSubject = subj;
   const pool = questions[subj][currentPlayer];
-  // Shuffle and pick 5
-  const shuffled = [...pool].sort(() => Math.random() - 0.5);
-  quizQuestions = shuffled.slice(0, 5).map(q => {
-    // Shuffle options but track correct answer
+  const completed = state[currentPlayer].completedQs[subj] || [];
+  // Filter out correctly answered questions
+  let available = pool.filter(q => !completed.includes(q.q));
+  // If all questions completed, reset and start fresh cycle
+  if (available.length === 0) {
+    state[currentPlayer].completedQs[subj] = [];
+    available = [...pool];
+    save();
+  }
+  // Supplement with generated questions if pool is running low (math only)
+  if (subj === 'math' && available.length < 10) {
+    const needed = 15 - available.length;
+    for (let i = 0; i < needed; i++) {
+      const gq = generateMathQ(currentPlayer);
+      // Avoid duplicates
+      if (!available.some(a => a.q === gq.q) && !completed.includes(gq.q)) {
+        available.push(gq);
+      }
+    }
+  }
+  // Adaptive difficulty: weighted selection based on diffProgress
+  const dp = (state[currentPlayer].diffProgress && state[currentPlayer].diffProgress[subj]) || 0;
+  let weights;
+  if (dp <= 30) {
+    weights = { easy: 70, medium: 25, hard: 5 };
+  } else if (dp <= 60) {
+    weights = { easy: 20, medium: 60, hard: 20 };
+  } else {
+    weights = { easy: 5, medium: 30, hard: 65 };
+  }
+  // Weighted selection of 5 questions
+  function weightedSelect(pool, count) {
+    const scored = pool.map(q => ({ q, w: weights[q.diff] || weights.medium }));
+    const selected = [];
+    for (let i = 0; i < count && scored.length > 0; i++) {
+      const totalW = scored.reduce((s, e) => s + e.w, 0);
+      let r = Math.random() * totalW;
+      for (let j = 0; j < scored.length; j++) {
+        r -= scored[j].w;
+        if (r <= 0) {
+          selected.push(scored[j].q);
+          scored.splice(j, 1);
+          break;
+        }
+      }
+    }
+    return selected;
+  }
+  const selected = weightedSelect(available, 5);
+  // Order from easiest to hardest
+  const diffOrder = { easy: 0, medium: 1, hard: 2 };
+  selected.sort((a, b) => (diffOrder[a.diff] || 0) - (diffOrder[b.diff] || 0));
+  quizQuestions = selected.map(q => {
     const correctText = q.opts[q.ans];
     const shuffledOpts = [...q.opts].sort(() => Math.random() - 0.5);
     return { ...q, opts: shuffledOpts, ans: shuffledOpts.indexOf(correctText) };
@@ -1794,6 +2186,20 @@ function selectAnswer(idx) {
     }
     state[currentPlayer].totalCorrect++;
     if (state[currentPlayer].subjects[currentSubject]) state[currentPlayer].subjects[currentSubject].correct++;
+    // Track completed question so it won't appear again
+    if (currentSubject !== 'review' && state[currentPlayer].completedQs[currentSubject]) {
+      const cq = state[currentPlayer].completedQs[currentSubject];
+      if (!cq.includes(q.q)) cq.push(q.q);
+    }
+
+    // Adaptive difficulty: advance on correct answers
+    if (currentSubject !== 'review' && state[currentPlayer].diffProgress) {
+      const dp = state[currentPlayer].diffProgress[currentSubject];
+      if (dp !== undefined && dp < 100) {
+        const inc = q.diff === 'hard' ? 3 : q.diff === 'medium' ? 2 : 1;
+        state[currentPlayer].diffProgress[currentSubject] = Math.min(100, dp + inc);
+      }
+    }
 
     if (reviewMode && q._wpId) reviewedCorrect(currentPlayer, q._wpId);
 
@@ -1813,6 +2219,13 @@ function selectAnswer(idx) {
     state[currentPlayer].streak = 0;
     state[currentPlayer].totalWrong++;
     addWeakPoint(currentPlayer, q, currentSubject);
+    // Adaptive difficulty: slight regression on wrong
+    if (currentSubject !== 'review' && state[currentPlayer].diffProgress) {
+      const dp = state[currentPlayer].diffProgress[currentSubject];
+      if (dp !== undefined && dp > 0) {
+        state[currentPlayer].diffProgress[currentSubject] = Math.max(0, dp - 1);
+      }
+    }
     state[currentPlayer].xp += 2; // consolation XP
     document.getElementById('q-fb-title').textContent = 'Not quite! +2 XP for trying';
     document.getElementById('q-fb-text').textContent = q.exp;
@@ -1862,7 +2275,7 @@ function finishQuiz() {
 
   // Track daily completion (for display only, no gaming bonus)
   const today = new Date().toDateString();
-  const allSubjectsDone = ['math','science','english','chinese'].every(sub => s.subjects[sub].done > 0);
+  const allSubjectsDone = ['math','science','english','chinese'].every(sub => s.subjects[sub].done >= 3);
   if (allSubjectsDone && !s.dailyComplete.includes(today)) {
     s.dailyComplete.push(today);
   }
@@ -1932,19 +2345,14 @@ function useGaming(player, mins) {
 }
 
 function updateDailyProgress() {
-  ['yuhi','ryusei'].forEach(p => {
-    const s = state[p];
-    const done = ['math','science','english','chinese'].filter(sub => s.subjects[sub].done > 0).length;
-    const progEl = document.getElementById('daily-progress');
-    if (progEl) progEl.textContent = `${done}/4 subjects (${currentPlayer === p ? p : ''})`;
-  });
-  // Show for current player
   const s = state[currentPlayer];
-  const done = ['math','science','english','chinese'].filter(sub => s.subjects[sub].done > 0).length;
+  const subjects = ['math','science','english','chinese'];
+  const doneCount = subjects.filter(sub => s.subjects[sub].done >= 3).length;
+  const totalQuizzes = subjects.reduce((sum, sub) => sum + Math.min(s.subjects[sub].done, 3), 0);
   const progEl = document.getElementById('daily-progress');
-  if (progEl) progEl.textContent = `${done}/4 subjects`;
+  if (progEl) progEl.textContent = `${totalQuizzes}/12 quizzes (${doneCount}/4 subjects complete)`;
   const msgEl = document.getElementById('daily-complete-msg');
-  if (msgEl) msgEl.style.display = done >= 4 ? 'block' : 'none';
+  if (msgEl) msgEl.style.display = doneCount >= 4 ? 'block' : 'none';
 }
 
 // ============ DAILY STUDY STREAK ============
@@ -3735,12 +4143,12 @@ function maEndBattle(won) {
   arenaState.totalDmg += b.totalDmg;
 
   // Rewards
-  let xpReward = won ? 20 : 5;
-  let coinReward = won ? 10 : 3;
+  let xpReward = won ? 10 : 2;
+  let coinReward = won ? 5 : 1;
   let gameReward = 0;
-  if (stars >= 2) { xpReward += 15; coinReward += 5; }
-  if (stars >= 3) { xpReward += 25; coinReward += 10; }
-  if (b.stage.boss && won) { xpReward += 30; coinReward += 15; }
+  if (stars >= 2) { xpReward += 5; coinReward += 3; }
+  if (stars >= 3) { xpReward += 10; coinReward += 5; }
+  if (b.stage.boss && won) { xpReward += 10; coinReward += 7; }
 
   state[maCurrentPlayer].xp += xpReward;
   state[maCurrentPlayer].coins += coinReward;
@@ -3805,7 +4213,7 @@ function usePowerUp(type) {
   if (!b || b.answered) return;
   if (b.usedPowerUps.has(type)) return;
 
-  const costs = {'5050': 10, 'hint': 0, 'double': 20};
+  const costs = {'5050': 10, 'hint': 20, 'double': 20};
   if (costs[type] > 0 && state[maCurrentPlayer].coins < costs[type]) {
     alert(`Not enough coins! Need ${costs[type]}, have ${state[maCurrentPlayer].coins}`);
     return;
@@ -4443,16 +4851,40 @@ function renderTaskTimeResult(type) {
   const xp    = type === 'wake' ? today.wakeXP    : today.bedXP;
   const icon  = type === 'wake' ? '⏰' : '🌙';
 
+  let resultText, resultColor, reactionEmoji, reactionMsg;
   if (diff > 0) {
-    el.textContent = `${icon} ${diff} min early! +${coins} coins +${xp} XP`;
-    el.style.color = '#2ed573';
+    resultText = `${icon} ${diff} min early! +${coins} coins +${xp} XP`;
+    resultColor = '#2ed573';
+    reactionEmoji = diff >= 30 ? '🏆' : '⭐';
+    reactionMsg = diff >= 30 ? 'AMAZING! Super Early!' : 'Great Job! Early Bird!';
   } else if (diff < 0) {
-    el.textContent = `${icon} ${Math.abs(diff)} min late. ${coins} coins ${xp} XP`;
-    el.style.color = '#ff6b6b';
+    const absDiff = Math.abs(diff);
+    resultText = `${icon} ${absDiff} min late. ${coins} coins ${xp} XP`;
+    resultColor = '#ff6b6b';
+    reactionEmoji = absDiff >= 30 ? '😴' : '⏰';
+    reactionMsg = absDiff >= 30 ? 'Zzz... Try earlier tomorrow!' : 'Almost! Just a bit late~';
   } else {
-    el.textContent = `${icon} Perfect timing! On time!`;
-    el.style.color = '#ffd200';
+    resultText = `${icon} Perfect timing! On time!`;
+    resultColor = '#ffd200';
+    reactionEmoji = '🎯';
+    reactionMsg = 'PERFECT! Right on time!';
   }
+
+  el.innerHTML = `<span style="font-size:1.2em;font-weight:700">${resultText}</span>`;
+  el.style.color = resultColor;
+  el.classList.remove('task-result-animate');
+  void el.offsetWidth;
+  el.classList.add('task-result-animate');
+
+  // Show dramatic overlay reaction
+  const overlay = document.createElement('div');
+  overlay.className = 'task-reaction';
+  overlay.style.background = diff > 0 ? 'radial-gradient(circle,rgba(46,213,115,.3),transparent 70%)' :
+                             diff < 0 ? 'radial-gradient(circle,rgba(255,107,107,.15),transparent 70%)' :
+                             'radial-gradient(circle,rgba(255,210,0,.3),transparent 70%)';
+  overlay.innerHTML = `<div class="task-reaction-text"><span class="task-reaction-emoji">${reactionEmoji}</span>${reactionMsg}<br><span style="font-size:.6em;color:${resultColor}">${coins >= 0 ? '+' : ''}${coins} coins &nbsp; ${xp >= 0 ? '+' : ''}${xp} XP</span></div>`;
+  document.body.appendChild(overlay);
+  setTimeout(() => overlay.remove(), 2600);
 
   // Update badge
   const badge = document.getElementById('task-' + type + '-pts');
