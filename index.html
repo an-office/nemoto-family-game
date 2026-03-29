@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nemoto Family Weekend Quest & Study Game</title>
+<title>Nemoto Family Quest</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23ffd200'/%3E%3Cstop offset='100%25' stop-color='%23f7971e'/%3E%3C/linearGradient%3E%3ClinearGradient id='g2' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%2345b7d1'/%3E%3Cstop offset='100%25' stop-color='%232ed573'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='32' cy='32' r='30' fill='%231a1a2e' stroke='url(%23g1)' stroke-width='3'/%3E%3Cpath d='M20 18l12 6 12-6v10l-12 8-12-8z' fill='url(%23g1)' opacity='.9'/%3E%3Cpath d='M32 24v20' stroke='url(%23g2)' stroke-width='3' stroke-linecap='round'/%3E%3Cpath d='M24 36l8 8 8-8' stroke='url(%23g2)' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='22' cy='48' r='4' fill='%23ff4757' opacity='.8'/%3E%3Ccircle cx='42' cy='48' r='4' fill='%2345b7d1' opacity='.8'/%3E%3Ctext x='32' y='16' text-anchor='middle' font-size='10' font-weight='bold' fill='%23ffd200' font-family='sans-serif'%3E⚔%3C/text%3E%3C/svg%3E">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
@@ -323,20 +323,6 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   .p-card{min-width:150px;padding:14px}
   .sched-block{flex-direction:column;gap:4px}
   .sched-time{min-width:auto}
-  .top-nav{gap:4px;padding:8px 6px}
-  .nav-btn{padding:6px 12px;font-size:.75em}
-  #pomo-float{bottom:12px;right:12px;left:auto}
-  #pomo-widget{padding:6px 10px;min-width:auto;border-radius:50px}
-  #pomo-widget .pomo-label{display:none}
-  #pomo-widget .pomo-timer{font-size:1em}
-  #pomo-widget .pomo-controls{margin-top:0;gap:4px}
-  #pomo-widget .pomo-btn{padding:3px 8px;font-size:.65em}
-  #pomo-widget .pomo-count{display:none}
-  #pomo-widget.pomo-collapsed .pomo-timer,
-  #pomo-widget.pomo-collapsed .pomo-controls{display:none}
-  #pomo-widget.pomo-collapsed{padding:8px 12px;border-radius:50%}
-  #pomo-widget.pomo-collapsed::after{content:'🍅';font-size:1.4em}
-  .page{padding-bottom:70px}
 }
 /* BATTLE MODE */
 .win-cell{color:#2ed573!important}
@@ -507,6 +493,9 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
 .pomo-btn.pause{background:#ffa502;color:#1a1a2e}
 .pomo-btn.reset{background:#ff6b6b;color:white}
 .pomo-count{text-align:center;font-size:.7em;color:#888;margin-top:4px}
+.pomo-mode-select{display:flex;gap:4px;justify-content:center;margin-top:6px}
+.pomo-mode-btn{padding:3px 10px;border:1px solid #555;border-radius:6px;font-size:.65em;font-weight:700;cursor:pointer;background:transparent;color:#888;transition:all .2s}
+.pomo-mode-btn.active{background:#4facfe;color:#1a1a2e;border-color:#4facfe}
 #pomo-break-overlay{display:none;position:fixed;inset:0;background:rgba(10,46,26,.95);z-index:9995;overflow-y:auto}
 .pomo-break-content{max-width:500px;margin:40px auto;padding:20px;text-align:center}
 .pomo-break-content h2{font-size:1.8em;color:#2ed573;margin-bottom:8px}
@@ -531,6 +520,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   <button class="nav-btn active" onclick="showPage('dashboard')">Dashboard</button>
   <button class="nav-btn" onclick="showPage('study')">Study Quest</button>
   <button class="nav-btn" onclick="showPage('oral')">Oral Quest</button>
+
   <button class="nav-btn" id="nav-arena" onclick="showPage('arena')">Math Arena</button>
   <button class="nav-btn" id="nav-eng-arena" onclick="showPage('eng-arena')">English Arena</button>
   <button class="nav-btn" id="nav-ch-arena" onclick="showPage('ch-arena')">Chinese Arena</button>
@@ -545,7 +535,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
 <!-- ===== DASHBOARD ===== -->
 <div class="page active" id="pg-dashboard">
   <div class="header">
-    <h1>NEMOTO STUDY QUEST</h1>
+    <h1>NEMOTO FAMILY QUEST</h1>
     <div class="sub">Weekend Edition - PSLE Power-Up!</div>
   </div>
 
@@ -779,7 +769,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
 <!-- ===== STUDY QUEST ===== -->
 <div class="page" id="pg-study">
   <div class="header">
-    <h1>STUDY QUEST</h1>
+    <h1>FAMILY QUEST</h1>
     <div class="sub">Answer questions, earn XP & Gaming Time!</div>
   </div>
 
@@ -1529,7 +1519,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       <button class="task-time-btn" id="task-wake-btn" onclick="applyTaskTime('wake')">🔒 Apply (Parent)</button>
     </div>
     <div class="task-time-result" id="task-wake-result"></div>
-    <div style="color:#777;font-size:.75em;margin-top:6px">Early: +2 coins +3 XP per min &nbsp;|&nbsp; Late: −3 coins −5 XP per min</div>
+    <div style="color:#777;font-size:.75em;margin-top:6px">Early: +30 coins +30 XP per min &nbsp;|&nbsp; Late: −30 coins −30 XP per min</div>
   </div>
 
   <!-- Task list -->
@@ -1544,11 +1534,25 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       <button class="task-time-btn" id="task-bed-btn" onclick="applyTaskTime('bed')">🔒 Apply (Parent)</button>
     </div>
     <div class="task-time-result" id="task-bed-result"></div>
-    <div style="color:#777;font-size:.75em;margin-top:6px">Early: +1 coin +2 XP per min &nbsp;|&nbsp; Late: −2 coins −3 XP per min</div>
+    <div style="color:#777;font-size:.75em;margin-top:6px">Early: +30 coins +30 XP per min &nbsp;|&nbsp; Late: −30 coins −30 XP per min</div>
   </div>
 
   <!-- Summary -->
   <div class="task-summary" id="task-summary"></div>
+</div>
+
+<!-- Parent PIN Modal -->
+<div id="pin-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:10002;align-items:center;justify-content:center">
+  <div style="background:#1a1a2e;border:2px solid #ffa502;border-radius:16px;padding:24px;max-width:320px;width:90%;text-align:center">
+    <h3 style="color:#ffa502;margin:0 0 8px">🔒 Parent PIN Required</h3>
+    <p style="color:#aaa;font-size:.85em;margin:0 0 16px">Joanne or Akihiro, please enter the PIN:</p>
+    <input type="password" id="pin-input" maxlength="4" inputmode="numeric" pattern="[0-9]*" style="width:120px;padding:12px;font-size:1.5em;text-align:center;border:2px solid #555;border-radius:10px;background:#16213e;color:#fff;letter-spacing:8px" placeholder="····">
+    <div style="margin-top:16px;display:flex;gap:10px;justify-content:center">
+      <button onclick="pinModalCancel()" style="padding:10px 24px;border:1px solid #555;border-radius:8px;background:transparent;color:#aaa;cursor:pointer;font-size:.9em">Cancel</button>
+      <button onclick="pinModalSubmit()" style="padding:10px 24px;border:none;border-radius:8px;background:#ffa502;color:#1a1a2e;font-weight:700;cursor:pointer;font-size:.9em">Confirm</button>
+    </div>
+    <div id="pin-error" style="color:#ff4757;font-size:.8em;margin-top:8px;display:none">Incorrect PIN</div>
+  </div>
 </div>
 
 <!-- Pomodoro Timer Widget -->
@@ -1561,7 +1565,21 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       <button class="pomo-btn pause" id="pomo-pause-btn" onclick="event.stopPropagation();pomoPause()" style="display:none">⏸ Pause</button>
       <button class="pomo-btn reset" onclick="event.stopPropagation();pomoReset()">↺</button>
     </div>
+    <div class="pomo-mode-select" id="pomo-mode-select" onclick="event.stopPropagation()">
+      <button class="pomo-mode-btn active" id="pomo-mode-50" onclick="pomoSetMode(50,10)">50 / 10</button>
+      <button class="pomo-mode-btn" id="pomo-mode-25" onclick="pomoSetMode(25,5)">25 / 5</button>
+    </div>
     <div class="pomo-count" id="pomo-count">🍅 0 pomodoros today</div>
+  </div>
+</div>
+
+<!-- Pomodoro Completion Overlay -->
+<div id="pomo-complete-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:10001;align-items:center;justify-content:center">
+  <div style="text-align:center;padding:30px;max-width:400px">
+    <div id="pomo-complete-emoji" style="font-size:4em;margin-bottom:16px"></div>
+    <h2 id="pomo-complete-title" style="color:#2ed573;font-size:1.8em;margin:0 0 12px"></h2>
+    <p id="pomo-complete-msg" style="color:#ccc;font-size:1.1em;margin:0 0 20px"></p>
+    <button onclick="pomoDismissOverlay()" style="padding:12px 32px;font-size:1.1em;font-weight:700;border:none;border-radius:12px;color:#fff;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,.3)" id="pomo-complete-btn">OK</button>
   </div>
 </div>
 
@@ -2075,6 +2093,57 @@ const questions = {
       {q:"Which fraction is equivalent to 4/6?", opts:["2/3","3/4","4/8","1/2"], ans:0, exp:"🔄 Simplify by dividing top and bottom by 2: 4÷2=2, 6÷2=3. So 4/6 = 2/3!", diff:"easy"},
       {q:"Which is smaller: 5/8 or 3/5?", opts:["3/5","5/8","They are equal","Cannot tell"], ans:0, exp:"💡 Cross multiply: 5×5=25, 8×3=24. Since 25 > 24, 5/8 > 3/5. So 3/5 is smaller!", diff:"hard"},
       {q:"A ribbon is 1 metre long. Jenny uses 3/10 of it. How many cm of ribbon did she use?", opts:["30 cm","3 cm","70 cm","10 cm"], ans:0, exp:"📏 1 m = 100 cm. 3/10 of 100 = 30 cm!", diff:"easy"},
+      // ===== 2024 P4 Exam Paper Questions (Math) =====
+      {q:"The value of digit 5 in 75 328 is ___.", opts:["50","500","5 000","50 000"], ans:2, exp:"🧮 Whole Numbers", diff:"easy"},
+      {q:"36 258 rounded to the nearest hundred is ___.", opts:["36 300","36 260","36 200","36 000"], ans:0, exp:"🧮 Whole Numbers", diff:"easy"},
+      {q:"3 and 4 are factors of ___.", opts:["8","18","24","34"], ans:2, exp:"🧮 Whole Numbers", diff:"easy"},
+      {q:"How many one-thirds are there in 4 wholes?", opts:["12","3/4","1 1/3","4"], ans:0, exp:"🧮 Fractions", diff:"easy"},
+      {q:"In which of the following does the digit 7 stand for 7 tenths?", opts:["13.75","37.68","45.37","71.54"], ans:0, exp:"🧮 Decimals", diff:"easy"},
+      {q:"Which letter has perpendicular lines?", opts:["A","H","N","V"], ans:1, exp:"🧮 Geometry", diff:"medium"},
+      {q:"Each figure is made up of 4 identical squares and 2 identical rectangles. Which one has a line of symmetry?", opts:["Figure 1 (L-shape with top right extensions)","Figure 2 (staircase going up-right)","Figure 3 (straight row with bumps on top)","Figure 4 (zigzag with two bumps)"], ans:2, exp:"🧮 Symmetry", diff:"medium"},
+      {q:"A triangular pyramid is shown. Which of the following is a net of the pyramid?", opts:["Three triangles and a square arranged in a cross","A square with a diamond on each side","A square with a triangle on each side forming a cross shape","Two diamonds and two squares"], ans:2, exp:"🧮 Geometry", diff:"medium"},
+      {q:"The area of rectangle B is 56 m². Its length is 8 m. Find the breadth of rectangle B.", opts:["6 m","7 m","8 m","9 m"], ans:1, exp:"🧮 Area & Perimeter", diff:"easy"},
+      {q:"A rectangle is divided into 4 identical squares. The perimeter of the rectangle is 80 cm. What is the length of the rectangle?", opts:["16 cm","32 cm","48 cm","64 cm"], ans:1, exp:"🧮 Area & Perimeter", diff:"medium"},
+      {q:"A square piece of paper is folded twice into a smaller square. The area of the smaller square is 9 cm². What is the perimeter of the original square piece of paper?", opts:["12 cm","18 cm","24 cm","36 cm"], ans:2, exp:"🧮 Area & Perimeter", diff:"hard"},
+      {q:"Jun Kai earned $130 for a day of work. How much did Jun Kai earn for 14 days of work?", opts:["$550","$650","$1 720","$1 820"], ans:3, exp:"🧮 Money", diff:"easy"},
+      {q:"A line graph shows the number of customers in a coffee shop from Monday to Friday. On which two days did the shop have the same number of customers?", opts:["Monday and Wednesday","Tuesday and Thursday","Wednesday and Friday","Monday and Friday"], ans:1, exp:"🧮 Tables & Graphs", diff:"medium"},
+      {q:"A pie chart shows favourite food of 60 children: Chicken Rice (5/12), Roti Prata (1/3), Bee Hoon (1/8), Fishball Noodles (remaining). Which statement best represents the data?", opts:["Chicken rice is the least favourite food among the children","The number of children who chose bee hoon is twice the number who chose roti prata","1/10 of the children chose fishball noodles as their favourite food","20 children chose roti prata as their favourite food"], ans:3, exp:"🧮 Tables & Graphs", diff:"hard"},
+      {q:"The table shows concert ticket prices: Adult (Mon-Fri: $31.60, Sat-Sun: $39.60), Child (Mon-Fri: $15.90, Sat-Sun: $21.90). How much does a family of 2 adults and 3 children pay for Saturday?", opts:["$110.90","$126.60","$144.90","$162.60"], ans:2, exp:"🧮 Money", diff:"hard"},
+      {q:"What is the value of 8 in 384 925?", opts:["80","800","8 000","80 000"], ans:3, exp:"🧮 Whole Numbers", diff:"easy"},
+      {q:"Which of the following is the largest?", opts:["4.09","4.90","4.19","4.91"], ans:3, exp:"🧮 Decimals", diff:"easy"},
+      {q:"What is 2/5 + 1/4?", opts:["3/9","3/20","8/20 + 5/20 = 13/20","3/5"], ans:2, exp:"🧮 Fractions", diff:"easy"},
+      {q:"Which of the following fractions is smaller than 1/2?", opts:["3/5","2/7","4/8","5/12"], ans:1, exp:"🧮 Fractions", diff:"medium"},
+      {q:"Express 9/12 in its simplest form.", opts:["1/2","2/3","3/4","4/6"], ans:2, exp:"🧮 Fractions", diff:"easy"},
+      {q:"Round 23.45 to the nearest whole number.", opts:["23","23.5","24","23.4"], ans:0, exp:"🧮 Decimals", diff:"easy"},
+      {q:"Arrange these numbers from smallest to greatest: 2/5, 0.408, 0.048", opts:["0.048, 2/5, 0.408","0.048, 0.408, 2/5","2/5, 0.048, 0.408","0.408, 0.048, 2/5"], ans:0, exp:"🧮 Decimals", diff:"medium"},
+      {q:"6.3 − 0.74 = ___", opts:["5.56","5.66","6.56","5.46"], ans:0, exp:"🧮 Decimals", diff:"easy"},
+      {q:"What is the common multiple of 6 and 8?", opts:["12","16","24","32"], ans:2, exp:"🧮 Whole Numbers", diff:"easy"},
+      {q:"A square has a perimeter of 48 cm. What is the area of the square?", opts:["96 cm²","144 cm²","192 cm²","576 cm²"], ans:1, exp:"🧮 Area & Perimeter", diff:"medium"},
+      {q:"Tom has 3/4 of a pizza. He eats 1/3 of it. What fraction of the whole pizza did he eat?", opts:["1/4","2/4","1/3","2/7"], ans:0, exp:"🧮 Fractions", diff:"medium"},
+      {q:"What is the remainder when 1 786 is divided by 9?", opts:["3","4","5","6"], ans:2, exp:"🧮 Whole Numbers", diff:"medium"},
+      {q:"A rope is 4.5 m long. It is cut into pieces of 0.9 m each. How many pieces can be cut?", opts:["4","5","6","7"], ans:1, exp:"🧮 Decimals", diff:"medium"},
+      {q:"An angle measures more than 90° but less than 180°. What type of angle is it?", opts:["Acute angle","Right angle","Obtuse angle","Reflex angle"], ans:2, exp:"🧮 Geometry", diff:"easy"},
+      {q:"How many lines of symmetry does a square have?", opts:["1","2","3","4"], ans:3, exp:"🧮 Symmetry", diff:"easy"},
+      {q:"A rectangle has a length of 12 cm and a breadth of 5 cm. What is its area?", opts:["34 cm²","50 cm²","60 cm²","17 cm²"], ans:2, exp:"🧮 Area & Perimeter", diff:"easy"},
+      {q:"What is 3 1/5 − 1 3/5?", opts:["1 2/5","1 3/5","2 2/5","2 3/5"], ans:1, exp:"🧮 Fractions", diff:"medium"},
+      {q:"A container holds 2.4 litres of water. 0.75 litres is poured out. How much water is left?", opts:["1.55 ℓ","1.65 ℓ","1.75 ℓ","3.15 ℓ"], ans:1, exp:"🧮 Measurement", diff:"easy"},
+      {q:"There are 4 368 people at a concert. Round this number to the nearest thousand.", opts:["4 000","4 300","4 400","5 000"], ans:0, exp:"🧮 Whole Numbers", diff:"easy"},
+      {q:"Peter has $50. He buys 3 books at $8.90 each. How much money does he have left?", opts:["$23.30","$24.30","$26.70","$41.10"], ans:0, exp:"🧮 Money", diff:"medium"},
+      {q:"A figure is made up of a square and a triangle. The square has sides of 6 cm. What is the perimeter of the figure if the triangle shares one side with the square and has two other sides of 5 cm each?", opts:["22 cm","28 cm","32 cm","34 cm"], ans:1, exp:"🧮 Area & Perimeter", diff:"hard"},
+      {q:"What fraction of a day is 8 hours?", opts:["1/2","1/3","1/4","1/8"], ans:1, exp:"🧮 Fractions", diff:"easy"},
+      {q:"A shop sells pencils in packs of 12. Mrs Lee needs 150 pencils. What is the least number of packs she must buy?", opts:["12","12.5","13","14"], ans:2, exp:"🧮 Whole Numbers", diff:"medium"},
+      {q:"Ali is 1.45 m tall. His sister is 18 cm shorter. How tall is his sister?", opts:["0.27 m","1.27 m","1.43 m","1.63 m"], ans:1, exp:"🧮 Measurement", diff:"medium"},
+      {q:"What is 4 × 925?", opts:["3 600","3 700","3 690","3 900"], ans:1, exp:"🧮 Whole Numbers", diff:"easy"},
+      {q:"A tank can hold 15 litres of water. It is 2/5 full. How many litres of water are in the tank?", opts:["3 ℓ","5 ℓ","6 ℓ","10 ℓ"], ans:2, exp:"🧮 Fractions", diff:"medium"},
+      {q:"Which of the following shows a pair of parallel lines?", opts:["Two lines that meet at a point","Two lines that cross each other","Two lines that are always the same distance apart","Two lines that form a right angle"], ans:2, exp:"🧮 Geometry", diff:"easy"},
+      {q:"What is 7/8 − 3/8?", opts:["1/2","4/8","10/8","4/16"], ans:0, exp:"🧮 Fractions", diff:"easy"},
+      {q:"Convert 3 km 45 m to metres.", opts:["345 m","3 045 m","3 450 m","30 045 m"], ans:1, exp:"🧮 Measurement", diff:"easy"},
+      {q:"The time now is 10:45 a.m. What time will it be in 2 hours and 30 minutes?", opts:["12:15 p.m.","1:15 p.m.","12:45 p.m.","1:45 p.m."], ans:1, exp:"🧮 Time", diff:"easy"},
+      {q:"A square piece of paper has an area of 64 cm². What is the length of one side?", opts:["6 cm","7 cm","8 cm","16 cm"], ans:2, exp:"🧮 Area & Perimeter", diff:"medium"},
+      {q:"Siti bought 6 identical pens. She paid with a $50 note and received $17 change. What was the cost of each pen?", opts:["$4.50","$5.00","$5.50","$6.00"], ans:2, exp:"🧮 Money", diff:"medium"},
+      {q:"Which of the following is NOT a factor of 36?", opts:["4","6","8","9"], ans:2, exp:"🧮 Whole Numbers", diff:"easy"},
+      {q:"A number pattern: 2, 6, 18, 54, ___. What is the next number?", opts:["72","108","162","216"], ans:2, exp:"🧮 Patterns", diff:"medium"},
+      {q:"The mass of a box with 5 identical cubes is 31.7 kg. After removing 2 cubes, the mass is 20.3 kg. What is the mass of the empty box?", opts:["6.2 kg","8.0 kg","8.2 kg","11.4 kg"], ans:2, exp:"🧮 Measurement", diff:"hard"},
     ]
   },
   science: {
@@ -2210,6 +2279,62 @@ const questions = {
       // P4 — Weather and environment
       {q:"What causes rain?", opts:["Water vapour in clouds cools and forms droplets that fall","The sun melts the clouds","Wind pushes water from the sea","Trees release water into the sky"], ans:0, exp:"Water vapour condenses in clouds to form droplets. When heavy enough, they fall as rain.", diff:"medium"},
       {q:"Which human activity can harm the environment?", opts:["Cutting down forests (deforestation)","Planting trees","Recycling waste","Using less electricity"], ans:0, exp:"Deforestation destroys habitats, reduces oxygen production, and causes soil erosion.", diff:"easy"},
+      // ===== 2024 P4 Exam Paper Questions (Science) =====
+      {q:"Which of the following is a living thing? [Diagram shows: (1) a rabbit, (2) a motorcycle, (3) a paper airplane, (4) a sailboat]", opts:["A rabbit","A motorcycle","A paper airplane","A sailboat"], ans:0, exp:"🔬 Animals", diff:"easy"},
+      {q:"Study the flowchart shown. [Flowchart: Start -> 'Can it make its own food?' -> No -> 'Does it have six legs?' -> Yes -> X]. What could X be?", opts:["Bird","Plant","Insect","Mammal"], ans:2, exp:"🔬 Animals", diff:"easy"},
+      {q:"Which of the following animals has pupa as a stage in its life cycle?", opts:["Frog","Beetle","Cockroach","Grasshopper"], ans:1, exp:"🔬 Life Cycles", diff:"easy"},
+      {q:"The diagram shows the growth of a young plant with two missing stages P and Q. [Diagram shows seed -> sprout -> P -> Q -> mature plant with leaves and branches]. Which of the following rows shows the correct stages for P and Q?", opts:["P: seedling with first leaves, Q: young plant with more leaves","P: seed with root emerging, Q: seedling with leaves","P: young plant with more leaves, Q: seedling with first leaves","P: mature plant, Q: seed"], ans:0, exp:"🔬 Plants", diff:"easy"},
+      {q:"Which organ system is shown in the diagram? [Diagram shows the human body with the circulatory system highlighted, showing the heart and blood vessels]", opts:["Skeletal system","Digestive system","Circulatory system","Respiratory system"], ans:2, exp:"🔬 Human Body Systems", diff:"easy"},
+      {q:"The diagram shows a knife which is used to cut food. Metal is used to make the knife blade because metal ________.", opts:["can reflect light","does not break easily","can bend without breaking","does not allow light to pass through"], ans:1, exp:"🔬 Matter", diff:"easy"},
+      {q:"The diagram shows a measuring cylinder containing liquid Y. [Diagram shows a measuring cylinder with liquid level between the 30 ml and 40 ml marks, with a magnified view showing the meniscus at 35 ml]. What is the volume of liquid Y?", opts:["30 cm³","35 cm³","36 cm³","41 cm³"], ans:1, exp:"🔬 Matter", diff:"easy"},
+      {q:"The set-up shows light shining on a wooden cube. [Diagram shows a torch shining on a wooden cube with a screen behind it]. Which of the following diagrams would likely be seen on the screen?", opts:["A bright square shape on the screen","A completely dark screen","A shadow in the shape of a square","A shadow with light passing through"], ans:2, exp:"🔬 Light", diff:"easy"},
+      {q:"Charles placed a metal spoon in a bowl of hot soup. The metal spoon becomes warmer after a while. Which of the following statements explains this?", opts:["The bowl loses heat to the hot soup.","The metal spoon loses heat to the bowl.","The hot soup gains heat from the metal spoon.","The metal spoon gains heat from the hot soup."], ans:3, exp:"🔬 Heat & Temperature", diff:"easy"},
+      {q:"Which of the following objects can be attracted by a magnet?", opts:["Iron rod","Glass rod","Plastic rod","Wooden rod"], ans:0, exp:"🔬 Magnets", diff:"easy"},
+      {q:"A student conducted an experiment on four similar seeds, A, B, C and D, to find out the conditions required for seed germination. A tick (✓) in a box shows the conditions the seed was exposed to. [Table: Seed A: Air ✓, Warmth ✓, Water ✓, Light ✓; Seed B: Air ✓, Warmth ✓, Water ✓, Light; Seed C: Air, Warmth ✓, Water ✓, Light ✓; Seed D: Air ✓, Warmth ✓, Water, Light ✓]. Based on the information above, which of the following seed(s) germinated?", opts:["A only","D only","A and D only","A only"], ans:0, exp:"🔬 Plants", diff:"medium"},
+      {q:"Study the flowchart. [Flowchart: Animals -> 'Does it have wings?' -> No -> Frog; Yes -> 'Question A' -> No -> Mosquito; Yes -> 'Question B' -> No -> Chicken; Yes -> Butterfly]. Which of the following most likely represent questions A and B?", opts:["A: Does it lay eggs? B: Does the young resemble its adult?","A: Does the young live on land? B: Does it have a four-stage life cycle?","A: Does the young resemble its adult? B: Does it have a three-stage life cycle?","A: Does it have a three-stage life cycle? B: Does it lay eggs?"], ans:2, exp:"🔬 Life Cycles", diff:"medium"},
+      {q:"The diagram shows different systems working together in a human body. [Flowchart: Digestive system -> P -> Q -> All parts of the body; Respiratory system -> Oxygen -> Q -> All parts of the body]. Which of the following identifies P and Q correctly?", opts:["P: Digested food, Q: Muscular system","P: Digested food, Q: Circulatory system","P: Undigested food, Q: Muscular system","P: Undigested food, Q: Circulatory system"], ans:1, exp:"🔬 Human Body Systems", diff:"medium"},
+      {q:"The diagram shows a plant with roots, stem, leaves and flower labelled R. Which of the following statements is not a function of part R (roots)?", opts:["It holds the plant upright.","It is the organ for the plant.","It transports food to other plant parts.","It transports water to other plant parts."], ans:2, exp:"🔬 Plants", diff:"medium"},
+      {q:"Sally placed similar plants into identical containers, E, F and G, as shown in the diagram. The containers had different amounts of holes at the top of the experiment and were placed at the same location. She measured the amount of water left in the containers after one week. Which of the following graphs shows the amount of water left in each container at the end of one week?", opts:["E highest, F middle, G lowest","E lowest, F middle, G highest","All containers same level","E and F same, G lower"], ans:1, exp:"🔬 Plants", diff:"medium"},
+      {q:"The diagram shows a glass tank which has a capacity of 1000 cm³. The tank is used to contain either air or water at each time. Which of the following shows the correct volume of air or water that can be put into the tank?", opts:["Air: 800 cm³, Water: 1100 cm³","Air: 500 cm³, Water: 1200 cm³","Air: 1000 cm³, Water: 1000 cm³","Air: 100 cm³, Water: 900 cm³"], ans:2, exp:"🔬 Matter", diff:"medium"},
+      {q:"Meena tried to pour some oil into a flask using a funnel. She held the funnel in place with some plasticine. The oil dripped very slowly into the flask. What should she do to make the oil flow more quickly into the flask?", opts:["Heat the base of the flask to expand the air inside it.","Tilt the flask at the side to push the oil into the flask.","Tilt the flask slightly to let the oil flow into the flask more slowly.","Make a hole through the plasticine to let the air from inside the flask escape."], ans:3, exp:"🔬 Matter", diff:"medium"},
+      {q:"Which of the following contains only sources of light? [Diagrams show different combinations of objects: fire, sun, moon, candle flame, stars, light bulb]", opts:["Fire, Sun, Moon","Fire, Moon, Star","Candle flame, Fire, Moon","Candle flame, Moon, Star"], ans:0, exp:"🔬 Light", diff:"medium"},
+      {q:"Ms Goh was walking home along a street lit with a street lamp. The length of her shadow changed as she walked towards the street lamp. [Diagram shows a person walking from point P towards point R, passing under a street lamp]. Which of the following graphs shows the changes in the length of her shadow as Ms Goh walked from Point P to Point R?", opts:["Shadow length increases then decreases","Shadow length stays constant then increases","Shadow length decreases then increases","Shadow length decreases steadily"], ans:2, exp:"🔬 Light", diff:"hard"},
+      {q:"The diagram shows an experimental set-up used to find out the amount of light that could pass through each material, A, B, C and D, using a light sensor. The materials were of identical size and thickness. [Table: Material A: 100 lux, Material B: 600 lux, Material C: 800 lux, Material D: 50 lux]. Mr Tan wanted to make an aquarium that allows people to see the animals in it clearly. Which material is the most suitable to make the aquarium?", opts:["A","B","C","D"], ans:2, exp:"🔬 Light", diff:"hard"},
+      {q:"Ali wants to open a jar of jam as shown. He is unable to open the jar as the metal lid is too tight. What should he do to open the jar most quickly?", opts:["Put the metal lid in cold water.","Put the metal lid in warm water.","Put both the metal lid and glass jar in cold water.","Put the metal lid in warm water and wrap the glass jar with cold towel."], ans:3, exp:"🔬 Heat & Temperature", diff:"hard"},
+      {q:"Ravi placed a mug of hot milk at 80°C in a container of cold water at 10°C. Which of the following graphs shows the changes in the temperatures of the milk and water over three hours?", opts:["Both temperatures meet in the middle and stay constant","Hot milk decreases, cold water stays constant","Both temperatures reach 10°C","Hot milk increases, cold water decreases"], ans:0, exp:"🔬 Heat & Temperature", diff:"hard"},
+      {q:"Mia conducted an experiment to find out the heat conductivity of four rods made of different materials, J, K, L and M. Each rod, which had a piece of identical wax placed at its end, was attached to the heater as shown. The table shows the time taken for the wax on each material to melt completely. [Table: J: 2 min, K: 10 min, L: 5 min, M: 15 min]. Which of the following materials is best used to make into a lunch box to keep the cooked food warm?", opts:["J","K","L","M"], ans:3, exp:"🔬 Heat & Temperature", diff:"hard"},
+      {q:"Betty placed the north pole of a magnet near the ends, X and Y, of four different bars, T, U, V and W, as shown in the diagram. She recorded her observations in a table. [Table: Bar T - End X: Attracted, End Y: Attracted; Bar U - End X: Attracted, End Y: Repelled; Bar V - End X: No interaction, End Y: No interaction; Bar W - End X: Repelled, End Y: Attracted]. Which of the following are magnets?", opts:["T and U only","T and V only","U and W only","U and W only"], ans:2, exp:"🔬 Magnets", diff:"hard"},
+      {q:"Jacob arranged three magnets as shown in the diagram. [Diagram shows three bar magnets arranged in an L-shape with poles labelled A through F]. Which of the following is another possible arrangement for the three magnets?", opts:["Rearranged with E-F on top, C below, A-B-D at bottom","E-F-C in a row on top, B-A-D in a row on bottom","D-C-A in a row on top, F-E-B in a row on bottom","C-B-A in a row on top, D-F-E in a row on bottom"], ans:3, exp:"🔬 Magnets", diff:"hard"},
+      {q:"Mr Murray tried to remove some unwanted plants from his garden. He found that they were difficult to pull out from the soil. [Diagram shows a man pulling plants from the ground, with roots visible in the soil]. Which of the following made it difficult for him to remove the plants?", opts:["The stem held the plants upright.","The roots absorbed water and mineral salts.","The roots held the plants firmly in the ground.","The stem transported food to remove white parts of the plants."], ans:2, exp:"🔬 Plants", diff:"medium"},
+      {q:"Digestion releases most of the large intestine in the digestive system. Substance G and H are found in the large intestine. Substance G moves through the large intestine walls and substance H stays in the large intestine. [Diagram shows the digestive system with bloodstream, large intestine, and labels for G and H]. Based on the information given above, what substances could G and H be?", opts:["G: digested food, H: undigested food","G: undigested food, H: digested food","G: digested food, H: digested food","G: undigested food, H: undigested food"], ans:0, exp:"🔬 Human Body Systems", diff:"medium"},
+      {q:"The flowchart below shows how food and air are transported in the human body. [Flowchart: air -> System P -> air; food -> System G -> System R]. Based on the flowchart above, identify systems P, G and R.", opts:["P: circulatory, G: respiratory, R: digestive","P: respiratory, G: digestive, R: circulatory","P: digestive, G: circulatory, R: respiratory","P: circulatory, G: digestive, R: respiratory"], ans:0, exp:"🔬 Human Body Systems", diff:"medium"},
+      {q:"The table below describes the life cycles of animals A, B, C and D. [Table shows: Description 1 'The young spends its time in water' - A: Yes, B: No, C: Yes, D: No; Description 2 'It has 4 stages in its life cycle' - A: Yes, B: Yes, C: No, D: No; Description 3 'The young looks like the adult' - A: No, B: No, C: Yes, D: Yes]. Which of the following is likely to be a butterfly?", opts:["A","B","C","D"], ans:1, exp:"🔬 Life Cycles", diff:"medium"},
+      {q:"The diagram below shows the life cycle of a mosquito. [Diagram shows stages A (adult mosquito), B, C, D in a cycle]. Which of the following statements is true?", opts:["The mosquito in stage D eats a lot.","The mosquito in stage A can spread harmful diseases.","The mosquito in stage C will start developing its wings.","The mosquito in stage B can move to protect itself from harm."], ans:1, exp:"🔬 Life Cycles", diff:"medium"},
+      {q:"Eros set up the following experiment with 3 water samples, A, B and C, placed in a beaker. He used a light sensor to measure the amount of light that passed through each water sample. He recorded the data in the table below. [Table: Water sample A: 540 lux, Water sample B: 100 lux, Water sample C: 300 lux]. Which of the following shows the water samples arranged in the correct order? (least clear to most clear)", opts:["A, C, B","B, A, C","B, C, A","C, A, B"], ans:2, exp:"🔬 Light", diff:"hard"},
+      {q:"Which of the following variables in this experiment should Eros keep constant in order to carry out a fair test? W: Type of light, X: Material of beaker, Y: Volume of water sample, Z: Amount of light detected by the sensor.", opts:["W, X and Y only","W, X and Z only","W, Y and Z only","X, Y and Z only"], ans:0, exp:"🔬 Light", diff:"hard"},
+      {q:"A dented ping pong ball was placed in a beaker of hot water. There was no hole in the ping pong ball. Five minutes later, it returned to its original shape. [Diagram shows dented ping pong ball placed in hot water, then returning to round shape]. Which of the following explains the change in the shape of the ping pong ball?", opts:["Air moved out of the dented ping pong ball.","Air entered the dented ping pong ball and it expanded.","Air in the dented ping pong ball lost heat to the hot water and contracted.","Air in the dented ping pong ball gained heat from the hot water and expanded."], ans:3, exp:"🔬 Heat & Temperature", diff:"hard"},
+      {q:"Chai filled two identical pots, P and Q, with 500 ml of water at room temperature. Pot P was placed on a hot metal plate with gaps while pot Q was placed on a hot metal plate without gaps as shown in the diagram. She wanted to find out which pot of water will boil first. Which of the following reasons correctly explains Chai's observation?", opts:["P boiled first - Water gained heat faster from the metal plate with gaps.","Q boiled first - Water gained heat faster from the metal plate without gaps.","P boiled first - Water lost heat faster with the gaps in the plate.","Q boiled first - Water lost heat faster without the gaps in the plate."], ans:1, exp:"🔬 Heat & Temperature", diff:"hard"},
+      {q:"Two similar plastic cups, C and D, were pushed downwards with the same strength into a basin of water. The water level in cup C was higher than the one in cup D. [Diagram shows 4 possible set-ups with cups of different sizes and orientations]. Which of the following shows a possible set-up for the observation?", opts:["Cup C is narrower than Cup D, both pushed open-end down","Cup C has holes at bottom, Cup D does not","Cup C is wider than Cup D, both pushed open-end down","Cup C is pushed open-end down, Cup D is pushed closed-end down"], ans:0, exp:"🔬 Matter", diff:"hard"},
+      {q:"Anna placed substances X and Y in identical glass beakers as shown in diagram 1. Diagram 2 shows what happened to the substances when she tilted both beakers. Which of the following explains the difference in the observation of substances X and Y?", opts:["Both X and Y have a definite shape.","Y has a definite shape but X does not.","X has a definite volume but Y does not.","Both X and Y do not have a definite volume."], ans:1, exp:"🔬 Matter", diff:"hard"},
+      {q:"The diagram below shows a tube containing toothpaste. Which of the following properties should the tube have for the toothpaste to be squeezed out easily?", opts:["It is transparent.","It absorbs water.","It is flexible (can be bent).","It allows most light to pass through."], ans:2, exp:"🔬 Matter", diff:"hard"},
+      {q:"Andrew arranged four bar magnets as shown in the diagram. [Diagram shows 4 bar magnets arranged in an L-shape]. Which of the following diagrams correctly shows the interaction between two of the magnets when placed together?", opts:["Two magnets attract each other at the shown ends","Two magnets repel each other at the shown ends","Two magnets attract at one pair and repel at another","Two magnets show no interaction"], ans:3, exp:"🔬 Magnets", diff:"hard"},
+      {q:"Sandra conducted an experiment to identify which magnet, X or Y, has a greater magnetic strength. She used similar magnets as shown below. [Diagram shows two magnets X and Y with pins attracted to them. Magnet X attracts fewer pins than magnet Y]. The magnets attracted different numbers of identical pins. Based on the pins, what can be concluded from her observations?", opts:["The pins are made of plastic.","The pins are not made of magnetic material.","Both magnets X and Y have the same magnetic strength.","Magnet Y has a greater magnetic strength than magnet X."], ans:3, exp:"🔬 Magnets", diff:"hard"},
+      {q:"Which of the following is not a function of the stem of a plant?", opts:["To transport water from the roots to the leaves","To transport food from the leaves to other parts of the plant","To absorb water and mineral salts from the soil","To hold the plant upright"], ans:2, exp:"🔬 Plants", diff:"easy"},
+      {q:"Which of the following animals undergoes a 3-stage life cycle?", opts:["Butterfly","Mosquito","Cockroach","Beetle"], ans:2, exp:"🔬 Life Cycles", diff:"easy"},
+      {q:"Which of the following is the correct order of the stages in the life cycle of a butterfly?", opts:["Egg -> Caterpillar -> Pupa -> Adult","Egg -> Pupa -> Caterpillar -> Adult","Egg -> Adult -> Caterpillar -> Pupa","Caterpillar -> Egg -> Pupa -> Adult"], ans:0, exp:"🔬 Life Cycles", diff:"easy"},
+      {q:"Which part of the plant makes food?", opts:["Roots","Stem","Leaves","Flowers"], ans:2, exp:"🔬 Plants", diff:"easy"},
+      {q:"What are the three states of matter?", opts:["Hot, cold and warm","Solid, liquid and gas","Hard, soft and flexible","Heavy, light and medium"], ans:1, exp:"🔬 Matter", diff:"easy"},
+      {q:"Which of the following materials is a good conductor of heat?", opts:["Wood","Plastic","Metal","Rubber"], ans:2, exp:"🔬 Heat & Temperature", diff:"easy"},
+      {q:"Heat always flows from a ________ object to a ________ object.", opts:["cooler, warmer","warmer, cooler","bigger, smaller","smaller, bigger"], ans:1, exp:"🔬 Heat & Temperature", diff:"easy"},
+      {q:"Which of the following is not a source of light?", opts:["The Sun","A lighted candle","The Moon","A torch that is switched on"], ans:2, exp:"🔬 Light", diff:"easy"},
+      {q:"Which of the following materials allows most light to pass through it?", opts:["A piece of cardboard","A wooden plank","A clear glass window","A metal sheet"], ans:2, exp:"🔬 Light", diff:"easy"},
+      {q:"A magnet can attract objects made of which of the following materials?", opts:["Wood","Iron","Plastic","Glass"], ans:1, exp:"🔬 Magnets", diff:"easy"},
+      {q:"What happens when two north poles of magnets are brought close together?", opts:["They attract each other.","They repel each other.","Nothing happens.","They stick together."], ans:1, exp:"🔬 Magnets", diff:"easy"},
+      {q:"Which of the following correctly describes water when it changes from liquid to solid (freezes)?", opts:["It gains heat from the surroundings.","It loses heat to the surroundings.","Its temperature increases.","Its volume decreases."], ans:1, exp:"🔬 Heat & Temperature", diff:"medium"},
+      {q:"The digestive system breaks down food. Which of the following is the correct order of the organs that food passes through?", opts:["Mouth -> Stomach -> Gullet -> Small intestine -> Large intestine","Mouth -> Gullet -> Stomach -> Small intestine -> Large intestine","Mouth -> Gullet -> Small intestine -> Stomach -> Large intestine","Mouth -> Small intestine -> Gullet -> Stomach -> Large intestine"], ans:1, exp:"🔬 Human Body Systems", diff:"medium"},
+      {q:"Which of the following statements about shadows is correct?", opts:["Shadows are formed when light passes through an object.","Shadows are formed on the same side as the light source.","A shadow is formed when an opaque object blocks light.","Shadows are always the same size as the object."], ans:2, exp:"🔬 Light", diff:"medium"},
+      {q:"Which of the following correctly describes a property of a liquid?", opts:["It has a definite shape and a definite volume.","It does not have a definite shape but has a definite volume.","It does not have a definite shape and does not have a definite volume.","It has a definite shape but does not have a definite volume."], ans:1, exp:"🔬 Matter", diff:"medium"},
+      {q:"Which of the following human body systems works with the circulatory system to transport oxygen to all parts of the body?", opts:["Digestive system","Respiratory system","Muscular system","Skeletal system"], ans:1, exp:"🔬 Human Body Systems", diff:"medium"},
     ]
   },
   english: {
@@ -2333,6 +2458,67 @@ const questions = {
       {q:'Which word is spelled correctly?',opts:["Wednesday","Wensday","Wendsday","Wednsday"],ans:0,exp:"W-E-D-N-E-S-D-A-Y. The silent 'd' and 'e' make it tricky!",diff:"medium"},
       {q:'Which word is spelled correctly?',opts:["disappear","dissapear","disapear","disappeer"],ans:0,exp:"dis + appear = disappear. One 's', two 'p's.",diff:"medium"},
       {q:'Choose the correct spelling:',opts:["necessary","neccessary","necesary","neccesary"],ans:0,exp:"N-E-C-E-S-S-A-R-Y. One 'c', two 's'. Remember: one Collar, two Socks!",diff:"hard"},
+      // ===== 2024 P4 Exam Paper Questions (English) =====
+      {q:"The girls have not seen Mr Ong __________ two weeks.", opts:["at","for","since","during"], ans:1, exp:"📖 Prepositions", diff:"easy"},
+      {q:"The Sunites __________ at their shop till very late last night.", opts:["are","is","was","were"], ans:3, exp:"📖 Subject-Verb Agreement", diff:"easy"},
+      {q:"While Mother was cooking for the New Year feast, the kitchen __________ filled with delicious smells.", opts:["is","are","was","were"], ans:2, exp:"📖 Tenses", diff:"easy"},
+      {q:"\"I __________ Grandpa for a stroll in the park now,\" I told my mother.", opts:["accompany","am accompanying","accompanied","was accompanying"], ans:1, exp:"📖 Tenses", diff:"easy"},
+      {q:"Darius __________ in the race a month ago.", opts:["run","runs","ran","was running"], ans:2, exp:"📖 Tenses", diff:"easy"},
+      {q:"The children __________ in the room when the lights went out.", opts:["play","will play","have played","were playing"], ans:3, exp:"📖 Tenses", diff:"easy"},
+      {q:"\"May I know where __________ books can be found?\" Ali asked the librarian as he showed him a list of titles.", opts:["this","that","these","those"], ans:2, exp:"📖 Grammar", diff:"easy"},
+      {q:"I cannot see clearly; __________ I have to wear glasses.", opts:["so","but","yet","because"], ans:0, exp:"📖 Conjunctions", diff:"easy"},
+      {q:"Jane bought only __________ souvenirs as she did not want to spend too much money.", opts:["a few","few","a little","little"], ans:0, exp:"📖 Grammar", diff:"medium"},
+      {q:"There is not __________ rice left, so Mother has gone to buy another packet.", opts:["little","few","much","many"], ans:2, exp:"📖 Grammar", diff:"easy"},
+      {q:"She followed closely to the __________ given in the cake recipe for the required quantity of each ingredient.", opts:["rules","tactics","techniques","measurements"], ans:3, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"The river has overflowed due to the __________ rainfall over the week.", opts:["dusty","fluffy","heavy","messy"], ans:2, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"To help Cindy's family save some money, Aunt Lina offered them her house as their __________ during their visit to China.", opts:["location","junction","production","accommodation"], ans:3, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"It will save you a lot of trouble if you do things __________.", opts:["heavily","originally","impressively","systematically"], ans:3, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"No one in class dares to __________ Miss Tan's decision as she is the Discipline Mistress.", opts:["explore","challenge","investigate","experiment"], ans:1, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"A group of nurses __________ gathered at the scene of the car crash upon hearing a loud explosion.", opts:["excitedly","violently","anxiously","innocently"], ans:2, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"The students lined up quietly __________ the canteen after recess.", opts:["in","at","on","to"], ans:3, exp:"📖 Prepositions", diff:"easy"},
+      {q:"While having dinner last night, Aini and her brother __________ excited when their father gave them permission to visit the zoo.", opts:["are","was","were","is"], ans:2, exp:"📖 Subject-Verb Agreement", diff:"easy"},
+      {q:"Ahmad __________ delighted when Mr Tan praised him.", opts:["is","are","was","were"], ans:2, exp:"📖 Tenses", diff:"easy"},
+      {q:"\"Please stop writing. The group leaders __________ the worksheets now,\" said the teacher.", opts:["collect","collects","are collecting","have collected"], ans:2, exp:"📖 Tenses", diff:"easy"},
+      {q:"Yesterday, Mrs Ang __________ Fiona to school before going to work.", opts:["has sent","was sent","was sending","sent"], ans:0, exp:"📖 Tenses", diff:"easy"},
+      {q:"While Jack __________ in the kitchen, he heard the doorbell ring.", opts:["cooks","will cook","has cooked","was cooking"], ans:3, exp:"📖 Tenses", diff:"easy"},
+      {q:"__________ girl standing there has the prettiest dress for the concert.", opts:["This","That","These","Those"], ans:1, exp:"📖 Grammar", diff:"easy"},
+      {q:"Sheila painted a new picture __________ she misplaced the one she had.", opts:["and","but","so","because"], ans:3, exp:"📖 Conjunctions", diff:"easy"},
+      {q:"My mother prepared a lot of food as I had invited __________ friends to my birthday party.", opts:["a few","any","many","every"], ans:2, exp:"📖 Grammar", diff:"easy"},
+      {q:"Siti was upset and had __________ interest to talk to anyone.", opts:["little","few","many","a lot of"], ans:0, exp:"📖 Grammar", diff:"medium"},
+      {q:"The choir instructor held an __________ to choose the best singers for the school choir.", opts:["audit","audition","addition","ovation"], ans:1, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"\"You must obey the new classroom routines which were __________ last week,\" reminded Mr Lim.", opts:["included","circulated","introduced","instilled"], ans:2, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"After practising on the piano for a few hours, Ben decided to rest as he was __________.", opts:["renewed","frustrated","frightened","exhausted"], ans:3, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"The audience did not think the performance was __________ as they looked bored.", opts:["appealing","distressing","interesting","depressing"], ans:0, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"Mary went on stage to __________ her trophy after the announcement was made.", opts:["gather","grasp","receive","collect"], ans:2, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"A group of nurses __________ gathered at the scene of the car crash upon hearing a loud explosion.", opts:["excitedly","violently","anxiously","innocently"], ans:2, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"The talent show will be held at __________.", opts:["Tini Band","Fiesta Group","Youth Wing Club","Shine Community Club"], ans:3, exp:"📖 Comprehension", diff:"easy"},
+      {q:"The main purpose of this talent show is __________.", opts:["to become a singer","to show your talent","to meet Ken and Beri","to perform a song with famous singers"], ans:1, exp:"📖 Comprehension", diff:"easy"},
+      {q:"The closing date to register for the talent show is __________.", opts:["10 November","27 November","15 December","18 December"], ans:2, exp:"📖 Comprehension", diff:"easy"},
+      {q:"Which one of the following statements about the talent show is true?", opts:["Registration is free for all contestants.","Contestants can form a group of six members.","The performance cannot be longer than three minutes.","Contestants must call Amy to register for this talent show."], ans:2, exp:"📖 Comprehension", diff:"medium"},
+      {q:"Patsy __________ her gymnastics training that afternoon.", opts:["missed","skipped","attended","postponed"], ans:0, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"In paragraph 1, Eve was grumbling because she __________.", opts:["felt very sweaty","disliked Mr Ong","had bugs on her back","felt bored"], ans:0, exp:"📖 Comprehension", diff:"hard"},
+      {q:"What does the word 'them' in line 6 refer to?", opts:["bugs","stories","scientists","behaviours"], ans:0, exp:"📖 Comprehension", diff:"hard"},
+      {q:"Alex longed for a friend because __________.", opts:["He wanted to talk all day.","He wanted to play with someone.","He was new to the neighbourhood.","He was the youngest boy in the neighbourhood."], ans:3, exp:"📖 Comprehension", diff:"hard"},
+      {q:"Last Sunday, Sam __________ to the park with his family.", opts:["goes","went","has gone","was going"], ans:1, exp:"📖 Tenses", diff:"easy"},
+      {q:"My parents __________ pleased when they heard the good news.", opts:["is","are","was","were"], ans:3, exp:"📖 Subject-Verb Agreement", diff:"easy"},
+      {q:"While I __________ a book, the doorbell rang.", opts:["was reading","am reading","read","will read"], ans:0, exp:"📖 Tenses", diff:"easy"},
+      {q:"After doing the chores yesterday, my sister __________ tired.", opts:["is","are","was","were"], ans:2, exp:"📖 Tenses", diff:"easy"},
+      {q:"The children played a game of hide-and-seek __________ minutes.", opts:["during","for","since","at"], ans:1, exp:"📖 Prepositions", diff:"easy"},
+      {q:"__________ shelves over there have not been dusted yet.", opts:["This","That","These","Those"], ans:3, exp:"📖 Grammar", diff:"easy"},
+      {q:"Henry went to the playground __________ he had completed his homework.", opts:["so","but","and","after"], ans:3, exp:"📖 Conjunctions", diff:"easy"},
+      {q:"\"Mrs Tan __________ us our groups for the project right now,\" Brad told George.", opts:["assigns","assigned","is assigning","has assigned"], ans:2, exp:"📖 Tenses", diff:"easy"},
+      {q:"The dish was very spicy as she had added too __________ pepper to it.", opts:["few","little","much","many"], ans:2, exp:"📖 Grammar", diff:"easy"},
+      {q:"This stall is very popular, so there are __________ customers who visit it.", opts:["a little","few","many","much"], ans:2, exp:"📖 Grammar", diff:"easy"},
+      {q:"The museum contained many precious __________ from all over the world.", opts:["supplies","souvenirs","exhibitions","possessions"], ans:3, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"The mischievous boys were __________ and bowed their heads after being caught red-handed vandalising.", opts:["reluctant","disturbed","ashamed","impolite"], ans:2, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"The elderly man __________ slowly along the pavement while carrying a heavy shopping bag.", opts:["strolled","sprinted","shuffled","scurried"], ans:2, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"The actress rehearsed for her performance __________ over many months, ensuring no mistakes on every day without fail.", opts:["patently","diligently","cheerfully","gracefully"], ans:1, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"My pet dog __________ in fear after thunder boomed during the rainstorm.", opts:["whimpered","protested","grumbled","thundered"], ans:0, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"The burglars __________ my neighbour's house when they were away on a holiday.", opts:["broke up","broke off","broke into","broke down"], ans:2, exp:"📖 Vocabulary", diff:"medium"},
+      {q:"Which adjective best describes Alto's grandfather? (He taught Alto to treat waterbirds with respect and as partners, not tools.)", opts:["selfish","hostile","wise"], ans:2, exp:"📖 Comprehension", diff:"hard"},
+      {q:"Sunflower plants are popular. Their striking yellow blooms __________ the sun and symbolise warmth and positivity.", opts:["resemble","resembles","resembling","resembled"], ans:0, exp:"📖 Subject-Verb Agreement", diff:"medium"},
+      {q:"Some varieties even __________ tower / towers over 4.5 metres.", opts:["tower","towers","towered","towering"], ans:0, exp:"📖 Subject-Verb Agreement", diff:"medium"},
+      {q:"In the crowded city, people rush to work every morning. Some catch the train, while others __________ (ride / rides / ridden) to work.", opts:["ride","rides","ridden","riding"], ans:0, exp:"📖 Subject-Verb Agreement", diff:"medium"},
     ]
   },
   chinese: {
@@ -2473,6 +2659,57 @@ const questions = {
       {q:'What is 妈妈的妈妈?', opts:['外婆 (wàipó)','奶奶 (nǎinai)','阿姨 (āyí)','姐姐 (jiějie)'], ans:0, exp:'Mother\'s mother = 外婆 (wàipó, maternal grandmother).', diff:'medium'},
       {q:'Complete: 今天是___月三号 (Today is March 3rd)', opts:['三','四','五','二'], ans:0, exp:'三月 = March (month 3). 三月三号 = March 3rd.', diff:'medium'},
       {q:'Which is correct? "I have a younger sister"', opts:['我有一个妹妹','我是一个妹妹','我去一个妹妹','我吃一个妹妹'], ans:0, exp:'有 (yǒu) = have. 我有一个妹妹 = I have a younger sister.', diff:'easy'},
+      // ===== 2024 P4 Exam Paper Questions (Chinese) =====
+      {q:"老师和同学都鼓____我，叫我不要放弃。", opts:["立","丽","励","利"], ans:2, exp:"🀄 汉字", diff:"easy"},
+      {q:"猴子很骄傲，说自己的本____最大。", opts:["领","邻","怜","冷"], ans:0, exp:"🀄 汉字", diff:"easy"},
+      {q:"知道自己做错了，丽文____地低下头。", opts:["吃惊","害羞","耐心","焦急"], ans:1, exp:"🀄 词语", diff:"easy"},
+      {q:"科学老师给同学们____下雨以后为什么有彩虹。", opts:["解释","劝告","建议","讨论"], ans:0, exp:"🀄 词语", diff:"easy"},
+      {q:"这双鞋子很____，走很久也不会累。", opts:["漂亮","舒服","凉爽","优秀"], ans:1, exp:"🀄 词语", diff:"easy"},
+      {q:"妈妈批评你____不爱你，____希望你变得更好。", opts:["不是……而是","不但……而且","因为……所以","虽然……但是"], ans:0, exp:"🀄 语法", diff:"medium"},
+      {q:"做了体检，护士就给我打了一____针。", opts:["根","支","针","剂"], ans:0, exp:"🀄 语法", diff:"medium"},
+      {q:"姐姐在考试中取得了优秀的成____，大家都为她高兴。", opts:["记","考","现","绩"], ans:3, exp:"🀄 汉字", diff:"easy"},
+      {q:"星期天晚上，我们一家人一起看____的故事。", opts:["入迷","认真","精彩","值得"], ans:2, exp:"🀄 词语", diff:"easy"},
+      {q:"小文向老师____他做错了事，请老师原谅他。", opts:["承认","了解","告诉","批评"], ans:0, exp:"🀄 词语", diff:"medium"},
+      {q:"运动会那天，彩旗在微风中____。", opts:["排列","飘扬","发抖","跳舞"], ans:1, exp:"🀄 词语", diff:"easy"},
+      {q:"虽然篮球队的训练很____，但队员们还是坚持练习。", opts:["危险","疲倦","辛苦","焦急"], ans:2, exp:"🀄 词语", diff:"medium"},
+      {q:"____他学习很努力，____成绩一直很好。", opts:["虽然……但是","不但……而且","因为……所以","如果……就"], ans:2, exp:"🀄 语法", diff:"easy"},
+      {q:"小明____迟到了，____是因为路上堵车。", opts:["虽然……但是","不但……而且","之所以……是因为","如果……就"], ans:2, exp:"🀄 语法", diff:"medium"},
+      {q:"这件事____你不说，我也会知道的。", opts:["虽然","即使","因为","如果"], ans:1, exp:"🀄 语法", diff:"medium"},
+      {q:"弟弟最喜欢吃妈妈做的____。", opts:["家务","食物","家具","衣服"], ans:1, exp:"🀄 词语", diff:"easy"},
+      {q:"「清楚地知道」的词语是____。", opts:["了解","明白","心里有数","一清二楚"], ans:1, exp:"🀄 词语", diff:"medium"},
+      {q:"同学们在操场上____地做早操。", opts:["整整齐齐","干干净净","安安静静","开开心心"], ans:0, exp:"🀄 词语", diff:"easy"},
+      {q:"下面哪个词语中的量词用得不正确？", opts:["一张纸","一张桌子","一张水","一张嘴"], ans:2, exp:"🀄 语法", diff:"easy"},
+      {q:"他____很年轻，____已经是一位著名的科学家了。", opts:["因为……所以","不但……而且","虽然……但是","如果……就"], ans:2, exp:"🀄 语法", diff:"easy"},
+      {q:"这本书的内容非常____，我一口气就看完了。", opts:["精彩","美丽","干净","安静"], ans:0, exp:"🀄 词语", diff:"easy"},
+      {q:"我们要____保护环境，不要乱扔垃圾。", opts:["注意","注目","注册","注解"], ans:0, exp:"🀄 词语", diff:"easy"},
+      {q:"妹妹____长得可爱，____很懂事。", opts:["虽然……但是","不但……而且","因为……所以","如果……就"], ans:1, exp:"🀄 语法", diff:"easy"},
+      {q:"奶奶每天早上都到公园去____。", opts:["运动","散步","比赛","旅行"], ans:1, exp:"🀄 词语", diff:"easy"},
+      {q:"下面哪个句子用了比喻的手法？", opts:["小鸟在树上唱歌。","月亮像一面镜子。","风儿轻轻地吹。","花儿开了。"], ans:1, exp:"🀄 语法", diff:"medium"},
+      {q:"小华平时很____，从不迟到。", opts:["准时","暂时","及时","随时"], ans:0, exp:"🀄 词语", diff:"easy"},
+      {q:"这场比赛的结果让大家都感到很____。", opts:["失望","希望","盼望","愿望"], ans:0, exp:"🀄 词语", diff:"medium"},
+      {q:"过马路的时候，我们应该____左右看。", opts:["先","才","又","再"], ans:0, exp:"🀄 语法", diff:"easy"},
+      {q:"爸爸____我好好学习，将来做一个有用的人。", opts:["要求","请求","要是","鼓励"], ans:3, exp:"🀄 词语", diff:"medium"},
+      {q:"「高兴」的反义词是____。", opts:["快乐","伤心","开心","欢乐"], ans:1, exp:"🀄 近义词反义词", diff:"easy"},
+      {q:"「美丽」的近义词是____。", opts:["丑陋","漂亮","难看","可怕"], ans:1, exp:"🀄 近义词反义词", diff:"easy"},
+      {q:"哥哥____学习好，____体育也很棒。", opts:["虽然……但是","不但……而且","因为……所以","只有……才"], ans:1, exp:"🀄 语法", diff:"easy"},
+      {q:"____天气很冷，____爷爷还是坚持去公园散步。", opts:["因为……所以","不但……而且","虽然……但是","如果……就"], ans:2, exp:"🀄 语法", diff:"easy"},
+      {q:"下面哪个量词用得正确？", opts:["一条鱼","一张鱼","一块鱼","一件鱼"], ans:0, exp:"🀄 语法", diff:"easy"},
+      {q:"妈妈____地对我说：你要认真做功课。", opts:["严厉","严重","严格","严密"], ans:0, exp:"🀄 词语", diff:"medium"},
+      {q:"医生____他多休息，少吃油腻的食物。", opts:["吩咐","劝告","命令","要求"], ans:1, exp:"🀄 词语", diff:"medium"},
+      {q:"她的舞蹈表演非常____，观众们都鼓掌叫好。", opts:["出色","出发","出去","出来"], ans:0, exp:"🀄 词语", diff:"easy"},
+      {q:"下面哪个句子是正确的？", opts:["他把作业完成了做。","他把作业做完成了。","他把作业做完了。","他做把作业完了。"], ans:2, exp:"🀄 语法", diff:"medium"},
+      {q:"这里的风景太____了，像一幅画一样。", opts:["美丽","美好","美味","美满"], ans:0, exp:"🀄 词语", diff:"easy"},
+      {q:"____你努力学习，____一定能考出好成绩。", opts:["虽然……但是","因为……所以","只要……就","不但……而且"], ans:2, exp:"🀄 语法", diff:"medium"},
+      {q:"同学们听了老师的话，都____地笑了起来。", opts:["哈哈","默默","慢慢","偷偷"], ans:0, exp:"🀄 词语", diff:"easy"},
+      {q:"「认真」的反义词是____。", opts:["努力","马虎","仔细","用心"], ans:1, exp:"🀄 近义词反义词", diff:"easy"},
+      {q:"弟弟____在图书馆看书，____在家里看电视。", opts:["宁可……也不","一边……一边","不是……就是","又……又"], ans:2, exp:"🀄 语法", diff:"medium"},
+      {q:"小明每天都____地完成作业，从不拖拉。", opts:["按时","暂时","一时","临时"], ans:0, exp:"🀄 词语", diff:"easy"},
+      {q:"「勇敢」的近义词是____。", opts:["害怕","勇气","勇猛","胆小"], ans:2, exp:"🀄 近义词反义词", diff:"easy"},
+      {q:"下课后，同学们在操场上____地玩耍。", opts:["愉快","伤心","安静","难过"], ans:0, exp:"🀄 词语", diff:"easy"},
+      {q:"我们____保护地球，____减少使用塑料袋。", opts:["不但要……还要","虽然……但是","因为……所以","如果……就"], ans:0, exp:"🀄 语法", diff:"medium"},
+      {q:"他的成绩____很好，全班同学都很____他。", opts:["一直……佩服","一直……害怕","偶尔……羡慕","经常……讨厌"], ans:0, exp:"🀄 词语", diff:"medium"},
+      {q:"下面哪个「的/地/得」用法正确？", opts:["我高兴的跳了起来。","我高兴地跳了起来。","我高兴得跳了起来。","B和C都正确"], ans:3, exp:"🀄 语法", diff:"hard"},
+      {q:"小红____把教室打扫干净____才回家。", opts:["先……然后","一边……一边","虽然……但是","因为……所以"], ans:0, exp:"🀄 语法", diff:"medium"},
     ]
   }
 };
@@ -2649,13 +2886,17 @@ function startSubject(subj) {
   currentSubject = subj;
   const pool = questions[subj][currentPlayer];
   const completed = state[currentPlayer].completedQs[subj] || [];
-  // Filter out correctly answered questions
+  // Filter out already-answered questions (correct or wrong)
   let available = pool.filter(q => !completed.includes(q.q));
-  // If all questions completed, reset and start fresh cycle
-  if (available.length === 0) {
-    state[currentPlayer].completedQs[subj] = [];
-    available = [...pool];
-    save();
+  // If all questions completed, mark as review cycle — keep completedQs intact
+  let isReviewCycle = false;
+  if (available.length < 5) {
+    isReviewCycle = true;
+    // Only bring back questions for review, but don't reset completedQs
+    // Prioritize questions answered long ago (first in the array)
+    const reviewPool = pool.filter(q => completed.includes(q.q));
+    const needed = Math.max(5, 10) - available.length;
+    available = available.concat(reviewPool.slice(0, needed));
   }
   // Supplement with procedurally generated questions for ALL subjects
   const generators = {math: generateMathQ, science: generateScienceQ, english: generateEnglishQ, chinese: generateChineseQ};
@@ -2781,6 +3022,7 @@ function selectAnswer(idx) {
     if (currentSubject !== 'review' && state[currentPlayer].completedQs[currentSubject]) {
       const cq = state[currentPlayer].completedQs[currentSubject];
       if (!cq.includes(q.q)) cq.push(q.q);
+      save(); // Persist immediately so progress survives page close
     }
 
     // Adaptive difficulty: advance on correct answers
@@ -2820,6 +3062,7 @@ function selectAnswer(idx) {
     if (currentSubject !== 'review' && state[currentPlayer].completedQs[currentSubject]) {
       const cq = state[currentPlayer].completedQs[currentSubject];
       if (!cq.includes(q.q)) cq.push(q.q);
+      save(); // Persist immediately so progress survives page close
     }
     // Adaptive difficulty: slight regression on wrong
     if (currentSubject !== 'review' && state[currentPlayer].diffProgress) {
@@ -3960,6 +4203,34 @@ const eaStages = [
         q:"What does this tell us about Sara?", opts:["Hard work leads to success","She is naturally talented","Piano is easy","The audience was small"]},
        {p:"Dark clouds gathered overhead. The wind picked up, scattering leaves across the playground. Children rushed inside as the first drops began to fall.",
         q:"What was about to happen?", opts:["It was going to rain heavily","The sun was coming out","School was starting","It was getting dark at night"]},
+       {p:"Lily found a small kitten hiding under a bush in the rain. She picked it up gently, wrapped it in her jacket, and carried it home. Her mother helped her dry it with a towel.",
+        q:"What kind of person is Lily?", opts:["Kind and caring","Scared of animals","Lazy","Impatient"]},
+       {p:"Mr Tan checked the weather forecast before leaving the house. He put on his raincoat and grabbed his umbrella. As he stepped outside, the sky was still clear and blue.",
+        q:"Why did Mr Tan bring an umbrella?", opts:["The forecast said it would rain","It was already raining","He always brings one","Someone told him to"]},
+       {p:"Every morning, Ravi walks to the bus stop at 7 a.m. He waits for Bus 12, which takes him to school. If the bus is late, he reads a book while waiting.",
+        q:"What does Ravi do if the bus is late?", opts:["He reads a book","He walks to school","He calls his mother","He goes back home"]},
+       {p:"Maria carefully placed the last candle on the cake. She counted them — there were ten. She smiled, thinking about how surprised her brother would be at the party.",
+        q:"How old is Maria's brother turning?", opts:["Ten years old","Nine years old","Eleven years old","Eight years old"]},
+       {p:"The library was very quiet. A boy was reading a thick book about dinosaurs. He turned the pages slowly, studying each picture carefully.",
+        q:"What was the boy interested in?", opts:["Dinosaurs","Sports","Cooking","Music"]},
+       {p:"After the race, Mei Ling sat on the grass, breathing hard. Her legs ached but she was smiling. She looked at the gold medal hanging around her neck.",
+        q:"How did Mei Ling do in the race?", opts:["She won first place","She came in last","She did not finish","She was watching"]},
+       {p:"Dad packed sandwiches, fruit, and juice into a basket. Mum folded a large blanket. The children ran to the car, excited for their day at the park.",
+        q:"What is the family going to do?", opts:["Have a picnic","Go shopping","Visit the doctor","Go to school"]},
+       {p:"The fisherman set out early in the morning when the sea was calm. By noon, his net was full of fish. He headed back to shore, happy with his catch.",
+        q:"Why was the fisherman happy?", opts:["He caught many fish","The weather was nice","He saw dolphins","He met a friend"]},
+       {p:"Aisha planted sunflower seeds in her garden. She watered them every day and made sure they got enough sunlight. After a few weeks, tall yellow flowers appeared.",
+        q:"What helped the sunflowers grow?", opts:["Water and sunlight","Shade and cold","Aisha singing to them","Fertiliser only"]},
+       {p:"Ben forgot to set his alarm. When he finally opened his eyes, the clock showed 8:15. School started at 8:00. He jumped out of bed in a panic.",
+        q:"Why was Ben panicking?", opts:["He was already late for school","He had a bad dream","He forgot his homework","The clock was broken"]},
+       {p:"The zookeeper filled a large tub with water and placed some fish inside. The penguins waddled over eagerly, jumping into the tub one by one.",
+        q:"Why did the zookeeper prepare the tub?", opts:["To feed the penguins","To clean the floor","To wash the fish","To water the plants"]},
+       {p:"Grandma put on her glasses and opened the thick storybook. Her grandchildren gathered around her chair, eyes wide with excitement. 'Once upon a time...' she began.",
+        q:"What was Grandma about to do?", opts:["Read a story to her grandchildren","Watch television","Cook dinner","Go for a walk"]},
+       {p:"The fire alarm rang suddenly. Students quickly lined up and walked out of the building. Teachers checked that everyone was safe outside on the field.",
+        q:"What were the students practising?", opts:["A fire drill","A school concert","Sports day","An exam"]},
+       {p:"Kevin noticed a wallet lying on the ground near the bus stop. He picked it up and found an ID card inside. He brought it to the nearest police station.",
+        q:"What does this tell us about Kevin?", opts:["He is honest and responsible","He wanted the money","He was scared","He did not care"]}
      ]; const c=passages[rand(0,passages.length-1)]; return {q:c.q, opts:c.opts, ans:0, exp:'🏕️ Read carefully — the clues are in the passage!', diff:'easy', passage:c.p}; }
    ]},
   {id:'comp2', name:'Comprehension Castle', icon:'🏰', topic:'comprehension', desc:'Inference & Main Idea', diff:'medium',
@@ -3973,11 +4244,113 @@ const eaStages = [
         q:"Which word best describes the crowd?", opts:["Ecstatic","Angry","Bored","Confused"]},
        {p:"Grandmother carefully wrapped the old photo album in tissue paper and placed it in the wooden chest. 'These are memories,' she whispered, 'and memories must be protected.'",
         q:"Why did Grandmother wrap the album carefully?", opts:["The photos were precious to her","She wanted to throw it away","The album was new","She was packing to move"]},
+       {p:"Jake stared at the empty fish tank. The lid was slightly open and there were wet marks on the table leading to the window. He groaned and grabbed a net.",
+        q:"What most likely happened?", opts:["The fish jumped out of the tank","Someone stole the fish","The tank broke","Jake cleaned the tank"]},
+       {p:"The smell of freshly baked cookies filled the kitchen. Emma peeked through the oven door and saw golden-brown edges. She set the timer for two more minutes.",
+        q:"What can you infer about Emma?", opts:["She knows when cookies are almost ready","She has never baked before","The cookies are burnt","She is not paying attention"]},
+       {p:"Mr Lim looked at his watch for the third time. He paced back and forth near the arrival gate, clutching a bouquet of flowers. Every time the doors opened, he stood on his toes to look.",
+        q:"Why was Mr Lim at the arrival gate?", opts:["He was waiting for someone special","He was lost","He worked at the airport","He was catching a flight"]},
+       {p:"The canteen was unusually empty for a Monday. A notice on the wall read: 'Canteen closed for cleaning. Packed lunches only.' Students sat on benches outside, opening their lunch boxes.",
+        q:"Why were students eating outside?", opts:["The canteen was closed","It was a holiday","They preferred eating outside","The food was bad"]},
+       {p:"Priya looked at her painting and sighed. The blue sky she had painted looked more like grey mud. She dipped her brush in water and started again, this time mixing the colours more carefully.",
+        q:"What was Priya's problem?", opts:["Her colours did not turn out right","She ran out of paint","The paper was too small","She did not like painting"]},
+       {p:"The boy pressed his face against the pet shop window. His eyes followed a golden retriever puppy as it tumbled over its siblings. He turned to his father with pleading eyes.",
+        q:"What did the boy most likely want?", opts:["He wanted his father to buy the puppy","He was scared of the dog","He wanted to leave","He was looking for his pet"]},
+       {p:"Captain Tan studied the dark horizon through his binoculars. The waves were getting bigger and the wind was howling. He ordered the crew to secure all equipment on deck.",
+        q:"What was Captain Tan preparing for?", opts:["A storm at sea","A celebration","Reaching the shore","A race"]},
+       {p:"Siti noticed that her neighbour's cat had been sitting by the front door all day meowing loudly. The lights in the house were off and no car was in the driveway.",
+        q:"What can you infer?", opts:["The neighbour is probably not home","The cat is sick","The neighbour is sleeping","The cat wants to play"]},
+       {p:"The teacher wrote 'TEST TOMORROW' in big red letters on the whiteboard. Some students gasped. Others quickly opened their notebooks and began reviewing their notes.",
+        q:"How did the students react to the announcement?", opts:["They were surprised and started studying","They were happy","They ignored it","They left the class"]},
+       {p:"Rosa's hands trembled as she stood behind the curtain. She could hear hundreds of people talking in the audience. She took a deep breath, straightened her costume, and stepped onto the stage.",
+        q:"How was Rosa feeling?", opts:["Nervous but determined","Angry","Bored","Confused"]},
+       {p:"The refrigerator was empty except for a carton of milk and some leftover rice. Dad grabbed his keys and a shopping bag. 'I will be back in an hour,' he said.",
+        q:"Where was Dad most likely going?", opts:["To the supermarket to buy groceries","To work","To the gym","To pick up the children"]}
      ]; const c=passages[rand(0,passages.length-1)]; return {q:c.q, opts:c.opts, ans:0, exp:'🏰 Use inference — read between the lines!', diff:'medium', passage:c.p}; }
    ]},
-  {id:'boss', name:'📚 English Master', icon:'👑', topic:'mixed', desc:'Mixed Challenge — Grammar, Vocab & Comprehension', diff:'hard', boss:true,
+  {id:'psle_exam', name:'PSLE Exam Trainer', icon:'🎯', topic:'psle', desc:'Real P4 exam questions — test yourself!', diff:'medium',
    qs: [
-     () => { const all = [...eaStages[0].qs, ...eaStages[1].qs, ...eaStages[2].qs, ...eaStages[3].qs, ...eaStages[4].qs, ...eaStages[5].qs, ...eaStages[6].qs, ...eaStages[7].qs]; return all[rand(0,all.length-1)](); }
+     () => { const items=[
+       ['The girls have not seen Mr Ong __________ two weeks.','for','at','since','during','Use "for" with a duration of time (two weeks)!'],
+       ['The Sunites __________ at their shop till very late last night.','were','are','is','was','Plural subject + past tense = "were"!'],
+       ['While Mother was cooking, the kitchen __________ filled with delicious smells.','was','is','are','were','Singular noun (kitchen) + past = "was"!'],
+       ['"I __________ Grandpa for a stroll in the park now," I told my mother.','am accompanying','accompany','accompanied','was accompanying','"Now" = present continuous: am + verb-ing!'],
+       ['Darius __________ in the race a month ago.','ran','run','runs','was running','"A month ago" = simple past: ran!'],
+       ['The children __________ in the room when the lights went out.','were playing','play','will play','have played','"When" + past = past continuous: were playing!'],
+       ['"May I know where __________ books can be found?" Ali asked.','these','this','that','those','Ali is holding the list (near) = "these"!'],
+       ['I cannot see clearly; __________ I have to wear glasses.','so','but','yet','because','Result/consequence = "so"!'],
+       ['Jane bought only __________ souvenirs as she did not want to spend too much.','a few','few','a little','little','"A few" = some (countable), neutral tone!'],
+       ['There is not __________ rice left, so Mother has gone to buy more.','much','little','few','many','Rice = uncountable, negative = "much"!'],
+       ['The students lined up quietly __________ the canteen after recess.','to','in','at','on','"Lined up to" = direction/destination!'],
+       ['Sheila painted a new picture __________ she misplaced the one she had.','because','and','but','so','"Because" = gives the reason!'],
+       ['My mother prepared a lot of food as I had invited __________ friends.','many','a few','any','every','"A lot of food" suggests "many" friends!'],
+       ['Siti was upset and had __________ interest to talk to anyone.','little','few','many','a lot of','"Little" = almost none (uncountable)!'],
+       ['While Jack __________ in the kitchen, he heard the doorbell ring.','was cooking','cooks','will cook','has cooked','"While" + past event = past continuous!'],
+       ['__________ girl standing there has the prettiest dress.','That','This','These','Those','One girl far away = "That"!'],
+       ['Henry went to the playground __________ he had completed his homework.','after','so','but','and','"After" = shows sequence of events!'],
+       ['"Mrs Tan __________ us our groups right now," Brad told George.','is assigning','assigns','assigned','has assigned','"Right now" = present continuous!'],
+       ['The dish was very spicy as she had added too __________ pepper.','much','few','little','many','Pepper = uncountable → "much"!'],
+       ['Last Sunday, Sam __________ to the park with his family.','went','goes','has gone','was going','"Last Sunday" = simple past: went!'],
+       ['My parents __________ pleased when they heard the good news.','were','is','are','was','Parents = plural, past tense = "were"!'],
+       ['While I __________ a book, the doorbell rang.','was reading','am reading','read','will read','"While" + interruption = past continuous!'],
+       ['After doing the chores yesterday, my sister __________ tired.','was','is','are','were','Sister = singular, past = "was"!'],
+       ['The children played hide-and-seek __________ minutes.','for','during','since','at','Duration = "for" + time period!'],
+       ['__________ shelves over there have not been dusted yet.','Those','This','That','These','"Over there" = far away, plural = "Those"!'],
+     ]; const item=items[rand(0,items.length-1)]; return {q:`Fill in: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🎯 '+item[5], diff:'medium'}; }
+   ]},
+  {id:'word_detective', name:'Word Detective', icon:'🔍', topic:'vocab_context', desc:'Choose the best word — PSLE vocabulary!', diff:'medium',
+   qs: [
+     () => { const items=[
+       ['She followed the __________ in the recipe for each ingredient.','measurements','rules','tactics','techniques','Recipes give measurements (quantities) of ingredients!'],
+       ['The river overflowed due to the __________ rainfall over the week.','heavy','dusty','fluffy','messy','"Heavy" rainfall = a lot of rain!'],
+       ['Aunt Lina offered her house as their __________ during the visit.','accommodation','location','junction','production','A place to stay = accommodation!'],
+       ['It will save trouble if you do things __________.','systematically','heavily','originally','impressively','Doing things in an organised way = systematically!'],
+       ['No one dares to __________ Miss Tan\'s decision.','challenge','explore','investigate','experiment','To question/oppose a decision = challenge!'],
+       ['The nurses __________ gathered at the scene of the crash.','anxiously','excitedly','violently','innocently','Worried about injuries = anxiously!'],
+       ['The choir instructor held an __________ to choose the best singers.','audition','audit','addition','ovation','A tryout for performers = audition!'],
+       ['"You must obey the routines which were __________ last week," said Mr Lim.','introduced','included','circulated','instilled','New rules being started = introduced!'],
+       ['After practising piano for hours, Ben was __________.','exhausted','renewed','frustrated','frightened','Very tired from effort = exhausted!'],
+       ['The audience did not think the performance was __________.','appealing','distressing','depressing','interesting','Attractive/enjoyable = appealing!'],
+       ['Mary went on stage to __________ her trophy.','receive','gather','grasp','collect','Officially getting a prize = receive!'],
+       ['The museum contained many precious __________ from all over the world.','possessions','supplies','souvenirs','exhibitions','Valuable owned items = possessions!'],
+       ['The boys were __________ after being caught vandalising.','ashamed','reluctant','disturbed','impolite','Feeling guilty/embarrassed = ashamed!'],
+       ['The elderly man __________ slowly along the pavement.','shuffled','strolled','sprinted','scurried','Walking slowly with difficulty = shuffled!'],
+       ['The actress rehearsed __________ over many months.','diligently','patently','cheerfully','gracefully','Working hard without stopping = diligently!'],
+       ['My pet dog __________ in fear after thunder boomed.','whimpered','protested','grumbled','thundered','Soft crying sound from fear = whimpered!'],
+       ['The burglars __________ my neighbour\'s house.','broke into','broke up','broke off','broke down','Entering illegally = broke into!'],
+       ['The boy was __________ when he heard he won the prize.','thrilled','annoyed','confused','relieved','Very excited and happy = thrilled!'],
+       ['She __________ looked around the dark room, afraid of what she might see.','nervously','cheerfully','proudly','lazily','Scared = nervously!'],
+       ['The crowd __________ when the fireworks lit up the night sky.','cheered','whispered','yawned','frowned','Excited reaction = cheered!'],
+       ['Father __________ us not to swim too far from the shore.','cautioned','allowed','encouraged','invited','Warning = cautioned!'],
+       ['The students __________ at the fascinating science experiment.','marvelled','laughed','complained','shrugged','Amazed by something cool = marvelled!'],
+     ]; const item=items[rand(0,items.length-1)]; return {q:`Choose the best word: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🔍 '+item[5], diff:'medium'}; }
+   ]},
+  {id:'sentence_doc', name:'Sentence Surgeon', icon:'⚕️', topic:'editing', desc:'Find the error and fix the sentence!', diff:'hard',
+   qs: [
+     () => { const items=[
+       ['Which sentence is CORRECT?','She has been waiting for an hour.','She have been waiting for an hour.','She has been waited for an hour.','She have been waited for an hour.','She (singular) = has + been + verb-ing!'],
+       ['Which sentence has CORRECT punctuation?','"Where are you going?" asked Mum.','"Where are you going" asked Mum?','"Where are you going?" Asked Mum.','"Where are you going," asked Mum.','Question mark inside quotes, lowercase "asked"!'],
+       ['Find the ERROR: "The team of players are ready."','Should be "is ready"','Should be "was ready"','Should be "were ready"','No error','"The team" = singular → "is ready"!'],
+       ['Which sentence is CORRECT?','Neither Tom nor Jerry wants dessert.','Neither Tom nor Jerry want dessert.','Neither Tom or Jerry wants dessert.','Neither Tom and Jerry wants dessert.','Neither...nor + singular nearest subject = wants!'],
+       ['Find the ERROR: "Each students must bring their own lunch."','Should be "Each student"','Should be "Each students will"','Should be "All students must"','No error','"Each" = singular → "Each student"!'],
+       ['Which sentence is CORRECT?','The children\'s toys were scattered everywhere.','The childrens\' toys were scattered everywhere.','The childrens toys were scattered everywhere.','The children toys\' were scattered everywhere.','Irregular plural possessive: children\'s!'],
+       ['Find the ERROR: "Me and my friend went to the park."','Should be "My friend and I"','Should be "I and my friend"','Should be "My friend and me"','No error','Subject position = "My friend and I"!'],
+       ['Which sentence uses the comma CORRECTLY?','After the rain stopped, we went outside.','After the rain stopped we went outside.','After, the rain stopped we went outside.','After the rain, stopped we went outside.','Comma after introductory clause!'],
+       ['Find the ERROR: "Everyone have finished their work."','Should be "has finished"','Should be "had finish"','Should be "are finished"','No error','"Everyone" = singular → "has finished"!'],
+       ['Which is the CORRECT way to write this?','Mr and Mrs Lee\'s house is beautiful.','Mr and Mrs Lee house is beautiful.','Mr\'s and Mrs Lee\'s house is beautiful.','Mr and Mrs Lees\' house is beautiful.','Joint possession: only the last name gets \'s!'],
+       ['Find the ERROR: "He runned to the store quickly."','Should be "ran"','Should be "was running"','Should be "has run"','No error','"Run" is irregular: run → ran → run!'],
+       ['Which sentence is CORRECT?','I could hardly wait for the holiday.','I couldn\'t hardly wait for the holiday.','I could not hardly wait for the holiday.','I can\'t hardly wait for the holiday.','Double negative is wrong. "Could hardly" is correct!'],
+       ['Find the ERROR: "The news are very shocking today."','Should be "is"','Should be "were"','Should be "have been"','No error','"News" is uncountable/singular → "is"!'],
+       ['Which sentence is CORRECT?','Who\'s coming to the party tonight?','Whose coming to the party tonight?','Whos\' coming to the party tonight?','Whos coming to the party tonight?','Who\'s = Who is. Whose = belonging to whom!'],
+       ['Find the ERROR: "She is more taller than her sister."','Remove "more"','Remove "taller"','Change to "most taller"','No error','Use "taller" alone, not "more taller"!'],
+       ['Which sentence is CORRECT?','There are fewer students today than yesterday.','There are less students today than yesterday.','There is fewer students today than yesterday.','There is less students today than yesterday.','Countable noun (students) = "fewer"!'],
+       ['Find the ERROR: "I am interesting in science."','Should be "interested"','Should be "interests"','Should be "interest"','No error','"Interested in" for feelings, "interesting" for things!'],
+       ['Which sentence is CORRECT?','She speaks English well.','She speaks English good.','She speaks English goodly.','She speaks English nice.','Verb + adverb: "well" not "good"!'],
+     ]; const item=items[rand(0,items.length-1)]; return {q:item[0], opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'⚕️ '+item[5], diff:'hard'}; }
+   ]},
+  {id:'boss', name:'📚 English Master', icon:'👑', topic:'mixed', desc:'Mixed Challenge — All categories!', diff:'hard', boss:true,
+   qs: [
+     () => { const allStages = eaStages.filter(s => !s.boss); const picked = allStages[rand(0,allStages.length-1)]; return picked.qs[rand(0,picked.qs.length-1)](); }
    ]},
 ];
 
@@ -3987,8 +4360,8 @@ function eaShowStages() {
   document.getElementById('ea-stage-area').style.display = '';
   document.getElementById('ea-battle-area').style.display = 'none';
   document.getElementById('ea-result-area').style.display = 'none';
-  if (!state.yuhi.engArena) state.yuhi.engArena = {};
-  const ea = state.yuhi.engArena;
+  if (!state[currentPlayer].engArena) state[currentPlayer].engArena = {};
+  const ea = state[currentPlayer].engArena;
   if (!ea.wins) ea.wins = 0;
   if (!ea.streak) ea.streak = 0;
   if (!ea.bestCombo) ea.bestCombo = 0;
@@ -4020,7 +4393,9 @@ function eaStartBattle(stageIdx) {
   const stage = eaStages[stageIdx];
   eaBattle = {stage, qIdx:0, correct:0, combo:0, bestCombo:0, questions:[], answered:false};
   // Generate 5 questions from stage generators
-  const completed = state.yuhi.completedQs.english || [];
+  if (!state[currentPlayer].completedQs) state[currentPlayer].completedQs = {};
+  if (!state[currentPlayer].completedQs.english) state[currentPlayer].completedQs.english = [];
+  const completed = state[currentPlayer].completedQs.english || [];
   for (let i = 0; i < 20; i++) {
     const q = stage.qs[rand(0, stage.qs.length-1)]();
     if (!eaBattle.questions.some(x => x.q === q.q) && !completed.includes(q.q)) {
@@ -4029,8 +4404,10 @@ function eaStartBattle(stageIdx) {
     if (eaBattle.questions.length >= 5) break;
   }
   if (eaBattle.questions.length < 5) {
-    for (let i = eaBattle.questions.length; i < 5; i++) {
-      eaBattle.questions.push(stage.qs[rand(0, stage.qs.length-1)]());
+    // Review mode: bring back completed questions rather than unfiltered duplicates
+    for (let i = 0; i < 30 && eaBattle.questions.length < 5; i++) {
+      const q = stage.qs[rand(0, stage.qs.length-1)]();
+      if (!eaBattle.questions.some(x => x.q === q.q)) eaBattle.questions.push(q);
     }
   }
   document.getElementById('ea-stage-area').style.display = 'none';
@@ -4094,8 +4471,8 @@ function eaSelectAnswer(idx) {
     if (eaBattle.combo > eaBattle.bestCombo) eaBattle.bestCombo = eaBattle.combo;
     const xp = q.diff==='hard'?20:q.diff==='medium'?12:8;
     const coins = q.diff==='hard'?10:q.diff==='medium'?6:4;
-    state.yuhi.xp += xp;
-    state.yuhi.coins += coins;
+    state[currentPlayer].xp += xp;
+    state[currentPlayer].coins += coins;
     fb.style.display = 'block';
     fb.style.background = 'rgba(46,213,115,.15)';
     fb.style.color = '#2ed573';
@@ -4103,26 +4480,26 @@ function eaSelectAnswer(idx) {
     playSound('correct');
     if (eaBattle.combo >= 3) playSound('combo');
     // Track in completedQs
-    const cq = state.yuhi.completedQs.english;
+    const cq = state[currentPlayer].completedQs.english;
     if (cq && !cq.includes(q.q)) cq.push(q.q);
   } else {
     btns[idx].classList.add('wrong');
     btns[q.ans].classList.add('correct');
     eaBattle.combo = 0;
-    state.yuhi.xp += 2;
+    state[currentPlayer].xp += 2;
     fb.style.display = 'block';
     fb.style.background = 'rgba(255,71,87,.15)';
     fb.style.color = '#ff4757';
     fb.innerHTML = `❌ Not quite! +2 XP<br>Correct: ${q.opts[q.ans]}<br><span style="font-size:.85em;color:#aaa">${q.exp}</span>`;
     playSound('wrong');
-    const cq = state.yuhi.completedQs.english;
+    const cq = state[currentPlayer].completedQs.english;
     if (cq && !cq.includes(q.q)) cq.push(q.q);
   }
   document.getElementById('ea-progress-bar').style.width = (eaBattle.correct/5*100)+'%';
   document.getElementById('ea-progress-text').textContent = `${eaBattle.correct} / 5 correct`;
   save(); updatePlayerCards();
   // Show "Next" button — wait for user to confirm understanding
-  fb.innerHTML += `<br><button onclick="eaNextQuestion()" style="margin-top:10px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">理解したら次へ ➜</button>`;
+  fb.innerHTML += `<br><button onclick="eaNextQuestion()" style="margin-top:10px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">Got it! Next ➜</button>`;
 }
 
 function eaNextQuestion() {
@@ -4134,8 +4511,8 @@ function eaNextQuestion() {
 function eaUsePowerUp(type) {
   if (eaBattle.answered) return;
   const costs = {'5050':10, 'hint':20};
-  if (state.yuhi.coins < costs[type]) return;
-  state.yuhi.coins -= costs[type];
+  if (state[currentPlayer].coins < costs[type]) return;
+  state[currentPlayer].coins -= costs[type];
   save(); updatePlayerCards();
   const q = eaBattle.currentQ;
   if (type === '5050') {
@@ -4149,8 +4526,8 @@ function eaUsePowerUp(type) {
 }
 
 function eaFinish() {
-  if (!state.yuhi.engArena) state.yuhi.engArena = {};
-  const ea = state.yuhi.engArena;
+  if (!state[currentPlayer].engArena) state[currentPlayer].engArena = {};
+  const ea = state[currentPlayer].engArena;
   if (!ea.wins) ea.wins = 0; if (!ea.streak) ea.streak = 0;
   if (!ea.bestCombo) ea.bestCombo = 0; if (!ea.stageStars) ea.stageStars = {};
   const won = eaBattle.correct >= 3;
@@ -4168,8 +4545,8 @@ function eaFinish() {
   if (stars >= 2) { xpReward += 8; coinReward += 6; }
   if (stars >= 3) { xpReward += 12; coinReward += 8; }
   if (eaBattle.stage.boss && won) { xpReward += 15; coinReward += 12; }
-  state.yuhi.xp += xpReward;
-  state.yuhi.coins += coinReward;
+  state[currentPlayer].xp += xpReward;
+  state[currentPlayer].coins += coinReward;
 
   document.getElementById('ea-battle-area').style.display = 'none';
   document.getElementById('ea-result-area').style.display = '';
@@ -4247,7 +4624,27 @@ function caGetStages() {
          ['这朵花真___！','漂亮','丑陋','可怕','奇怪','漂亮 means beautiful!'],
          ['小猫___地睡着了。','安静','吵闹','生气','伤心','安静 means quietly!'],
          ['他是一个很___的孩子。','聪明','笨','坏','懒','聪明 means clever/smart!'],
-         ['公园里有很多___的树。','高大','矮小','枯萎','丑陋','高大 means tall and big!']
+         ['公园里有很多___的树。','高大','矮小','枯萎','丑陋','高大 means tall and big!'],
+         ['知道自己做错了，他___地低下了头。','害羞','吃惊','耐心','焦急','害羞 means embarrassed/shy!'],
+         ['科学老师给同学们___下雨以后为什么有彩虹。','解释','劝告','建议','讨论','解释 means to explain!'],
+         ['这双鞋子很___，走很久也不会累。','舒服','漂亮','凉爽','优秀','舒服 means comfortable!'],
+         ['妹妹看到毛毛虫，___地叫了起来。','害怕','开心','安静','骄傲','害怕 means scared/frightened!'],
+         ['同学们都___地听老师讲故事。','认真','马虎','调皮','着急','认真 means attentively/seriously!'],
+         ['外面下着大雨，路上很___。','湿滑','干净','明亮','安静','湿滑 means wet and slippery!'],
+         ['弟弟___地跑回家，告诉妈妈这个好消息。','兴奋','伤心','害怕','疲倦','兴奋 means excitedly!'],
+         ['爸爸每天早上都会___跑步锻炼身体。','坚持','放弃','忘记','讨厌','坚持 means to persist/insist on!'],
+         ['这家餐厅的菜又好吃又___。','便宜','困难','危险','奇怪','便宜 means cheap/affordable!'],
+         ['小明考试考了一百分，心里很___。','得意','难过','紧张','害羞','得意 means proud/pleased with oneself!'],
+         ['图书馆里大家都很___，没有人说话。','安静','吵闹','热闹','拥挤','安静 means quiet!'],
+         ['奶奶做的蛋糕又香又___。','甜','咸','辣','苦','甜 means sweet!'],
+         ['小狗看到主人回来，___地摇着尾巴。','开心','生气','伤心','害怕','开心 means happily!'],
+         ['今天的作业很___，我一会儿就做完了。','简单','复杂','困难','麻烦','简单 means simple/easy!'],
+         ['爷爷虽然年纪大了，但身体还很___。','健康','虚弱','疲倦','瘦弱','健康 means healthy!'],
+         ['春天来了，花园里___极了。','美丽','可怕','奇怪','冰冷','美丽 means beautiful!'],
+         ['同学们在操场上___地做早操。','整齐','杂乱','懒散','随便','整齐 means neatly/in orderly fashion!'],
+         ['妈妈___地叫我起床，怕我上学迟到。','焦急','安静','缓慢','随便','焦急 means anxiously!'],
+         ['这个故事非常___，我听了很感动。','动人','无聊','普通','奇怪','动人 means touching/moving!'],
+         ['姐姐画的画很___，大家都很喜欢。','精美','丑陋','普通','马虎','精美 means exquisite/beautifully done!']
        ];
        const items = isP6 ? p6 : p4;
        const item = items[rand(0,items.length-1)];
@@ -4273,7 +4670,22 @@ function caGetStages() {
          ['老师','lǎo shī','láo shī','lǎo shì','lào shī','老师 (teacher) = lǎo shī!'],
          ['动物','dòng wù','dōng wù','dòng wǔ','dǒng wù','动物 (animal) = dòng wù!'],
          ['星期','xīng qī','xìng qī','xīng qì','xǐng qī','星期 (week) = xīng qī!'],
-         ['早上','zǎo shang','záo shang','zǎo shàng','zào shang','早上 (morning) = zǎo shang!']
+         ['早上','zǎo shang','záo shang','zǎo shàng','zào shang','早上 (morning) = zǎo shang!'],
+         ['认真','rèn zhēn','rén zhēn','rèn zhěn','rěn zhēn','认真 (serious/careful) = rèn zhēn!'],
+         ['舒服','shū fu','shù fu','shū fú','shǔ fu','舒服 (comfortable) = shū fu!'],
+         ['作业','zuò yè','zuō yè','zuò yé','zuǒ yè','作业 (homework) = zuò yè!'],
+         ['图书馆','tú shū guǎn','tū shū guǎn','tú shū guàn','tǔ shū guǎn','图书馆 (library) = tú shū guǎn!'],
+         ['超市','chāo shì','cháo shì','chāo shī','chǎo shì','超市 (supermarket) = chāo shì!'],
+         ['蝴蝶','hú dié','hū dié','hú diē','hǔ dié','蝴蝶 (butterfly) = hú dié!'],
+         ['温暖','wēn nuǎn','wén nuǎn','wēn nuàn','wěn nuǎn','温暖 (warm) = wēn nuǎn!'],
+         ['操场','cāo chǎng','cào chǎng','cāo cháng','cǎo chǎng','操场 (playground) = cāo chǎng!'],
+         ['饺子','jiǎo zi','jiāo zi','jiǎo zǐ','jiào zi','饺子 (dumplings) = jiǎo zi!'],
+         ['游泳','yóu yǒng','yōu yǒng','yóu yòng','yǒu yǒng','游泳 (swimming) = yóu yǒng!'],
+         ['钢琴','gāng qín','gǎng qín','gāng qìn','gàng qín','钢琴 (piano) = gāng qín!'],
+         ['害羞','hài xiū','hǎi xiū','hài xīu','hāi xiū','害羞 (shy) = hài xiū!'],
+         ['兴奋','xīng fèn','xìng fèn','xīng fěn','xǐng fèn','兴奋 (excited) = xīng fèn!'],
+         ['眼睛','yǎn jing','yán jing','yǎn jìng','yàn jing','眼睛 (eyes) = yǎn jing!'],
+         ['故事','gù shi','gǔ shi','gù shì','gū shi','故事 (story) = gù shi!']
        ];
        const items = isP6 ? p6 : p4;
        const item = items[rand(0,items.length-1)];
@@ -4299,7 +4711,19 @@ function caGetStages() {
          ['一___鱼','条','只','个','本','鱼 uses 条 (tiáo) as measure word!'],
          ['一___纸','张','本','条','个','纸 uses 张 (zhāng) as measure word!'],
          ['一___牛','头','只','条','个','牛 uses 头 (tóu) as measure word!'],
-         ['一___衣服','件','条','只','个','衣服 uses 件 (jiàn) as measure word!']
+         ['一___衣服','件','条','只','个','衣服 uses 件 (jiàn) as measure word!'],
+         ['一___钢笔','支','条','本','个','钢笔 uses 支 (zhī) as measure word!'],
+         ['一___飞机','架','辆','只','艘','飞机 uses 架 (jià) as measure word!'],
+         ['一___汽车','辆','架','只','台','汽车 uses 辆 (liàng) as measure word!'],
+         ['一___船','艘','辆','架','条','船 uses 艘 (sōu) as measure word!'],
+         ['一___雨伞','把','支','条','个','雨伞 uses 把 (bǎ) as measure word!'],
+         ['一___眼镜','副','把','双','对','眼镜 uses 副 (fù) as measure word!'],
+         ['一___鞋','双','副','对','只','鞋 uses 双 (shuāng) as measure word!'],
+         ['一___河','条','道','个','根','河 uses 条 (tiáo) as measure word!'],
+         ['一___山','座','个','条','棵','山 uses 座 (zuò) as measure word!'],
+         ['一___桥','座','条','个','道','桥 uses 座 (zuò) as measure word!'],
+         ['一___歌','首','条','篇','个','歌 uses 首 (shǒu) as measure word!'],
+         ['一___星星','颗','个','粒','只','星星 uses 颗 (kē) as measure word!']
        ];
        const items = isP6 ? p6 : p4;
        const item = items[rand(0,items.length-1)];
@@ -4325,7 +4749,19 @@ function caGetStages() {
          ['冷','热','暖','凉','温','冷 (cold) ↔ 热 (hot)!'],
          ['新','旧','老','破','坏','新 (new) ↔ 旧 (old)!'],
          ['长','短','高','低','远','长 (long) ↔ 短 (short)!'],
-         ['胖','瘦','高','矮','轻','胖 (fat) ↔ 瘦 (thin)!']
+         ['胖','瘦','高','矮','轻','胖 (fat) ↔ 瘦 (thin)!'],
+         ['轻','重','大','快','高','轻 (light) ↔ 重 (heavy)!'],
+         ['深','浅','低','薄','窄','深 (deep) ↔ 浅 (shallow)!'],
+         ['宽','窄','小','短','薄','宽 (wide) ↔ 窄 (narrow)!'],
+         ['粗','细','薄','轻','短','粗 (thick/coarse) ↔ 细 (thin/fine)!'],
+         ['甜','苦','酸','辣','咸','甜 (sweet) ↔ 苦 (bitter)!'],
+         ['干','湿','冷','热','软','干 (dry) ↔ 湿 (wet)!'],
+         ['聪明','愚笨','安静','调皮','害羞','聪明 (clever) ↔ 愚笨 (foolish)!'],
+         ['勇敢','胆小','害怕','紧张','着急','勇敢 (brave) ↔ 胆小 (timid)!'],
+         ['勤劳','懒惰','辛苦','忙碌','疲倦','勤劳 (hardworking) ↔ 懒惰 (lazy)!'],
+         ['安全','危险','可怕','紧张','困难','安全 (safe) ↔ 危险 (dangerous)!'],
+         ['容易','困难','简单','轻松','方便','容易 (easy) ↔ 困难 (difficult)!'],
+         ['整齐','杂乱','干净','漂亮','安静','整齐 (tidy) ↔ 杂乱 (messy)!']
        ];
        const items = isP6 ? p6 : p4;
        const item = items[rand(0,items.length-1)];
@@ -4351,13 +4787,25 @@ function caGetStages() {
          ['五颜六色','颜色很多','五种颜色','六种颜色','彩虹','五颜六色 = colorful/multicolored!'],
          ['千言万语','有很多话要说','一千个字','写文章','读书','千言万语 = having so much to say!'],
          ['张灯结彩','装饰得很漂亮','开灯','买灯','修灯','张灯结彩 = decorated with lights and colors (for celebrations)!'],
-         ['大吃一惊','非常吃惊','吃很多','肚子饿','害怕','大吃一惊 = very surprised/shocked!']
+         ['大吃一惊','非常吃惊','吃很多','肚子饿','害怕','大吃一惊 = very surprised/shocked!'],
+         ['坐井观天','见识很少','坐在井里','看天空','休息','坐井观天 = having a narrow view of the world (like a frog in a well)!'],
+         ['对牛弹琴','对不懂的人讲道理','给牛听音乐','弹钢琴','喜欢动物','对牛弹琴 = talking to someone who cannot understand (casting pearls before swine)!'],
+         ['狐假虎威','借别人的力量吓人','狐狸和老虎','打架','森林','狐假虎威 = using someone else\'s power to bully others!'],
+         ['拔苗助长','急于求成反而坏事','种田','拔草','帮忙','拔苗助长 = trying to help but making things worse by being impatient!'],
+         ['井井有条','非常整齐有秩序','水井','很多井','喝水','井井有条 = very organized and orderly!'],
+         ['手忙脚乱','非常慌张','手和脚','跳舞','运动','手忙脚乱 = in a flurry, all flustered!'],
+         ['异口同声','大家一起说同样的话','嘴巴不同','声音很大','唱歌','异口同声 = speaking in unison!'],
+         ['目不转睛','看得非常专心','眼睛不动','不会转头','睡觉','目不转睛 = staring without looking away, gazing intently!'],
+         ['自告奋勇','主动站出来','告诉别人','很勇敢','请求','自告奋勇 = volunteering bravely!'],
+         ['迫不及待','非常着急，等不了','被逼迫','来不及','太迟了','迫不及待 = too eager to wait!'],
+         ['恍然大悟','突然明白了','很亮','做梦','睡醒了','恍然大悟 = suddenly understanding/realizing!'],
+         ['兴高采烈','非常开心','采花','很高','兴趣','兴高采烈 = in high spirits, overjoyed!']
        ];
        const items = isP6 ? p6 : p4;
        const item = items[rand(0,items.length-1)];
        return {q:`"${item[0]}" 的意思是？`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🎋 '+item[5], diff:'medium'};
      }]},
-    {id:'reading', name:'阅读理解', icon:'📖', topic:'reading', desc:'Short passage questions', diff:'hard',
+    {id:'reading', name:'阅读理解', icon:'📖', topic:'reading', desc:'Short passage questions — bonus XP!', diff:'hard',
      qs: [() => {
        const p6=[
          {p:'小明每天早上六点起床，先跑步半小时，然后回家吃早餐。他的妈妈总是准备好热腾腾的粥和包子。吃完早餐后，小明会复习功课，然后才去学校。他的成绩一直很好，老师和同学都很佩服他。',
@@ -4374,10 +4822,54 @@ function caGetStages() {
           q:'小猫是一个怎样的动物？', opts:['善良友好','胆小害怕','调皮捣蛋','自私自利']},
          {p:'星期天，妈妈带我去超市买东西。我看到了一个很漂亮的玩具，想让妈妈买。妈妈说："你如果这个星期表现好，下次再买给你。"我点了点头。',
           q:'妈妈的意思是什么？', opts:['表现好才能买玩具','不想买玩具','下次不来了','玩具太贵了']},
+         {p:'小华养了一只小狗叫旺旺。每天放学回家，旺旺都会在门口等他，看到小华就开心地摇尾巴。有一天，旺旺生病了，小华很担心，每天都照顾它。过了几天，旺旺终于好了，小华高兴得跳了起来。',
+          q:'小华是一个怎样的孩子？', opts:['有爱心、关心动物','胆小害怕','不喜欢小狗','只会玩耍']},
+         {p:'放学后，小明在路上看到一位老爷爷提着很多东西，走得很慢。小明跑过去说："爷爷，我帮您提吧！"老爷爷笑着说："你真是个好孩子！"小明帮爷爷把东西提到家门口才离开。',
+          q:'这个故事告诉我们什么？', opts:['要乐于助人','走路要快','不要提重的东西','放学要早点回家']},
+         {p:'小美的奶奶住在乡下。每年暑假，小美都会去奶奶家住几天。奶奶家有一个大花园，里面种了很多花和蔬菜。小美最喜欢帮奶奶浇花，还会摘新鲜的西红柿吃。',
+          q:'小美最喜欢在奶奶家做什么？', opts:['帮奶奶浇花','看电视','做作业','睡觉']},
+         {p:'星期六，爸爸带我和弟弟去动物园。我们先看了大象，大象用长鼻子喷水，弟弟被吓了一跳。然后我们去看了猴子，猴子在树上跳来跳去，非常有趣。最后我们去看了熊猫，熊猫正在吃竹子，样子很可爱。',
+          q:'弟弟为什么被吓了一跳？', opts:['因为大象用鼻子喷水','因为猴子跳来跳去','因为熊猫太大了','因为动物园人太多']},
+         {p:'小兰是班上的图书管理员。每天午休时间，她都会整理书架上的书，把看完的书放回原来的位置。有同学借书，她会认真登记。同学们都说小兰做事很负责，老师也表扬了她。',
+          q:'同学们觉得小兰是一个怎样的人？', opts:['做事负责认真','很会看书','午休不休息','喜欢表扬别人']},
+         {p:'冬天到了，天气变得很冷。妈妈给我织了一条围巾，又暖和又漂亮。我戴着围巾去上学，同学们都说很好看。我告诉他们这是妈妈亲手织的，心里觉得很幸福。',
+          q:'为什么"我"心里觉得很幸福？', opts:['因为围巾是妈妈亲手织的','因为同学说好看','因为天气不冷了','因为放假了']},
+         {p:'小龙参加了学校的跑步比赛。比赛开始后，他一直跑在第三名。快到终点时，前面的同学不小心摔倒了。小龙没有直接跑过去，而是停下来把同学扶起来。虽然小龙最后没有得第一名，但是大家都为他鼓掌。',
+          q:'大家为什么为小龙鼓掌？', opts:['因为他停下来帮助摔倒的同学','因为他跑得最快','因为他得了第一名','因为他没有摔倒']},
+         {p:'下课了，小文和小亮在操场上踢足球。小文不小心把球踢到了花坛里，把一棵花踢断了。小文看了看四周没有人，想悄悄走开。小亮说："我们应该去告诉老师，做一个诚实的孩子。"小文想了想，点了点头。',
+          q:'小亮认为应该怎么做？', opts:['去告诉老师，做诚实的人','悄悄走开','把花藏起来','怪别人踢的']},
+         {p:'小军很喜欢吃糖。有一天，他牙疼得很厉害，妈妈带他去看牙医。牙医说他有蛀牙，以后要少吃糖，每天认真刷牙。小军害怕再牙疼，就听了牙医的话。',
+          q:'小军为什么会牙疼？', opts:['因为他吃了太多糖','因为他不喝水','因为天气太冷','因为他摔倒了']},
+         {p:'小丽和小红是好朋友。有一天，小丽不小心把小红的铅笔盒弄坏了。小丽很难过，主动跟小红道歉，还用自己的零花钱买了一个新的铅笔盒送给小红。小红原谅了她，她们还是好朋友。',
+          q:'小丽做了什么来弥补自己的错误？', opts:['道歉并买了新铅笔盒','假装不知道','哭了很久','不和小红说话']},
+         {p:'今天是植树节，老师带同学们去公园种树。小强挖坑，小花放树苗，小明浇水。大家合作得很好，一上午就种了十棵树。老师说："你们真棒！这些树长大了，会让空气更清新。"',
+          q:'同学们种树是为了什么？', opts:['让空气更清新','为了得奖','为了玩泥巴','因为老师命令的']},
+         {p:'小刚家里养了两只小鸡。每天早上，小刚都会给小鸡喂米和水。有一天，一只小鸡不吃东西了，小刚很着急。爸爸看了看说："小鸡可能感冒了，我们给它保暖吧。"小刚用棉花给小鸡做了一个小窝，过了两天小鸡就好了。',
+          q:'爸爸觉得小鸡怎么了？', opts:['可能感冒了','吃太饱了','不喜欢米了','想出去玩']},
+         {p:'周末，小亮跟着爸爸去钓鱼。他们坐在河边等了很久，一条鱼也没有钓到。小亮有点不耐烦了，想回家。爸爸说："做事要有耐心，再等等看。"又过了一会儿，鱼竿终于动了，他们钓到了一条大鱼！',
+          q:'这个故事教我们什么道理？', opts:['做事要有耐心','钓鱼很无聊','鱼很难钓','周末不要出去']},
+         {p:'小月的成绩一直不太好。有一天，新来的老师对她说："每个人都有自己的优点，你画画画得很好啊！"从那以后，小月每天都认真画画，还参加了学校的绘画比赛，得了第二名。她变得越来越自信了。',
+          q:'新老师的话对小月有什么影响？', opts:['让她发现自己的优点，变得自信','让她不想学习了','让她觉得难过','没有什么影响']},
+         {p:'小东和小西是邻居。小东有很多玩具，小西有很多书。他们经常交换着玩和看。小东从书里学到了很多知识，小西玩玩具也变得很开心。他们觉得分享让大家都快乐。',
+          q:'小东和小西觉得什么让大家都快乐？', opts:['分享','买新东西','比赛','争吵']},
+         {p:'考试前一天，小李一直在看漫画，没有复习。第二天考试，他很多题都不会做。看到旁边同学认真答题，他很后悔。从那以后，小李每次考试前都会认真复习。',
+          q:'小李为什么后悔？', opts:['因为他没有认真复习','因为考试太难了','因为他忘了带笔','因为他迟到了']},
+         {p:'暑假里，小芳参加了社区的义工活动。她帮老人打扫房间，给小朋友讲故事。虽然很累，但她觉得很有意义。社区的叔叔阿姨都夸她是个有爱心的孩子。',
+          q:'小芳为什么觉得义工活动有意义？', opts:['因为她帮助了别人','因为她得到了钱','因为不用做作业','因为可以出去玩']},
+         {p:'小豪家搬到了新的城市。刚开始他很不开心，因为没有朋友。后来，班上一个叫小杰的同学主动跟他说话，带他认识其他同学。慢慢地，小豪交到了很多新朋友，也喜欢上了这个新城市。',
+          q:'小豪为什么一开始不开心？', opts:['因为搬到新城市没有朋友','因为新城市太小','因为他不喜欢上学','因为爸爸妈妈不好']},
+         {p:'乌鸦口渴了，到处找水喝。它看到一个瓶子里有水，可是水太少了，嘴巴够不着。乌鸦想了一个办法，把小石子一颗一颗地放进瓶子里。水慢慢升高了，乌鸦终于喝到了水。',
+          q:'这个故事告诉我们什么？', opts:['遇到困难要动脑筋想办法','乌鸦很笨','石子很有用','瓶子太小了']},
+         {p:'小雨很怕黑，晚上总是不敢一个人睡觉。妈妈给她买了一个小夜灯，还告诉她："勇敢的孩子不怕黑，黑暗里什么都没有。"小雨试着关上大灯，只开小夜灯。慢慢地，她不再怕黑了。',
+          q:'小雨是怎么克服怕黑的？', opts:['用小夜灯慢慢适应','一直开着大灯','跟妈妈一起睡','不睡觉']},
+         {p:'秋天到了，树叶变黄了，从树上飘落下来。小林在公园里捡了很多漂亮的树叶，拿回家做了一幅树叶画。他把树叶贴成一只蝴蝶的形状，涂上颜色，非常漂亮。老师看了说："你真有创意！"',
+          q:'小林用树叶做了什么？', opts:['做了一幅树叶画','做了一个书签','扔掉了','给了同学']},
+         {p:'小伟的爷爷是一位退休的老师。每天下午，爷爷都会在院子里教小伟下棋。小伟一开始老是输，但是他没有放弃。经过三个月的练习，小伟终于赢了爷爷一盘棋。爷爷笑着说："你进步真大！"',
+          q:'小伟最后为什么能赢爷爷？', opts:['因为他坚持练习没有放弃','因为爷爷让他赢的','因为下棋很简单','因为他很聪明']}
        ];
        const items = isP6 ? p6 : p4;
        const c = items[rand(0,items.length-1)];
-       return {q:c.q, opts:c.opts, ans:0, exp:'📖 仔细阅读，答案就在文章里！', diff:'hard', passage:c.p};
+       return {q:c.q, opts:c.opts, ans:0, exp:'📖 仔细阅读，答案就在文章里！', diff:'hard', passage:c.p, bonusXp:true};
      }]},
     {id:'grammar', name:'语法高手', icon:'📐', topic:'grammar', desc:'Sentence structure & grammar', diff:'hard',
      qs: [() => {
@@ -4396,13 +4888,127 @@ function caGetStages() {
          ['哪个是问句？','你今天开心吗？','你今天很开心。','今天你开心。','开心你今天。','问句末尾用"吗"或"？"!'],
          ['选出正确的句子：','弟弟在房间里画画。','弟弟画画在房间里。','在房间里弟弟画画。','弟弟房间里在画画。','在 + Place + Verb: 表示地点!'],
          ['哪个句子有错误？','他跑步得很快。','他跑得很快。','他跑步跑得很快。','他很快地跑着。','跑步得很快 is wrong — should be 跑得很快!'],
+         ['选出正确的"把"字句：','姐姐把房间打扫干净了。','姐姐把打扫房间干净了。','把房间姐姐打扫干净了。','姐姐干净把房间打扫了。','把字句: Subject + 把 + Object + Verb + Result!'],
+         ['哪个句子的标点符号是正确的？','妈妈问我："你做完作业了吗？"','妈妈问我，"你做完作业了吗。"','妈妈问我"你做完作业了吗"','妈妈问我：你做完作业了吗？','引号内的问句要用问号，冒号引出引语!'],
+         ['哪个是比喻句？','弟弟的脸红得像苹果一样。','弟弟的脸很红。','弟弟的脸红了。','弟弟害羞了。','比喻句用"像"来比较，把脸比作苹果!'],
+         ['选出正确的句子：','我先做作业，然后去玩。','我先做作业然后去玩。','然后先做作业我去玩。','去玩先然后做作业。','先...然后 shows the correct order of actions!'],
+         ['哪个句子用了"被"字句？','蛋糕被弟弟吃完了。','弟弟吃完了蛋糕。','弟弟把蛋糕吃完了。','蛋糕吃完了。','被字句: Thing + 被 + Person + Verb + Result!'],
+         ['下面哪个是感叹句？','这朵花多漂亮啊！','这朵花漂亮吗？','这朵花很漂亮。','花很漂亮的。','感叹句用"多...啊！"表示强烈感情!'],
+         ['选出语序正确的句子：','我们在教室里安静地看书。','我们安静地在教室里看书。','在教室里我们安静地看书。','看书我们安静地在教室里。','Place + Manner + Verb is the standard order!'],
+         ['哪个词语用得不对？','他高高兴兴地哭了。','他高高兴兴地笑了。','他高高兴兴地回家了。','他高高兴兴地唱歌。','高高兴兴 means happily — it does not match 哭 (cry)!'],
+         ['选出正确的量词用法：','一只小鸟在树上唱歌。','一条小鸟在树上唱歌。','一头小鸟在树上唱歌。','一匹小鸟在树上唱歌。','小鸟 uses 只 (zhī) as measure word!'],
+         ['哪个句子是祈使句？','请大家安静！','大家很安静。','大家安静吗？','大家都安静了。','祈使句表示请求或命令，常用"请"!']
        ];
        const items = isP6 ? p6 : p4;
        const item = items[rand(0,items.length-1)];
        return {q:item[0], opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'📐 '+item[5], diff:'hard'};
      }]},
+    {id:'charset', name:'辨字测验', icon:'🔍', topic:'charset', desc:'Pick the correct character', diff:'easy',
+     qs: [() => {
+       const p6=[
+         ['老师和同学都鼓___我。','励','立','丽','利','鼓励 (encourage) — 励 is the correct character!'],
+         ['我们要保护周围的环___。','境','镜','竟','净','环境 (environment) — 境 means surroundings!'],
+         ['他的态度非常认___。','真','针','珍','诊','认真 (serious) — 真 means true/real!'],
+         ['这件事需要我们共同努___。','力','历','利','礼','努力 (work hard) — 力 means strength!'],
+         ['猴子很骄傲，说自己的本___最大。','领','邻','铃','令','本领 (skill) — 领 is the correct character!'],
+         ['妈妈___嘱我要小心过马路。','叮','丁','钉','顶','叮嘱 (remind/urge) — 叮 means to urge!'],
+         ['我们要尊___老师和长辈。','敬','竞','镜','净','尊敬 (respect) — 敬 means to respect!'],
+         ['春天来了，百花齐___。','放','防','访','仿','齐放 (bloom together) — 放 means to release/bloom!']
+       ];
+       const p4=[
+         ['妈妈让我去超市买东___。','西','习','洗','喜','东西 (things) — 西 means west, but 东西 means things!'],
+         ['小明很喜___画画。','欢','换','还','环','喜欢 (like) — 欢 means joy/happiness!'],
+         ['弟弟在操___上跑步。','场','常','长','唱','操场 (playground) — 场 means field/ground!'],
+         ['老师教我们写___文。','作','做','坐','座','作文 (composition) — 作 means to write/create!'],
+         ['天气很冷，我穿了一件棉___。','袄','奥','傲','熬','棉袄 (padded jacket) — 袄 means jacket!'],
+         ['春天来了，小草从地里___出来。','钻','赚','转','砖','钻出来 (sprout/drill out) — 钻 means to drill through!'],
+         ['爸爸给我讲了一个故___。','事','是','市','试','故事 (story) — 事 means matter/event!'],
+         ['这道数学题很___单。','简','间','见','建','简单 (simple) — 简 means simple!'],
+         ['我们应该___重别人。','尊','村','存','寸','尊重 (respect) — 尊 means to honor!'],
+         ['妈妈___诉我要好好学习。','告','高','搞','稿','告诉 (tell) — 告 means to tell!'],
+         ['放学后我去图书___看书。','馆','管','观','关','图书馆 (library) — 馆 means building/hall!'],
+         ['小鸟在树上___歌。','唱','常','场','长','唱歌 (sing) — 唱 means to sing!'],
+         ['今天的作业很___单。','简','间','检','捡','简单 (simple) — 简 means simple/brief!'],
+         ['弟弟___别人的帮助很感动。','对','队','兑','堆','对 (towards) — used with 别人的帮助 to mean "for the help"!'],
+         ['我们班___行了一次运动会。','举','具','巨','拒','举行 (hold an event) — 举 means to hold/raise!'],
+         ['哥哥的成___很好。','绩','迹','积','击','成绩 (results/grades) — 绩 means achievement!'],
+         ['同学们都很___结。','团','图','土','吐','团结 (united) — 团 means group/unite!'],
+         ['老师对我们很关___。','心','新','信','辛','关心 (care about) — 心 means heart!'],
+         ['我___望长大以后当医生。','希','稀','西','息','希望 (hope) — 希 means to hope!'],
+         ['这个周末我们去___园玩。','公','工','功','攻','公园 (park) — 公 means public!']
+       ];
+       const items = isP6 ? p6 : p4;
+       const item = items[rand(0,items.length-1)];
+       return {q:`选出正确的字: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🔍 '+item[5], diff:'easy'};
+     }]},
+    {id:'collocation', name:'词语搭配', icon:'🔗', topic:'collocation', desc:'Match the correct word pair', diff:'medium',
+     qs: [() => {
+       const p6=[
+         ['指挥___','交通','视力','乐曲','宾客','指挥交通 = direct traffic!'],
+         ['检查___','视力','交通','宾客','乐曲','检查视力 = check eyesight!'],
+         ['接待___','宾客','交通','视力','乐曲','接待宾客 = receive/welcome guests!'],
+         ['改善___','环境','勇气','知识','天空','改善环境 = improve the environment!'],
+         ['增长___','知识','天空','勇气','声音','增长知识 = grow/increase knowledge!'],
+         ['鼓起___','勇气','知识','天空','环境','鼓起勇气 = summon up courage!'],
+         ['发挥___','才能','问题','困难','错误','发挥才能 = display one\'s talent!'],
+         ['克服___','困难','才能','梦想','快乐','克服困难 = overcome difficulties!']
+       ];
+       const p4=[
+         ['打扫___','房间','作业','故事','音乐','打扫房间 = clean the room!'],
+         ['完成___','作业','房间','饭菜','衣服','完成作业 = finish homework!'],
+         ['讲___','故事','房间','作业','衣服','讲故事 = tell a story!'],
+         ['弹___','钢琴','足球','故事','饭菜','弹钢琴 = play piano!'],
+         ['踢___','足球','钢琴','故事','作业','踢足球 = kick/play football!'],
+         ['洗___','衣服','故事','作业','音乐','洗衣服 = wash clothes!'],
+         ['浇___','花','歌','球','书','浇花 = water the flowers!'],
+         ['整理___','书包','足球','花朵','饭菜','整理书包 = organize schoolbag!'],
+         ['收拾___','房间','钢琴','故事','歌曲','收拾房间 = tidy up the room!'],
+         ['照顾___','弟弟','作业','操场','课本','照顾弟弟 = take care of younger brother!'],
+         ['参加___','比赛','课本','铅笔','窗户','参加比赛 = participate in a competition!'],
+         ['欣赏___','风景','作业','铅笔','课桌','欣赏风景 = enjoy/appreciate the scenery!'],
+         ['保护___','环境','钢琴','故事','课桌','保护环境 = protect the environment!'],
+         ['培养___','习惯','铅笔','窗户','操场','培养习惯 = develop a habit!'],
+         ['解决___','问题','钢琴','风景','衣服','解决问题 = solve a problem!']
+       ];
+       const items = isP6 ? p6 : p4;
+       const item = items[rand(0,items.length-1)];
+       return {q:`选择正确的搭配: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🔗 '+item[5], diff:'medium'};
+     }]},
+    {id:'conjunction', name:'关联词', icon:'🔀', topic:'conjunction', desc:'Fill in the correct conjunction', diff:'medium',
+     qs: [() => {
+       const p6=[
+         ['___他很聪明，___他不努力，成绩还是不好。','虽然...但是','因为...所以','不但...而且','如果...就','虽然...但是 = although...but (contrast)!'],
+         ['___多读书，___能增长知识。','只要...就','虽然...但是','不是...而是','因为...所以','只要...就 = as long as...then!'],
+         ['他___会唱歌，___会弹琴。','不但...而且','虽然...但是','因为...所以','如果...就','不但...而且 = not only...but also!'],
+         ['___你不认真复习，___会考不好。','如果...就','虽然...但是','不但...而且','因为...所以','如果...就 = if...then!'],
+         ['___大家都反对，他___坚持自己的想法。','即使...也','因为...所以','不但...而且','只要...就','即使...也 = even if...still!'],
+         ['___刮风下雨，他___按时到校。','不管...都','因为...所以','如果...就','虽然...但是','不管...都 = no matter...always!'],
+         ['这件事___简单，___做起来还是挺难的。','看起来...但是','因为...所以','不但...而且','如果...就','看起来...但是 = it looks...but actually!'],
+         ['他___学习好，___乐于助人。','不仅...还','虽然...但是','因为...所以','如果...就','不仅...还 = not only...but also (furthermore)!']
+       ];
+       const p4=[
+         ['妈妈批评你___不爱你，___希望你变得更好。','不是...而是','不但...而且','因为...所以','虽然...但是','不是...而是 = not...but rather!'],
+         ['___今天下雨了，___我们不能去公园玩。','因为...所以','虽然...但是','不但...而且','如果...就','因为...所以 = because...therefore!'],
+         ['___天气很冷，___小明还是坚持跑步。','虽然...但是','因为...所以','不但...而且','如果...就','虽然...但是 = although...but!'],
+         ['___你按时完成作业，妈妈___带你去吃冰淇淋。','如果...就','虽然...但是','因为...所以','不但...而且','如果...就 = if...then!'],
+         ['弟弟___喜欢画画，___喜欢唱歌。','不但...而且','因为...所以','虽然...但是','如果...就','不但...而且 = not only...but also!'],
+         ['妈妈___下班回到家，___开始做饭。','一...就','因为...所以','虽然...但是','不但...而且','一...就 = as soon as...then!'],
+         ['___是谁做错了事，___应该道歉。','不管...都','因为...所以','虽然...但是','如果...就','不管...都 = no matter who...should!'],
+         ['___多运动，身体___会更健康。','只要...就','虽然...但是','因为...所以','不但...而且','只要...就 = as long as...then!'],
+         ['___学习，我们___要锻炼身体。','除了...还','因为...所以','虽然...但是','如果...就','除了...还 = besides...also!'],
+         ['___他个子不高，___篮球打得很好。','虽然...但是','因为...所以','不但...而且','如果...就','虽然...但是 = although...but!'],
+         ['___你喜欢这本书，___借去看吧。','如果...就','虽然...但是','因为...所以','不管...都','如果...就 = if...then!'],
+         ['小红___学习好，___经常帮助同学。','不但...而且','如果...就','因为...所以','虽然...但是','不但...而且 = not only...but also!'],
+         ['___我们怎么叫他，他___不理我们。','不管...都','如果...就','虽然...但是','因为...所以','不管...都 = no matter how...still!'],
+         ['___写完了作业，弟弟___跑出去玩了。','一...就','只要...就','虽然...但是','因为...所以','一...就 = as soon as...then!'],
+         ['这道题___难，___我还是做出来了。','虽然...但是','因为...所以','不但...而且','如果...就','虽然...但是 = although...but!']
+       ];
+       const items = isP6 ? p6 : p4;
+       const item = items[rand(0,items.length-1)];
+       return {q:`选出正确的关联词: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🔀 '+item[5], diff:'medium'};
+     }]},
     {id:'boss', name:'🏮 中文大师', icon:'👑', topic:'mixed', desc:'Mixed Challenge — All categories!', diff:'hard', boss:true,
-     qs: [() => { const stages = caGetStages(); const all=[...stages[0].qs,...stages[1].qs,...stages[2].qs,...stages[3].qs,...stages[4].qs,...stages[5].qs,...stages[6].qs]; return all[rand(0,all.length-1)](); }]},
+     qs: [() => { const stages = caGetStages(); const all=[...stages[0].qs,...stages[1].qs,...stages[2].qs,...stages[3].qs,...stages[4].qs,...stages[5].qs,...stages[6].qs,...stages[7].qs,...stages[8].qs,...stages[9].qs]; return all[rand(0,all.length-1)](); }]},
   ];
 }
 
@@ -4456,8 +5062,9 @@ function caStartBattle(stageIdx) {
     if (caBattle.questions.length >= 5) break;
   }
   if (caBattle.questions.length < 5) {
-    for (let i = caBattle.questions.length; i < 5; i++) {
-      caBattle.questions.push(stage.qs[rand(0, stage.qs.length-1)]());
+    for (let i = 0; i < 30 && caBattle.questions.length < 5; i++) {
+      const q = stage.qs[rand(0, stage.qs.length-1)]();
+      if (!caBattle.questions.some(x => x.q === q.q)) caBattle.questions.push(q);
     }
   }
   document.getElementById('ca-stage-area').style.display = 'none';
@@ -4516,14 +5123,17 @@ function caSelectAnswer(idx) {
     caBattle.correct++;
     caBattle.combo++;
     if (caBattle.combo > caBattle.bestCombo) caBattle.bestCombo = caBattle.combo;
-    const xp = q.diff==='hard'?20:q.diff==='medium'?12:8;
-    const coins = q.diff==='hard'?10:q.diff==='medium'?6:4;
+    let xp = q.diff==='hard'?20:q.diff==='medium'?12:8;
+    let coins = q.diff==='hard'?10:q.diff==='medium'?6:4;
+    // Bonus for reading comprehension (passage-based questions)
+    if (q.bonusXp || q.passage) { xp = Math.round(xp * 2); coins = Math.round(coins * 2); }
     state[currentPlayer].xp += xp;
     state[currentPlayer].coins += coins;
     fb.style.display = 'block';
     fb.style.background = 'rgba(46,213,115,.15)';
     fb.style.color = '#2ed573';
-    fb.innerHTML = `✅ 正确! +${xp} XP, +${coins} coins<br><span style="font-size:.85em;color:#aaa">${q.exp}</span>`;
+    const bonusLabel = (q.bonusXp || q.passage) ? ' ⭐ BONUS!' : '';
+    fb.innerHTML = `✅ 正确! +${xp} XP, +${coins} coins${bonusLabel}<br><span style="font-size:.85em;color:#aaa">${q.exp}</span>`;
     playSound('correct');
     if (caBattle.combo >= 3) playSound('combo');
     const cq = state[currentPlayer].completedQs.chinese;
@@ -4545,7 +5155,7 @@ function caSelectAnswer(idx) {
   document.getElementById('ca-progress-text').textContent = `${caBattle.correct} / 5 correct`;
   save(); updatePlayerCards();
   // Show "Next" button — wait for user to confirm understanding
-  fb.innerHTML += `<br><button onclick="caNextQuestion()" style="margin-top:10px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">理解したら次へ ➜</button>`;
+  fb.innerHTML += `<br><button onclick="caNextQuestion()" style="margin-top:10px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">Got it! Next ➜</button>`;
 }
 
 function caNextQuestion() {
@@ -4884,8 +5494,9 @@ function saStartBattle(stageIdx) {
     if (saBattle.questions.length >= 5) break;
   }
   if (saBattle.questions.length < 5) {
-    for (let i = saBattle.questions.length; i < 5; i++) {
-      saBattle.questions.push(stage.qs[rand(0, stage.qs.length-1)]());
+    for (let i = 0; i < 30 && saBattle.questions.length < 5; i++) {
+      const q = stage.qs[rand(0, stage.qs.length-1)]();
+      if (!saBattle.questions.some(x => x.q === q.q)) saBattle.questions.push(q);
     }
   }
   document.getElementById('sa-stage-area').style.display = 'none';
@@ -4972,7 +5583,7 @@ function saSelectAnswer(idx) {
   document.getElementById('sa-progress-text').textContent = `${saBattle.correct} / 5 correct`;
   save(); updatePlayerCards();
   // Show "Next" button — wait for user to confirm understanding
-  fb.innerHTML += `<br><button onclick="saNextQuestion()" style="margin-top:10px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">理解したら次へ ➜</button>`;
+  fb.innerHTML += `<br><button onclick="saNextQuestion()" style="margin-top:10px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">Got it! Next ➜</button>`;
 }
 
 function saNextQuestion() {
@@ -5609,8 +6220,8 @@ function oqGuidedNext() {
   oqGuidedState.answers[oqGuidedState.step] = input;
 
   // Award coins & XP for this step
-  state.yuhi.coins += s.coins;
-  state.yuhi.xp += s.xp;
+  state[currentPlayer].coins += s.coins;
+  state[currentPlayer].xp += s.xp;
   oqGuidedState.coinsEarned += s.coins;
   oqGuidedState.xpEarned += s.xp;
   save(); updatePlayerCards();
@@ -5686,8 +6297,8 @@ function scoreOralResponse() {
   // XP reward
   const xpEarned = Math.round(totalScore * 0.5);
   const coinsEarned = Math.round(totalScore * 0.2);
-  state.yuhi.xp += xpEarned;
-  state.yuhi.coins += coinsEarned;
+  state[currentPlayer].xp += xpEarned;
+  state[currentPlayer].coins += coinsEarned;
   oralState.totalXP = (oralState.totalXP || 0) + xpEarned;
   oralState.history.push({
     id: currentOralScenario.id,
@@ -6056,13 +6667,23 @@ function renderArenaStages() {
 
 function maStartBattle(stageId) {
   const stage = maStages.find(s => s.id === stageId);
-  // Filter out completed questions
   const completed = (state[maCurrentPlayer].completedQs && state[maCurrentPlayer].completedQs.math) || [];
-  let available = maQuestions[stageId].filter(q => !completed.includes(q.q));
-  // If too few available, reset completed for this stage
-  if (available.length < 3) {
-    available = [...maQuestions[stageId]];
+  // Always generate fresh procedural questions first, then fill from static pool
+  const genFn = maCurrentPlayer === 'yuhi' ? _gP6 : _gP4;
+  const arenaLvl = (arenaState && arenaState.level) || 1;
+  let available = [];
+  // Generate procedural questions (always fresh)
+  for (let i = 0; i < 60 && available.length < 10; i++) {
+    const gq = genFn(arenaLvl);
+    if (gq && gq.q && !available.some(a => a.q === gq.q) && !completed.includes(gq.q)) {
+      gq.hint = gq.hint || 'Think carefully and try your best!';
+      gq.diff = gq.diff || 'medium';
+      available.push(gq);
+    }
   }
+  // Add unused static questions as extra variety
+  const staticAvail = maQuestions[stageId].filter(q => !completed.includes(q.q) && !available.some(a => a.q === q.q));
+  available = available.concat(staticAvail);
   const pool = [...available].sort(() => Math.random() - 0.5);
   const picks = pool.slice(0, 3).map(q => {
     const correctText = q.opts[q.ans];
@@ -6137,7 +6758,7 @@ function maAnswer(idx) {
 
   // Track question in completedQs so it won't repeat
   const cqMath = state[maCurrentPlayer].completedQs.math;
-  if (cqMath && q.q && !cqMath.includes(q.q)) cqMath.push(q.q);
+  if (cqMath && q.q && !cqMath.includes(q.q)) { cqMath.push(q.q); save(); }
 
   const arenaBox = document.getElementById('ma-arena-box');
 
@@ -6235,7 +6856,7 @@ function maAnswer(idx) {
 
   // Show "Next" button — wait for user to confirm understanding
   const maFbArea = document.getElementById('ma-combo-display');
-  maFbArea.innerHTML += `<br><button onclick="maNextRound()" style="margin-top:8px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">理解したら次へ ➜</button>`;
+  maFbArea.innerHTML += `<br><button onclick="maNextRound()" style="margin-top:8px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">Got it! Next ➜</button>`;
 }
 
 function maNextRound() {
@@ -6596,7 +7217,7 @@ function chalAnswer(idx) {
   fbEl.style.display = 'block';
   fbEl.className = 'q-feedback show ' + (correct ? 'correct' : 'wrong');
   fbEl.innerHTML = (correct ? '<h4>✅ Correct! +1 point</h4>' : (idx===-1?'<h4>⏰ Time\'s up!</h4>':`<h4>❌ Wrong!</h4><p>Answer: ${q.opts[q.ans]}</p>`))
-    + `<button onclick="chalNextQ()" style="margin-top:10px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">理解したら次へ ➜</button>`;
+    + `<button onclick="chalNextQ()" style="margin-top:10px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">Got it! Next ➜</button>`;
 }
 
 function chalNextQ() {
@@ -6766,7 +7387,7 @@ function coopAnswer(idx) {
   save(); updatePlayerCards();
   // Show "Next" button — wait for user to confirm understanding
   const coopCombo = document.getElementById('coop-combo-display');
-  coopCombo.innerHTML += `<br><button onclick="coopNextRound()" style="margin-top:8px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">理解したら次へ ➜</button>`;
+  coopCombo.innerHTML += `<br><button onclick="coopNextRound()" style="margin-top:8px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">Got it! Next ➜</button>`;
 }
 
 function coopNextRound() {
@@ -6960,6 +7581,8 @@ function toggleDailyTask(taskId) {
 
 const PARENT_PIN = '2410';
 
+let _pendingTimeType = null;
+
 function applyTaskTime(type) {
   const player = currentTaskPlayer;
   const today = getTodayTaskData(player);
@@ -6973,12 +7596,46 @@ function applyTaskTime(type) {
     return;
   }
 
-  // Parent PIN check
-  const pin = prompt('Parent PIN required.\nJoanne or Akihiro, please enter the PIN:');
+  // Show PIN modal
+  _pendingTimeType = type;
+  document.getElementById('pin-modal').style.display = 'flex';
+  document.getElementById('pin-input').value = '';
+  document.getElementById('pin-error').style.display = 'none';
+  setTimeout(() => document.getElementById('pin-input').focus(), 100);
+  return;
+}
+
+function pinModalCancel() {
+  document.getElementById('pin-modal').style.display = 'none';
+  _pendingTimeType = null;
+}
+
+function pinModalSubmit() {
+  const pin = document.getElementById('pin-input').value;
   if (pin !== PARENT_PIN) {
-    alert('Incorrect PIN. Only parents can record wake-up and bedtime.');
+    document.getElementById('pin-error').style.display = 'block';
+    document.getElementById('pin-input').value = '';
+    document.getElementById('pin-input').focus();
     return;
   }
+  document.getElementById('pin-modal').style.display = 'none';
+  if (_pendingTimeType) {
+    _applyTaskTimeConfirmed(_pendingTimeType);
+    _pendingTimeType = null;
+  }
+}
+
+// Allow Enter key to submit PIN
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.getElementById('pin-modal').style.display === 'flex') {
+    pinModalSubmit();
+  }
+});
+
+function _applyTaskTimeConfirmed(type) {
+  const player = currentTaskPlayer;
+  const today = getTodayTaskData(player);
+  const input = document.getElementById('task-' + type + '-input').value;
 
   // Reverse previous bonus (safety, shouldn't happen with once-per-day check)
   if (type === 'wake' && today.wake) {
@@ -6997,13 +7654,13 @@ function applyTaskTime(type) {
 
   let coins = 0, xp = 0;
   if (diff > 0) {
-    const mins = type === 'wake' ? Math.min(diff, 45) : Math.min(diff, 45);
-    coins = type === 'wake' ? mins * 2 : mins * 1;
-    xp    = type === 'wake' ? mins * 3 : mins * 2;
+    const mins = Math.min(diff, 30);
+    coins = mins * 30;
+    xp    = mins * 30;
   } else if (diff < 0) {
-    const mins = Math.abs(diff);
-    coins = type === 'wake' ? -(mins * 3) : -(mins * 2);
-    xp    = type === 'wake' ? -(mins * 5) : -(mins * 3);
+    const mins = Math.min(Math.abs(diff), 30);
+    coins = -(mins * 30);
+    xp    = -(mins * 30);
   }
 
   if (type === 'wake') { today.wake = input; today.wakeCoins = coins; today.wakeXP = xp; }
@@ -7116,8 +7773,8 @@ function renderTasksSummary() {
 }
 
 // ============ POMODORO TIMER ============
-const POMO_STUDY_MINS = 50;
-const POMO_BREAK_MINS = 10;
+let POMO_STUDY_MINS = 50;
+let POMO_BREAK_MINS = 10;
 const BREAK_ACTIVITIES = [
   {emoji:'💧', name:'Water Break', desc:'Drink a full glass of water!'},
   {emoji:'🚽', name:'Toilet Break', desc:'Quick bathroom break'},
@@ -7185,6 +7842,9 @@ function pomoUpdateDisplay() {
   }
 
   widget.classList.toggle('paused', !pomoState.running && pomoState.secondsLeft < (pomoState.phase === 'study' ? POMO_STUDY_MINS * 60 : POMO_BREAK_MINS * 60));
+  // Hide mode selector while running
+  const modeSelect = document.getElementById('pomo-mode-select');
+  if (modeSelect) modeSelect.style.display = pomoState.running ? 'none' : 'flex';
 
   startBtn.style.display = pomoState.running ? 'none' : '';
   pauseBtn.style.display = pomoState.running ? '' : 'none';
@@ -7213,11 +7873,17 @@ function pomoTick() {
       state[currentPlayer].xp += 20;
       state[currentPlayer].coins += 10;
       save(); updatePlayerCards();
+      // Celebration sound & message
+      playPomoSound('studyDone');
+      pomoShowCompleteOverlay('study');
     } else {
       // Break complete -> back to study
       pomoState.phase = 'study';
       pomoState.secondsLeft = POMO_STUDY_MINS * 60;
       pomoHideBreak();
+      // Motivation sound & message
+      playPomoSound('breakDone');
+      pomoShowCompleteOverlay('break');
     }
   }
 
@@ -7277,20 +7943,97 @@ function pomoHideBreak() {
   document.getElementById('pomo-break-overlay').style.display = 'none';
 }
 
+function pomoSetMode(study, brk) {
+  if (pomoState.running) return; // don't change while running
+  POMO_STUDY_MINS = study;
+  POMO_BREAK_MINS = brk;
+  pomoState.phase = 'study';
+  pomoState.secondsLeft = study * 60;
+  document.getElementById('pomo-mode-50').classList.toggle('active', study === 50);
+  document.getElementById('pomo-mode-25').classList.toggle('active', study === 25);
+  pomoUpdateDisplay();
+}
+
+function playPomoSound(type) {
+  if (soundMuted) return;
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    const g = ctx.createGain();
+    g.connect(ctx.destination);
+    if (type === 'studyDone') {
+      // Triumphant fanfare — ascending major chord arpeggio
+      g.gain.setValueAtTime(0.18, now);
+      g.gain.linearRampToValueAtTime(0.15, now + 0.8);
+      g.gain.exponentialRampToValueAtTime(0.01, now + 1.6);
+      const notes = [523, 659, 784, 1047, 1319, 1568];
+      notes.forEach((f, i) => {
+        const o = ctx.createOscillator();
+        o.type = 'triangle';
+        o.frequency.setValueAtTime(f, now + i * 0.15);
+        o.connect(g);
+        o.start(now + i * 0.15);
+        o.stop(now + i * 0.15 + 0.3);
+      });
+    } else if (type === 'breakDone') {
+      // Energetic rally — quick ascending power-up
+      g.gain.setValueAtTime(0.16, now);
+      g.gain.exponentialRampToValueAtTime(0.01, now + 1.0);
+      const notes = [392, 523, 659, 784, 1047];
+      notes.forEach((f, i) => {
+        const o = ctx.createOscillator();
+        o.type = 'square';
+        o.frequency.setValueAtTime(f, now + i * 0.1);
+        o.connect(g);
+        o.start(now + i * 0.1);
+        o.stop(now + i * 0.1 + 0.18);
+      });
+    }
+  } catch(e) {}
+}
+
+const POMO_STUDY_MSGS = [
+  {emoji:'🏆', title:'Amazing work!', msg:'You crushed that study session! Time for a well-deserved break.'},
+  {emoji:'🌟', title:'Fantastic effort!', msg:'Your brain just leveled up! Take a break and recharge.'},
+  {emoji:'💪', title:'You did it!', msg:'That was an awesome study session. Rest up, champion!'},
+  {emoji:'🎉', title:'Study session complete!', msg:'Great focus! Enjoy your break — you earned it!'},
+  {emoji:'🔥', title:'On fire!', msg:'Incredible dedication! Now relax and come back stronger.'},
+];
+const POMO_BREAK_MSGS = [
+  {emoji:'⚡', title:"Let's go!", msg:"Break's over — time to conquer more questions!"},
+  {emoji:'🚀', title:'Ready for launch!', msg:"You're recharged and ready. Let's do this!"},
+  {emoji:'💥', title:'Power up!', msg:"Feeling fresh? Let's crush the next session!"},
+  {emoji:'🎯', title:'Focus mode: ON', msg:'Break time is over. Time to show what you can do!'},
+  {emoji:'🦁', title:'Unleash the beast!', msg:"You're rested and fired up. Let's make it count!"},
+];
+
+function pomoShowCompleteOverlay(type) {
+  const msgs = type === 'study' ? POMO_STUDY_MSGS : POMO_BREAK_MSGS;
+  const m = msgs[Math.floor(Math.random() * msgs.length)];
+  const overlay = document.getElementById('pomo-complete-overlay');
+  document.getElementById('pomo-complete-emoji').textContent = m.emoji;
+  document.getElementById('pomo-complete-title').textContent = m.title;
+  document.getElementById('pomo-complete-title').style.color = type === 'study' ? '#2ed573' : '#ffa502';
+  document.getElementById('pomo-complete-msg').textContent = m.msg;
+  const btn = document.getElementById('pomo-complete-btn');
+  btn.style.background = type === 'study'
+    ? 'linear-gradient(135deg,#2ed573,#1abc9c)'
+    : 'linear-gradient(135deg,#ffa502,#ff6348)';
+  btn.textContent = type === 'study' ? '🌿 Start Break' : '📚 Start Studying';
+  overlay.style.display = 'flex';
+}
+
+function pomoDismissOverlay() {
+  document.getElementById('pomo-complete-overlay').style.display = 'none';
+}
+
 function pomoSelectActivity(el, idx) {
   document.querySelectorAll('.pomo-activity').forEach(a => a.classList.remove('selected'));
   el.classList.add('selected');
 }
 
 function pomoToggleExpand() {
-  const w = document.getElementById('pomo-widget');
-  if (window.innerWidth <= 600) {
-    w.classList.toggle('pomo-collapsed');
-  }
-}
-// Auto-collapse on mobile load
-if (window.innerWidth <= 600) {
-  document.getElementById('pomo-widget').classList.add('pomo-collapsed');
+  // Could add expand/collapse but keep simple for now
 }
 
 // Initialize display
