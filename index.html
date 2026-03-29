@@ -3009,6 +3009,7 @@ function startSubject(subj) {
 }
 
 function renderQuestion() {
+  _answerLocked = false; // unlock for new question
   const q = quizQuestions[quizIndex];
   const subjNames = {math:'Math \u{1F522}',science:'Science \u{1F52C}',english:'English \u{1F4D6}',chinese:'Chinese \u{1F3EF}'};
   document.getElementById('q-num').textContent = `Q${quizIndex+1} / ${quizQuestions.length}`;
@@ -3055,8 +3056,14 @@ function renderQuestion() {
   document.getElementById('q-next').classList.remove('show');
 }
 
+var _answerLocked = false; // prevent double-tap
 function selectAnswer(idx) {
+  if (_answerLocked) return; // block double-tap
+  _answerLocked = true;
+  // Safety: if quizCorrect exceeds question count, something went wrong — force reset
+  if (quizCorrect > quizQuestions.length) { quizCorrect = 0; quizXpEarned = 0; quizCoinsEarned = 0; }
   const q = quizQuestions[quizIndex];
+  if (!q) return; // guard against undefined
   const btns = document.querySelectorAll('.opt-btn');
   btns.forEach(b => b.classList.add('disabled'));
   const fb = document.getElementById('q-feedback');
@@ -3099,7 +3106,7 @@ function selectAnswer(idx) {
     state[currentPlayer].coins += earnedCoins;
     quizCoinsEarned += earnedCoins;
 
-    document.getElementById('q-fb-title').textContent = 'Correct! +' + (xpMap[q.diff]||10) + ' XP, +' + (coinMap[q.diff]||3) + ' coins';
+    document.getElementById('q-fb-title').textContent = 'Correct! +' + (xpMap[q.diff]||10) + ' XP, +' + (coinMap[q.diff]||1) + ' coins';
     document.getElementById('q-fb-text').textContent = q.exp;
     fb.className = 'q-feedback correct show';
     playSound('correct');
@@ -3149,6 +3156,9 @@ function nextQuestion() {
 }
 
 function finishQuiz() {
+  // Safety cap — quizCorrect should never exceed question count
+  quizCorrect = Math.min(quizCorrect, quizQuestions.length);
+
   document.getElementById('quiz-area').classList.remove('active');
   document.getElementById('quiz-results').classList.add('active');
 
