@@ -518,6 +518,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   <button class="nav-btn" onclick="showPage('study')">Study Quest</button>
   <button class="nav-btn" onclick="showPage('oral')">Oral Quest</button>
   <button class="nav-btn" id="nav-arena" onclick="showPage('arena')">Math Arena</button>
+  <button class="nav-btn" id="nav-eng-arena" onclick="showPage('eng-arena')">English Arena</button>
   <button class="nav-btn" onclick="showPage('battle')">⚔️ Battle!</button>
   <button class="nav-btn" onclick="showPage('tasks')">✅ Tasks</button>
   <button class="nav-btn" onclick="showPage('schedule')">Weekly Plan</button>
@@ -993,6 +994,70 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div class="mr-btns">
       <button class="ma-btn-next" onclick="maNextBattle()">⚡ Next Battle!</button>
       <button class="ma-btn-back" onclick="maShowStages()">🗺️ Stage Select</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ENGLISH ARENA (Yuhi) ===== -->
+<div class="page" id="pg-eng-arena">
+  <div class="ma-header" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%)">
+    <h1>📚 ENGLISH ARENA 📚</h1>
+    <div class="ma-sub">Yuhi's Word Mastery Zone — Conquer English with SKILL!</div>
+  </div>
+
+  <div class="ma-stats" style="background:rgba(79,172,254,.08)">
+    <div class="ma-stat"><div class="ms-val" id="ea-wins">0</div><div class="ms-lbl">Wins</div></div>
+    <div class="ma-stat"><div class="ms-val" id="ea-streak">0</div><div class="ms-lbl">🔥 Streak</div></div>
+    <div class="ma-stat"><div class="ms-val" id="ea-best-combo">0</div><div class="ms-lbl">Best Combo</div></div>
+    <div class="ma-stat"><div class="ms-val" id="ea-mastery">0</div><div class="ms-lbl">Mastery %</div></div>
+  </div>
+
+  <!-- STAGE SELECT -->
+  <div id="ea-stage-area">
+    <div style="text-align:center;margin:12px 0;color:#aaa;font-size:.9em">Choose your arena! 5 questions per round. Master Grammar, Vocab & Comprehension!</div>
+    <div class="ma-stages" id="ea-stages"></div>
+  </div>
+
+  <!-- BATTLE -->
+  <div id="ea-battle-area" style="display:none" class="ma-battle">
+    <div class="ma-arena" id="ea-arena-box" style="background:linear-gradient(135deg,#0f3460,#16213e)">
+      <div style="text-align:center">
+        <div class="mf-sprite" style="font-size:2.5em" id="ea-stage-icon">📖</div>
+        <div id="ea-stage-title" style="color:#4facfe;font-size:1.1em;font-weight:bold;margin:4px 0">Grammar Forest</div>
+        <div class="mf-hp-bar" style="width:80%;margin:8px auto"><div class="mf-hp-fill hero" id="ea-progress-bar" style="width:0%;background:linear-gradient(90deg,#4facfe,#00f2fe)"></div></div>
+        <div id="ea-progress-text" style="color:#aaa;font-size:.85em">0 / 5 correct</div>
+      </div>
+      <div class="ma-combo">
+        <div class="combo-text" id="ea-combo-display"></div>
+      </div>
+    </div>
+
+    <div class="ma-powerups" id="ea-powerups">
+      <button class="ma-pu-btn" onclick="eaUsePowerUp('5050')">🎯 50/50 (10c)</button>
+      <button class="ma-pu-btn" onclick="eaUsePowerUp('hint')">💡 Hint (20c)</button>
+    </div>
+
+    <div class="ma-question" id="ea-question-box">
+      <div class="mq-num" id="ea-q-num">Q1 / 5</div>
+      <div id="ea-passage-box" style="display:none;background:rgba(255,255,255,.05);border-radius:8px;padding:12px;margin:8px 0;font-size:.9em;color:#ddd;line-height:1.6;text-align:left;border-left:3px solid #4facfe"></div>
+      <div class="mq-text" id="ea-q-text">Loading...</div>
+    </div>
+
+    <div class="ma-answers" id="ea-answers"></div>
+
+    <div id="ea-hint-box" style="display:none;text-align:center;margin-top:8px;padding:8px;background:rgba(79,172,254,.08);border-radius:8px;color:#4facfe;font-size:.85em"></div>
+    <div id="ea-feedback" style="display:none;text-align:center;margin-top:12px;padding:12px;border-radius:10px;font-size:.95em"></div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="ea-result-area" style="display:none" class="ma-result">
+    <div class="mr-title" id="ea-result-title">VICTORY!</div>
+    <div class="mr-stars" id="ea-result-stars"></div>
+    <div style="font-size:.9em;color:#aaa" id="ea-result-msg"></div>
+    <div class="mr-rewards" id="ea-result-rewards"></div>
+    <div class="mr-btns">
+      <button class="ma-btn-next" onclick="eaNextRound()">📚 Next Round!</button>
+      <button class="ma-btn-back" onclick="eaShowStages()">🗺️ Stage Select</button>
     </div>
   </div>
 </div>
@@ -1542,6 +1607,98 @@ const questions = {
       // P6 PSLE — Model Drawing Word Problems
       {q:"Amy has 3 times as many stickers as Ben. Together they have 120 stickers. How many does Amy have?", opts:["90","80","60","100"], ans:0, exp:"📊 Draw a model! If one person has 3 times as many, total = 4 parts. Find 1 part, then multiply!", diff:"easy"},
       {q:"David had twice as much money as Emily. After David spent $30, they had the same amount. How much did Emily have?", opts:["$30","$60","$45","$20"], ans:0, exp:"💡 Let the smaller amount be x. Write an equation: twice x minus the spent amount equals x. Solve for x!", diff:"medium"},
+      // P6 PSLE — Circles (circumference, area, composite)
+      {q:"What is the circumference of a circle with diameter 21 cm? (Use π = 22/7)", opts:["66 cm","44 cm","88 cm","132 cm"], ans:0, exp:"⭕ Circumference = π × diameter. Plug in 22/7 and the diameter — see what cancels!", diff:"easy"},
+      {q:"What is the circumference of a circle with radius 14 cm? (Use π = 22/7)", opts:["88 cm","44 cm","66 cm","176 cm"], ans:0, exp:"⭕ First double the radius to get the diameter, then Circumference = π × d!", diff:"easy"},
+      {q:"A circle has area 616 cm². What is its radius? (Use π = 22/7)", opts:["14 cm","21 cm","7 cm","28 cm"], ans:0, exp:"🔍 Area = π × r × r. Rearrange to find r² = Area ÷ π, then find the square root!", diff:"hard"},
+      {q:"Find the area of a quarter circle with radius 14 cm. (Use π = 22/7)", opts:["154 cm²","308 cm²","77 cm²","616 cm²"], ans:0, exp:"🥧 A quarter circle is ¼ of a full circle. Find the full circle area first, then divide by 4!", diff:"medium"},
+      {q:"A semicircular garden has a diameter of 28 cm. What is its perimeter? (Use π = 22/7)", opts:["72 cm","44 cm","88 cm","56 cm"], ans:0, exp:"🌿 Perimeter of semicircle = half the circumference PLUS the diameter (the straight edge). Don't forget the straight part!", diff:"hard"},
+      {q:"A square of side 14 cm has a circle of diameter 14 cm cut from it. What is the shaded area? (Use π = 22/7)", opts:["42 cm²","56 cm²","38 cm²","28 cm²"], ans:0, exp:"✂️ Find the square area, find the circle area, then subtract! The leftover is the shaded part!", diff:"hard"},
+      {q:"Two quarter circles of radius 7 cm overlap inside a square of side 7 cm. What is the total area of the two quarter circles? (Use π = 22/7)", opts:["77 cm²","38.5 cm²","154 cm²","44 cm²"], ans:0, exp:"🥧 Each quarter circle = ¼ × π × r². Calculate one, then multiply by 2 for both!", diff:"medium"},
+      {q:"The circumference of a wheel is 44 cm. How many complete turns does it make to cover 220 cm? (Use π = 22/7)", opts:["5","4","6","10"], ans:0, exp:"🎡 Each turn covers one circumference. Divide the total distance by the circumference!", diff:"medium"},
+      // P6 PSLE — Pie Charts
+      {q:"A pie chart shows 90° for Science. What percentage of the total does Science represent?", opts:["25%","30%","20%","15%"], ans:0, exp:"🥧 A full circle = 360°. Divide the angle by 360 and multiply by 100 to get the percentage!", diff:"easy"},
+      {q:"In a pie chart, English is 120° and Math is 80°. What fraction of the chart is English?", opts:["1/3","2/9","1/4","1/2"], ans:0, exp:"🥧 Fraction = angle ÷ 360°. Simplify the resulting fraction!", diff:"easy"},
+      {q:"A pie chart shows: Red 40%, Blue 25%, Green 15%, Yellow the rest. What angle represents Yellow?", opts:["72°","54°","90°","36°"], ans:0, exp:"🎨 Find Yellow's percentage first (100% minus the rest). Then angle = percentage × 360 ÷ 100!", diff:"medium"},
+      {q:"In a pie chart of 600 students, the Science section is 60°. How many students chose Science?", opts:["100","120","150","80"], ans:0, exp:"📊 Fraction of circle = 60° ÷ 360°. Multiply that fraction by the total number of students!", diff:"medium"},
+      {q:"A pie chart shows that 144° represents 80 pupils who like football. How many pupils were surveyed in total?", opts:["200","160","250","300"], ans:0, exp:"🥧 If 144° = 80 pupils, find the value per degree (80 ÷ 144), then multiply by 360°!", diff:"hard"},
+      {q:"In a pie chart, the ratio of boys to girls is 5:4. What angle represents boys?", opts:["200°","180°","160°","150°"], ans:0, exp:"🥧 Total parts = 5 + 4 = 9. Boys' angle = (5/9) × 360°. Use the ratio to share the full circle!", diff:"hard"},
+      // P6 PSLE — Solid Figures & Nets
+      {q:"How many faces does a triangular prism have?", opts:["5","4","6","3"], ans:0, exp:"🔺 A triangular prism has 2 triangular faces (top & bottom) and 3 rectangular faces (sides). Count them all!", diff:"easy"},
+      {q:"A net folds into a cube. How many squares does it have?", opts:["6","4","8","5"], ans:0, exp:"🎲 A cube has 6 faces! So its net must have exactly 6 squares that fold up to form the cube!", diff:"easy"},
+      {q:"What is the surface area of a cuboid 10 cm × 5 cm × 4 cm?", opts:["220 cm²","200 cm²","180 cm²","240 cm²"], ans:0, exp:"📦 Surface area = 2(lw + lh + wh). Find the area of each pair of faces and add them up, then double!", diff:"medium"},
+      {q:"A square pyramid has a square base. How many edges does it have?", opts:["8","6","10","12"], ans:0, exp:"🔺 Count the base edges (4) plus the edges going up to the apex (4). Add them together!", diff:"medium"},
+      {q:"A cube has edge length 6 cm. What is its total surface area?", opts:["216 cm²","144 cm²","180 cm²","252 cm²"], ans:0, exp:"🎲 Each face = edge × edge. A cube has 6 identical faces! Multiply one face area by 6!", diff:"medium"},
+      {q:"Which of these nets CANNOT form a cube?", opts:["A straight line of 6 squares","A cross shape of 6 squares","A T-shape of 6 squares","An L-shape of 6 squares"], ans:0, exp:"🎲 A line of 6 squares can't fold into a cube because opposite faces overlap! Try folding it mentally!", diff:"hard"},
+      // P6 PSLE — More Speed (advanced)
+      {q:"A car took 2 hours to travel from Town A to Town B at 60 km/h. It returned at 40 km/h. What was the average speed for the whole journey?", opts:["48 km/h","50 km/h","45 km/h","52 km/h"], ans:0, exp:"🚗 Average speed = Total distance ÷ Total time. Don't just average the two speeds — find each distance and time first!", diff:"hard"},
+      {q:"Two towns are 180 km apart. Car A leaves at 60 km/h and Car B leaves from the other town at 30 km/h towards each other. When do they meet?", opts:["2 hours","3 hours","2.5 hours","1.5 hours"], ans:0, exp:"🚗 When moving towards each other, add the speeds! Time = Distance ÷ Combined speed!", diff:"medium"},
+      {q:"Ali starts cycling at 12 km/h. 30 minutes later, Ben starts from the same place at 18 km/h. How long does Ben take to catch Ali?", opts:["1 hour","45 min","1.5 hours","2 hours"], ans:0, exp:"🚴 Ali's head start = speed × time. Ben catches up at (18-12) km/h. Time = head start distance ÷ speed difference!", diff:"hard"},
+      {q:"Convert 72 km/h to m/min.", opts:["1,200 m/min","720 m/min","1,000 m/min","1,500 m/min"], ans:0, exp:"🔄 Multiply km by 1000 to get metres, divide hours by 60 to get minutes. Or: km/h × 1000 ÷ 60!", diff:"medium"},
+      {q:"A bus travels at 45 km/h for 40 minutes. What distance does it cover?", opts:["30 km","45 km","35 km","25 km"], ans:0, exp:"🚌 Convert minutes to hours first! 40 min = 40/60 hours. Then Distance = Speed × Time!", diff:"medium"},
+      {q:"Sam jogged 2.4 km in 20 minutes. What was his speed in km/h?", opts:["7.2 km/h","6 km/h","8 km/h","4.8 km/h"], ans:0, exp:"🏃 Convert 20 minutes to hours (÷60 = 1/3 hour). Speed = Distance ÷ Time!", diff:"medium"},
+      {q:"Town P and Town Q are 300 km apart. A car leaves P at 9 am at 80 km/h. A truck leaves Q at 9 am at 70 km/h towards P. At what time do they meet?", opts:["11 am","11:30 am","10:30 am","12 pm"], ans:0, exp:"🚗 Combined speed = 80 + 70. Time to meet = 300 ÷ combined speed. Add that to the start time!", diff:"hard"},
+      {q:"Ali walks at 4 km/h and Ben walks at 6 km/h in the same direction from the same point. After 3 hours, how far apart are they?", opts:["6 km","10 km","8 km","12 km"], ans:0, exp:"🚶 Speed difference = 6 - 4 = 2 km/h. Gap = speed difference × time!", diff:"easy"},
+      // P6 PSLE — More Ratio (changing ratios)
+      {q:"The ratio of Ali's money to Ben's money is 7:3. If Ali gives $40 to Ben, the ratio becomes 3:7. How much money does Ali have at first?", opts:["$70","$100","$80","$56"], ans:0, exp:"💰 The total money doesn't change! Find total parts, then use the shift of $40 to find 1 unit!", diff:"hard"},
+      {q:"Apples to oranges ratio is 5:3. After eating 6 apples, the ratio becomes 1:1. How many oranges are there?", opts:["9","12","15","6"], ans:0, exp:"🍎 If the ratio becomes 1:1, they're equal. The oranges didn't change. Use the difference to find 1 unit!", diff:"medium"},
+      {q:"The ratio of boys to girls is 2:3. After 5 boys join, the ratio becomes 3:3. How many girls are there?", opts:["15","10","20","12"], ans:0, exp:"👦 If the new ratio is 3:3, boys = girls. The 5 boys that joined made the difference. Find the original numbers!", diff:"medium"},
+      {q:"Jars A and B have water in ratio 5:1. After pouring 12 ml from A to B, both jars have the same amount. How much water was in B at first?", opts:["6 ml","12 ml","10 ml","8 ml"], ans:0, exp:"💧 Total stays the same! If they end up equal, each has half the total. Use the poured amount to find 1 unit!", diff:"hard"},
+      {q:"Father and son's ages are in ratio 7:2. In 10 years, the ratio will be 9:4. What is the son's current age?", opts:["10","14","8","12"], ans:0, exp:"👨‍👦 Add 10 to both ages. Set up new ratio equation. The difference in ages stays the same — use this!", diff:"hard"},
+      {q:"Red to blue balls ratio is 3:5. If 3 red balls are added, the ratio becomes 3:4. How many blue balls are there?", opts:["20","15","25","12"], ans:0, exp:"🔴 Blue stays the same! Make the blue parts equal in both ratios and find how the red change matches the 3 added!", diff:"hard"},
+      {q:"A and B share money in ratio 3:5. B gives A $20 and the ratio becomes 1:1. How much do they have in total?", opts:["$160","$120","$200","$80"], ans:0, exp:"💰 Equal means same amount each. The $20 moved makes them equal. The difference was 2 parts = $40, find 1 part!", diff:"medium"},
+      {q:"The ratio of pens to pencils is 2:5. After buying 10 more pencils, the ratio becomes 2:7. How many pens are there?", opts:["10","12","15","8"], ans:0, exp:"✏️ Pens didn't change, so the pen parts must represent the same amount. Use this to find 1 unit!", diff:"medium"},
+      // P6 PSLE — More Percentage (advanced)
+      {q:"After a 20% discount, a bag costs $64. What was the original price?", opts:["$80","$76.80","$84","$70"], ans:0, exp:"🔄 If 20% off, you paid 80% of the original. So original = $64 ÷ 0.8. Reverse percentage!", diff:"medium"},
+      {q:"A population increased from 2,000 to 2,500. What is the percentage increase?", opts:["25%","20%","30%","15%"], ans:0, exp:"📈 Increase = new − old. Percentage increase = (increase ÷ original) × 100!", diff:"easy"},
+      {q:"An item costs $120 before 9% GST. What is the price including GST?", opts:["$130.80","$129.00","$132.00","$128.40"], ans:0, exp:"💳 GST amount = 9% × $120. Add the GST to the original price for the total!", diff:"easy"},
+      {q:"After a 25% increase, the price of a watch is $250. What was the original price?", opts:["$200","$225","$187.50","$210"], ans:0, exp:"🔄 125% of original = $250. Original = $250 ÷ 1.25. Reverse the percentage increase!", diff:"hard"},
+      {q:"A tank was 40% full. After adding 30 litres, it became 70% full. What is the full capacity of the tank?", opts:["100 litres","75 litres","120 litres","80 litres"], ans:0, exp:"💧 The 30 litres filled 70% − 40% = 30% of the tank. So 30% = 30 litres. Find 100%!", diff:"medium"},
+      {q:"The price of a shirt including 9% GST is $54.50. What is the price before GST?", opts:["$50","$49.50","$51","$48"], ans:0, exp:"💳 Price with GST = 109% of original. Divide by 1.09 to find the price before GST!", diff:"hard"},
+      // P6 PSLE — More Algebra (equations & patterns)
+      {q:"Solve: 4(x + 3) = 32. What is x?", opts:["5","6","4","8"], ans:0, exp:"🔍 Expand the brackets or divide both sides by 4 first. Then solve for x step by step!", diff:"easy"},
+      {q:"The sum of 3 consecutive numbers is 84. What is the smallest number?", opts:["27","26","28","25"], ans:0, exp:"🔢 Let the numbers be x, x+1, x+2. Add them = 84. Simplify and solve for x!", diff:"medium"},
+      {q:"A number multiplied by 5 and then decreased by 7 gives 38. What is the number?", opts:["9","8","10","7"], ans:0, exp:"🔍 Write as equation: 5n − 7 = 38. Add 7 to both sides, then divide by 5!", diff:"easy"},
+      {q:"Solve: 2x + 3 = x + 10. What is x?", opts:["7","5","3","10"], ans:0, exp:"🔍 Move x terms to one side and numbers to the other. Subtract x from both sides first!", diff:"easy"},
+      {q:"Pattern: Figure 1 has 5 sticks, Figure 2 has 9 sticks, Figure 3 has 13 sticks. How many sticks in Figure 10?", opts:["41","45","37","49"], ans:0, exp:"📐 Find the common difference! Rule = first term + (n-1) × difference. Plug in n = 10!", diff:"medium"},
+      {q:"Solve: 3(2y − 1) = 2(y + 5). What is y?", opts:["3.25","3","4","2.5"], ans:0, exp:"🔍 Expand both brackets, collect y terms on one side and numbers on the other, then solve!", diff:"hard"},
+      {q:"A number is doubled, then 5 is added to give 29. What is the number?", opts:["12","14","10","17"], ans:0, exp:"🔍 Work backwards! Subtract 5 from 29, then halve the result!", diff:"easy"},
+      {q:"There are x boys and (x + 8) girls in a class. If there are 40 students, how many boys?", opts:["16","18","20","14"], ans:0, exp:"🔍 x + (x + 8) = 40. Combine like terms: 2x + 8 = 40. Solve for x!", diff:"medium"},
+      // P6 PSLE — More Fractions (complex remainder problems)
+      {q:"Mei used 1/3 of her beads on Monday and 3/8 of the remainder on Tuesday. She had 100 beads left. How many beads did she start with?", opts:["240","180","200","160"], ans:0, exp:"📿 After Monday, 2/3 remain. After Tuesday, 5/8 of the remainder is left. Set fraction × original = 100!", diff:"hard"},
+      {q:"Which is larger: 5/7 or 7/10?", opts:["5/7","7/10","They are equal","Cannot tell"], ans:0, exp:"⚖️ Make a common denominator! 5/7 = 50/70 and 7/10 = 49/70. Compare the numerators!", diff:"medium"},
+      {q:"A bottle is 5/8 full. After drinking 150 ml, it is 1/4 full. What is the full capacity?", opts:["400 ml","300 ml","500 ml","350 ml"], ans:0, exp:"💧 The 150 ml = 5/8 − 1/4 of the bottle. Find that fraction, then work out the whole!", diff:"medium"},
+      {q:"1/5 of a group are children. 2/3 of the adults are women. If there are 40 men, how many people are in the group?", opts:["150","120","200","100"], ans:0, exp:"👨 Adults = 4/5 of total. Men = 1/3 of adults. Set 1/3 × 4/5 × total = 40 and solve!", diff:"hard"},
+      {q:"Jane ate 2/5 of a cake. Her brother ate 1/2 of what was left. What fraction of the cake remains?", opts:["3/10","1/5","1/4","2/10"], ans:0, exp:"🍰 After Jane: 3/5 remains. Brother ate 1/2 of 3/5. Find what's left after both!", diff:"medium"},
+      {q:"A farmer sold 3/7 of his eggs in the morning and 1/4 of the remainder in the afternoon. He had 270 eggs left. How many did he start with?", opts:["630","420","560","480"], ans:0, exp:"🥚 After morning: 4/7 remain. After afternoon: 3/4 of 4/7 = 3/7 remain. Set 3/7 × total = 270!", diff:"hard"},
+      {q:"Arrange in order from smallest to largest: 2/3, 5/8, 7/12", opts:["7/12, 5/8, 2/3","5/8, 7/12, 2/3","2/3, 5/8, 7/12","7/12, 2/3, 5/8"], ans:0, exp:"📏 Convert all to the same denominator (LCD = 24). Compare the numerators to arrange them!", diff:"medium"},
+      {q:"1/3 of the pupils in a school are girls. 1/2 of the girls and 1/4 of the boys wear glasses. What fraction of the school wears glasses?", opts:["1/3","1/4","5/12","1/6"], ans:0, exp:"👓 Find fractions: (1/2 × 1/3) + (1/4 × 2/3). Add the two parts together!", diff:"hard"},
+      // P6 PSLE — Volume & Capacity (water displacement, composite)
+      {q:"A tank 30 cm × 20 cm × 15 cm is half filled with water. What is the volume of water?", opts:["4,500 cm³","9,000 cm³","3,000 cm³","6,000 cm³"], ans:0, exp:"💧 Find the full volume first (l × w × h), then halve it for half-full!", diff:"easy"},
+      {q:"A stone is dropped into a tank 20 cm × 15 cm with water level at 8 cm. The level rises to 10 cm. What is the volume of the stone?", opts:["600 cm³","300 cm³","400 cm³","500 cm³"], ans:0, exp:"🪨 Volume of stone = rise in water level × base area. The displaced water equals the stone's volume!", diff:"medium"},
+      {q:"A container 25 cm × 20 cm × 30 cm is filled to the brim. How many litres of water does it hold?", opts:["15 litres","12 litres","10 litres","20 litres"], ans:0, exp:"💧 Volume in cm³ = l × w × h. Then divide by 1000 to convert cm³ to litres!", diff:"medium"},
+      {q:"750 ml of water is poured into a tank 15 cm × 10 cm. What is the water level height?", opts:["5 cm","7.5 cm","4 cm","6 cm"], ans:0, exp:"💧 750 ml = 750 cm³. Height = Volume ÷ (length × width). Divide to find the water level!", diff:"medium"},
+      {q:"Two identical cubes of edge 5 cm are placed side by side. What is the volume of the combined solid?", opts:["250 cm³","125 cm³","200 cm³","300 cm³"], ans:0, exp:"🧊 Volume of one cube = edge³. Two cubes = 2 × one cube's volume!", diff:"easy"},
+      {q:"A tank 40 cm × 25 cm has water at 12 cm. 5 identical balls each with volume 200 cm³ are dropped in. What is the new water level?", opts:["13 cm","14 cm","15 cm","12.5 cm"], ans:0, exp:"🪨 Total ball volume = 5 × 200. Rise = total volume ÷ base area. Add rise to original level!", diff:"hard"},
+      // P6 PSLE — Number Patterns (sequences & rules)
+      {q:"What is the next number: 2, 6, 18, 54, ___?", opts:["162","108","72","216"], ans:0, exp:"🔮 Each number is multiplied by the same value! Find the common ratio and apply it!", diff:"easy"},
+      {q:"Triangular numbers: 1, 3, 6, 10, 15, ___. What comes next?", opts:["21","18","20","24"], ans:0, exp:"🔢 The differences increase by 1 each time! 2, 3, 4, 5... What's the next difference?", diff:"medium"},
+      {q:"Pattern: 1, 1, 2, 3, 5, 8, 13, ___. What is next?", opts:["21","18","15","20"], ans:0, exp:"🐚 Each number = sum of the two before it! Add the last two numbers to get the next!", diff:"medium"},
+      {q:"The rule is: multiply by 2, then subtract 3. Starting from 5, what is the 4th term?", opts:["19","21","17","23"], ans:0, exp:"🔮 Apply the rule step by step: 5 → (5×2−3)=7 → (7×2−3)=11 → keep going! Count carefully!", diff:"hard"},
+      {q:"Sequence: 100, 95, 85, 70, 50, ___. What comes next?", opts:["25","30","20","35"], ans:0, exp:"📉 Find the differences: 5, 10, 15, 20... The differences are increasing! What's the next difference?", diff:"hard"},
+      // P6 PSLE — Data Analysis (mean, median, mode, graphs)
+      {q:"Scores: 12, 15, 15, 18, 20. What is the mode?", opts:["15","16","18","12"], ans:0, exp:"📊 The mode is the number that appears MOST often! Count how many times each number shows up!", diff:"easy"},
+      {q:"The mean of 6 numbers is 15. Five of them are 10, 12, 14, 18, 20. What is the sixth number?", opts:["16","15","14","18"], ans:0, exp:"🧮 Mean × count = total. Find the total, subtract the 5 known numbers to find the missing one!", diff:"medium"},
+      {q:"In a bar graph, Mon=12, Tue=8, Wed=15, Thu=10, Fri=5. What percentage of the total is Wednesday?", opts:["30%","25%","35%","20%"], ans:0, exp:"📊 Find the total of all bars. Then Wednesday ÷ total × 100 = percentage!", diff:"medium"},
+      {q:"Data: 3, 5, 7, 8, 12. If 12 is replaced by 8, how does the median change?", opts:["It stays the same","It decreases by 1","It increases by 1","It decreases by 2"], ans:0, exp:"📊 Arrange both sets in order and find the middle value. The median is the 3rd value in a set of 5!", diff:"hard"},
+      {q:"A table shows: Size S=15, M=25, L=20, XL=10. What fraction of shirts are Medium?", opts:["5/14","1/4","1/3","5/12"], ans:0, exp:"📊 Total = sum all sizes. Fraction = Medium ÷ Total. Simplify the fraction!", diff:"medium"},
+      // P6 PSLE — More Geometry (angles in quadrilaterals, parallel lines)
+      {q:"Three angles of a quadrilateral are 80°, 110° and 95°. What is the fourth angle?", opts:["75°","85°","65°","90°"], ans:0, exp:"📐 All four angles of a quadrilateral add up to 360°! Subtract the three known angles!", diff:"easy"},
+      {q:"Two lines cross. One angle formed is 42°. What is the vertically opposite angle?", opts:["42°","138°","48°","90°"], ans:0, exp:"✖️ Vertically opposite angles are always equal! They face each other when two lines cross!", diff:"easy"},
+      {q:"A line crosses two parallel lines. One angle is 125°. What is the co-interior (same-side) angle?", opts:["55°","125°","65°","35°"], ans:0, exp:"📐 Co-interior angles (between parallel lines, same side) add up to 180°! Subtract from 180!", diff:"medium"},
+      {q:"Angle AOB = 140°. What is the reflex angle AOB?", opts:["220°","240°","200°","180°"], ans:0, exp:"🔄 A reflex angle = 360° minus the given angle. Reflex angles are bigger than 180°!", diff:"medium"},
+      {q:"In a parallelogram, angle A = 72°. What is angle B (adjacent to A)?", opts:["108°","72°","90°","118°"], ans:0, exp:"📐 Adjacent angles in a parallelogram are supplementary — they add up to 180°!", diff:"medium"},
+      {q:"Two parallel lines are cut by a transversal. Angle x and angle y are alternate angles. If x = 63°, what is y?", opts:["63°","117°","53°","127°"], ans:0, exp:"📐 Alternate angles (Z-angles) between parallel lines are always equal! They form a Z shape!", diff:"hard"},
     ],
     ryusei: [ // P4 standard
       {q:"What is 567 + 348?", opts:["915","905","925","895"], ans:0, exp:"💪 Line up the numbers and add column by column, starting from the right. Don't forget to carry!", diff:"easy"},
@@ -2056,6 +2213,58 @@ function generateMathQ(player) {
 }
 function rand(min,max) { return Math.floor(Math.random()*(max-min+1))+min; }
 
+// ============ PROCEDURAL SCIENCE GENERATOR ============
+function generateScienceQ(player) {
+  const isP6 = player === 'yuhi';
+  const p6 = [
+    () => { const items=[['Iron nail','conductor'],['Rubber band','insulator'],['Copper wire','conductor'],['Glass rod','insulator'],['Wooden ruler','insulator'],['Aluminium foil','conductor'],['Steel spoon','conductor'],['Plastic cup','insulator']]; const pick=items[rand(0,items.length-1)]; const wrong=pick[1]==='conductor'?'insulator':'conductor'; return {q:`Is a ${pick[0].toLowerCase()} a conductor or insulator of electricity?`, opts:[pick[1],wrong,'semiconductor','neither'], ans:0, exp:'🔌 Metals conduct electricity. Non-metals like rubber, plastic, wood are insulators!', diff:'easy'}; },
+    () => { const chains=[['Grass','Grasshopper','Frog','Snake','Eagle'],['Algae','Small fish','Big fish','Seal','Shark'],['Plant','Caterpillar','Bird','Cat','Eagle'],['Seaweed','Snail','Crab','Octopus','Shark']]; const c=chains[rand(0,chains.length-1)]; const pos=rand(1,3); const roles=['producer','primary consumer','secondary consumer','tertiary consumer','apex predator']; return {q:`In: ${c.join(' → ')}. The ${c[pos]} is a:`, opts:[roles[pos],roles[(pos+1)%4],roles[pos>0?pos-1:pos+2],'decomposer'], ans:0, exp:'🌿 Count from the producer! Producer→Primary→Secondary→Tertiary!', diff:'medium'}; },
+    () => { const convs=[['battery-powered fan','Chemical → Electrical → Kinetic'],['electric kettle','Electrical → Heat'],['guitar being played','Kinetic → Sound'],['photosynthesis','Light → Chemical'],['burning candle','Chemical → Light + Heat'],['solar calculator','Light → Electrical'],['rubbing hands','Kinetic → Heat']]; const c=convs[rand(0,convs.length-1)]; const wrongs=convs.filter(x=>x!==c).slice(0,3).map(x=>x[1]); return {q:`What energy conversion occurs in ${c[0]}?`, opts:[c[1],...wrongs], ans:0, exp:'⚡ Think about what energy goes IN and what comes OUT!', diff:'medium'}; },
+    () => { const organs=[['heart','pumps blood around the body'],['lungs','take in oxygen and remove CO₂'],['stomach','breaks down food with acid'],['kidneys','filter waste from blood'],['liver','processes nutrients and removes toxins'],['small intestine','absorbs nutrients from food']]; const o=organs[rand(0,organs.length-1)]; const wrongs=organs.filter(x=>x!==o).slice(0,3).map(x=>x[1]); return {q:`What is the main function of the ${o[0]}?`, opts:[`It ${o[1]}`,`It ${wrongs[0]}`,`It ${wrongs[1]}`,`It ${wrongs[2]}`], ans:0, exp:'🫀 Each organ has a specific job!', diff:'easy'}; },
+    () => { const adapt=[['Cactus','thick waxy stem','store water in desert'],['Fish','streamlined body','move easily in water'],['Owl','large eyes','see well in dark'],['Penguin','thick blubber','keep warm in cold'],['Camel','hump','store fat for energy']]; const a=adapt[rand(0,adapt.length-1)]; const wrongs=adapt.filter(x=>x!==a).slice(0,3).map(x=>'to '+x[2]); return {q:`Why does a ${a[0].toLowerCase()} have ${a[1]}?`, opts:['To '+a[2],...wrongs], ans:0, exp:'🦎 Adaptations help organisms survive!', diff:'medium'}; },
+    () => { const changes=[['Melting ice','reversible'],['Burning paper','irreversible'],['Dissolving sugar in water','reversible'],['Cooking an egg','irreversible'],['Rusting iron','irreversible'],['Evaporating water','reversible']]; const c=changes[rand(0,changes.length-1)]; const wrong=c[1]==='reversible'?'irreversible':'reversible'; return {q:`Is ${c[0].toLowerCase()} a reversible or irreversible change?`, opts:[c[1],wrong,'both','neither'], ans:0, exp:'🔄 Can you get the original substance back? If yes = reversible!', diff:'medium'}; },
+  ];
+  const p4 = [
+    () => { const items=[['leaf','Produces food'],['root','Absorbs water'],['stem','Transports water'],['flower','Reproduction']]; const pick=items[rand(0,items.length-1)]; const wrongs=items.filter(x=>x!==pick).map(x=>x[1]); return {q:`Main function of a plant's ${pick[0]}?`, opts:[pick[1],...wrongs.slice(0,3)], ans:0, exp:'🌱 Each part has a special job!', diff:'easy'}; },
+    () => { const states=[['ice cube','solid'],['steam','gas'],['orange juice','liquid'],['iron nail','solid'],['milk','liquid'],['water vapour','gas']]; const s=states[rand(0,states.length-1)]; const wrongs=['solid','liquid','gas'].filter(x=>x!==s[1]); return {q:`What state of matter is ${s[0]}?`, opts:[s[1],wrongs[0],wrongs[1],'plasma'], ans:0, exp:'🧊 Solid=fixed shape, Liquid=flows, Gas=fills container!', diff:'easy'}; },
+    () => { const mats=[['metal spoon','good'],['wooden spoon','poor'],['plastic cup','poor'],['aluminium tray','good'],['copper pot','good'],['glass bottle','poor']]; const m=mats[rand(0,mats.length-1)]; const wrong=m[1]==='good'?'poor':'good'; return {q:`A ${m[0]} is a ___ conductor of heat.`, opts:[m[1],wrong,'medium','perfect'], ans:0, exp:'🔥 Metals = good conductors. Wood, plastic = poor conductors!', diff:'easy'}; },
+    () => { const forces=[['ball slowing on grass','Friction'],['apple falling from tree','Gravity'],['magnet pulling paperclip','Magnetic force'],['stretched rubber band','Elastic force']]; const f=forces[rand(0,forces.length-1)]; const wrongs=forces.filter(x=>x!==f).slice(0,3).map(x=>x[1]); return {q:`A ${f[0]}. What force is acting?`, opts:[f[1],...wrongs], ans:0, exp:'💪 Think about what force causes that motion!', diff:'medium'}; },
+  ];
+  const templates = isP6 ? p6 : p4;
+  return templates[Math.floor(Math.random()*templates.length)]();
+}
+
+// ============ PROCEDURAL ENGLISH GENERATOR ============
+function generateEnglishQ(player) {
+  const isP6 = player === 'yuhi';
+  const p6 = [
+    () => { const items=[['She ___ to the store yesterday.','went','goes','go','going','Simple past for completed actions!'],['He ___ already finished his homework.','has','have','had','is','Present perfect: has/have + past participle!'],['They ___ playing when it rained.','were','was','are','is','Past continuous: were + verb-ing!'],['If I ___ rich, I would travel.','were','am','was','be','Subjunctive: "If I were..."!'],['The cake ___ baked by Mom.','was','is','has','were','Passive voice: was + past participle!'],['Neither Tom ___ Jerry came.','nor','or','and','but','Neither...nor is the pair!'],['She asked ___ he was okay.','whether','weather','that','what','"Whether" for indirect yes/no questions!'],['Each student ___ a pen.','has','have','are','were','"Each" is singular → "has"!']]; const item=items[rand(0,items.length-1)]; return {q:`Fill in: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'📝 '+item[5], diff:rand(0,1)?'medium':'hard'}; },
+    () => { const words=[['enormous','huge','tiny','slow','calm'],['ancient','very old','new','fast','bright'],['courageous','brave','afraid','lazy','quiet'],['peculiar','strange','normal','big','happy'],['furious','very angry','calm','sad','sleepy'],['diligent','hardworking','lazy','tall','kind'],['reluctant','unwilling','eager','happy','fast'],['magnificent','splendid','ugly','small','quiet']]; const w=words[rand(0,words.length-1)]; return {q:`What does "${w[0]}" mean?`, opts:[w[1],w[2],w[3],w[4]], ans:0, exp:'📖 Build your vocabulary with advanced words!', diff:'medium'}; },
+    () => { const sents=[['Tom yawned and rubbed his eyes.','He was tired.','He was excited.','He was hungry.','He was angry.'],['Sara beamed at her test results.','She did well.','She failed.','She lost her paper.','She was confused.'],['The sky darkened and wind howled.','A storm was coming.','It was sunny.','It was morning.','Birds were singing.'],['Mr Lee slammed the door shut.','He was upset.','He was happy.','He was sleepy.','He was calm.']]; const s=sents[rand(0,sents.length-1)]; return {q:`"${s[0]}" — What can we infer?`, opts:[s[1],s[2],s[3],s[4]], ans:0, exp:'🔍 Use clues in the text to infer meaning!', diff:'medium'}; },
+  ];
+  const p4 = [
+    () => { const items=[['She ___ to school every day.','goes','go','went','going','Present tense + she = goes!'],['The dog ___ in the park.','ran','run','runs','running','Past tense of "run" = "ran"!'],['I ___ a book yesterday.','bought','buy','buys','buying','Past tense of "buy" = "bought"!'],['They ___ football on Saturdays.','play','plays','played','playing','Plural subject = base form!'],['He ___ not like broccoli.','does','do','did','is','He/She/It = "does"!'],['We ___ to the zoo last week.','went','go','goes','going','Past tense of "go" = "went"!']]; const item=items[rand(0,items.length-1)]; return {q:`Fill in: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'📝 '+item[5], diff:'easy'}; },
+    () => { const words=[['delighted','happy','sad','angry','tired'],['enormous','very big','small','quick','cold'],['famished','very hungry','full','thirsty','sleepy'],['hilarious','very funny','boring','scary','sad'],['furious','very angry','calm','kind','shy']]; const w=words[rand(0,words.length-1)]; return {q:`"${w[0]}" means:`, opts:[w[1],w[2],w[3],w[4]], ans:0, exp:'📖 Learn stronger vocabulary words!', diff:'medium'}; },
+  ];
+  const templates = isP6 ? p6 : p4;
+  return templates[Math.floor(Math.random()*templates.length)]();
+}
+
+// ============ PROCEDURAL CHINESE GENERATOR ============
+function generateChineseQ(player) {
+  const isP6 = player === 'yuhi';
+  const p6 = [
+    () => { const items=[['我们应该___保护环境。','积极','消极','随便','懒惰'],['他___地完成了任务。','顺利','困难','马虎','突然'],['同学们___地参加活动。','踊跃','犹豫','害怕','厌烦'],['老师___地批评了他。','严厉','温柔','开心','随便'],['她___地回答了问题。','自信','害羞','马虎','随便']]; const item=items[rand(0,items.length-1)]; return {q:`选择正确的词语：${item[0]}`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:`✏️ ${item[1]}是最合适的搭配。注意词语的感情色彩！`, diff:'medium'}; },
+    () => { const pinyins=[['图书馆','tú shū guǎn','dù shū guǎn','tú shū guān','dú shū guǎn'],['博物馆','bó wù guǎn','bō wù guǎn','bó wǔ guǎn','bó wù guān'],['运动场','yùn dòng chǎng','yún dòng chǎng','yùn dòng cháng','yùn dōng chǎng'],['计算机','jì suàn jī','jī suàn jì','jì suān jī','jì suàn jì']]; const p=pinyins[rand(0,pinyins.length-1)]; return {q:`"${p[0]}"的正确拼音是：`, opts:[p[1],p[2],p[3],p[4]], ans:0, exp:`🔤 注意声调！${p[0]} = ${p[1]}`, diff:'medium'}; },
+  ];
+  const p4 = [
+    () => { const items=[['一___书','本','只','条','张'],['一___鱼','条','只','本','个'],['一___纸','张','条','本','只'],['一___猫','只','条','本','张'],['一___花','朵','只','条','本'],['一___树','棵','条','张','只']]; const item=items[rand(0,items.length-1)]; return {q:`选择正确的量词：${item[0]}`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:`📏 量词要跟名词搭配！`, diff:'easy'}; },
+    () => { const opp=[['大','小','长','快','多'],['高','矮','胖','瘦','远'],['快','慢','大','高','重'],['热','冷','快','高','重'],['胖','瘦','高','矮','大']]; const o=opp[rand(0,opp.length-1)]; return {q:`"${o[0]}"的反义词是：`, opts:[o[1],o[2],o[3],o[4]], ans:0, exp:`↔️ ${o[0]} ↔ ${o[1]}`, diff:'easy'}; },
+  ];
+  const templates = isP6 ? p6 : p4;
+  return templates[Math.floor(Math.random()*templates.length)]();
+}
+
 // ============ SHOP ITEMS ============
 const shopItems = [
   {id:'game5', emoji:'🎮', name:'5 Min Gaming',        desc:'Quick 5 minutes of video games!',      cost:1500, gameMins:5},
@@ -2069,8 +2278,10 @@ const shopItems = [
 
 // ============ NAVIGATION ============
 function showPage(id) {
-  // Math Arena is Ryusei-only — redirect to dashboard if Yuhi tries
+  // Math Arena is Ryusei-only, English Arena is Yuhi-only
   if (id==='arena' && currentPlayer!=='ryusei') { showPage('dashboard'); return; }
+  if (id==='eng-arena' && currentPlayer!=='yuhi') { showPage('dashboard'); return; }
+  if (id==='eng-arena') eaShowStages();
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('pg-'+id).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -2101,9 +2312,11 @@ function selectPlayer(p) {
   document.getElementById('sel-ryusei').style.opacity = p==='ryusei'?1:.5;
   document.getElementById('sel-yuhi').className = p==='yuhi'?'btn btn-primary':'btn btn-secondary';
   document.getElementById('sel-ryusei').className = p==='ryusei'?'btn btn-primary':'btn btn-secondary';
-  // Math Arena is Ryusei-only
+  // Math Arena is Ryusei-only, English Arena is Yuhi-only
   const arenaNav = document.getElementById('nav-arena');
   if (arenaNav) arenaNav.style.display = p==='ryusei'?'':'none';
+  const engArenaNav = document.getElementById('nav-eng-arena');
+  if (engArenaNav) engArenaNav.style.display = p==='yuhi'?'':'none';
 }
 
 // ============ QUIZ ENGINE ============
@@ -2119,12 +2332,12 @@ function startSubject(subj) {
     available = [...pool];
     save();
   }
-  // Supplement with generated questions if pool is running low (math only)
-  if (subj === 'math' && available.length < 10) {
-    const needed = 15 - available.length;
+  // Supplement with procedurally generated questions for ALL subjects
+  const generators = {math: generateMathQ, science: generateScienceQ, english: generateEnglishQ, chinese: generateChineseQ};
+  if (generators[subj] && available.length < 10) {
+    const needed = 20 - available.length;
     for (let i = 0; i < needed; i++) {
-      const gq = generateMathQ(currentPlayer);
-      // Avoid duplicates
+      const gq = generators[subj](currentPlayer);
       if (!available.some(a => a.q === gq.q) && !completed.includes(gq.q)) {
         available.push(gq);
       }
@@ -2276,6 +2489,12 @@ function selectAnswer(idx) {
     state[currentPlayer].streak = 0;
     state[currentPlayer].totalWrong++;
     addWeakPoint(currentPlayer, q, currentSubject);
+    // Also add wrong answer to completedQs — exact same question text never repeats
+    // The concept will come back via procedural generators with different values
+    if (currentSubject !== 'review' && state[currentPlayer].completedQs[currentSubject]) {
+      const cq = state[currentPlayer].completedQs[currentSubject];
+      if (!cq.includes(q.q)) cq.push(q.q);
+    }
     // Adaptive difficulty: slight regression on wrong
     if (currentSubject !== 'review' && state[currentPlayer].diffProgress) {
       const dp = state[currentPlayer].diffProgress[currentSubject];
@@ -2638,20 +2857,71 @@ function updatePlayerCards() {
 }
 
 function getLevel(xp) {
-  const levels = [
-    {level:1, base:0, next:100, title:'Study Beginner'},
-    {level:2, base:100, next:250, title:'Knowledge Seeker'},
-    {level:3, base:250, next:500, title:'Brain Builder'},
-    {level:4, base:500, next:800, title:'Quiz Champion'},
-    {level:5, base:800, next:1200, title:'PSLE Warrior'},
-    {level:6, base:1200, next:1800, title:'Study Legend'},
-    {level:7, base:1800, next:2500, title:'Genius Mode'},
-    {level:8, base:2500, next:5000, title:'Ultimate Scholar'},
+  const titles = [
+    'Study Beginner','Knowledge Seeker','Brain Builder','Quiz Champion','PSLE Warrior',
+    'Study Legend','Genius Mode','Ultimate Scholar','Master Mind','Super Brain',
+    'Elite Thinker','Grand Scholar','Knowledge King','Wisdom Sage','PSLE Hero',
+    'Academic Star','Brilliant Mind','Study Titan','Brain Storm','Quiz Master',
+    'Mega Mind','Ultra Scholar','Supreme Thinker','Galaxy Brain','Diamond Mind',
+    'Phoenix Scholar','Dragon Sage','Celestial Mind','Mythic Scholar','Legendary Sage',
+    'Cosmic Brain','Infinity Mind','Eternal Scholar','Omega Genius','Transcendent',
+    'Godlike Mind','Quantum Sage','Dimensional Brain','Multiverse Scholar','Reality Bender',
+    'Time Lord','Space Sage','Universe Mind','Creation Scholar','Primordial Genius',
+    'Absolute Mind','Supreme Being','Infinite Sage','Ultimate Life','Beyond Genius',
+    'PSLE Conqueror','Study Emperor','Knowledge Emperor','Brain Emperor','Quiz Emperor',
+    'Academic Emperor','Wisdom Emperor','Scholar Emperor','Mind Emperor','Genius Emperor',
+    'Mega Emperor','Ultra Emperor','Supreme Emperor','Grand Emperor','Elite Emperor',
+    'Master Emperor','Super Emperor','Star Emperor','Titan Emperor','Hero Emperor',
+    'Diamond Emperor','Phoenix Emperor','Dragon Emperor','Celestial Emperor','Mythic Emperor',
+    'Legend Emperor','Cosmic Emperor','Infinity Emperor','Eternal Emperor','Omega Emperor',
+    'Quantum Emperor','Galaxy Emperor','Universe Emperor','Creation Emperor','Absolute Emperor',
+    'Supreme Master','Infinite Master','Ultimate Master','Beyond Master','Godlike Master',
+    'Time Master','Space Master','Reality Master','Dimensional Master','Multiverse Master',
+    'Final Boss','True Scholar','Enlightened One','Ascended Mind','The One',
+    'PSLE God','Study God','Knowledge God','Brain God','Quiz God','Ultimate God'
   ];
-  for (let i = levels.length-1; i >= 0; i--) {
-    if (xp >= levels[i].base) return levels[i];
+  // Level 1-10: fixed thresholds; Level 11+: scaling formula
+  const fixedLevels = [0, 100, 250, 500, 800, 1200, 1800, 2500, 3500, 5000, 7000];
+  let level = 1;
+  if (xp < fixedLevels[1]) {
+    level = 1;
+  } else {
+    for (let i = fixedLevels.length - 1; i >= 0; i--) {
+      if (xp >= fixedLevels[i]) { level = i + 1; break; }
+    }
+    if (level > fixedLevels.length) level = fixedLevels.length;
+    // Beyond fixed levels, each level needs progressively more XP
+    if (level >= fixedLevels.length) {
+      let remaining = xp - fixedLevels[fixedLevels.length - 1];
+      let lvl = fixedLevels.length;
+      let needed = 3000; // XP needed per level, grows slowly
+      while (remaining >= needed && lvl < 101) {
+        remaining -= needed;
+        lvl++;
+        needed = Math.floor(needed * 1.08); // 8% more each level
+      }
+      level = lvl;
+    }
   }
-  return levels[0];
+  if (level > 101) level = 101;
+  const title = titles[Math.min(level - 1, titles.length - 1)];
+  // Calculate base and next XP for progress bar
+  let base, next;
+  if (level <= fixedLevels.length) {
+    base = fixedLevels[level - 1];
+    next = level < fixedLevels.length ? fixedLevels[level] : fixedLevels[fixedLevels.length - 1] + 3000;
+  } else {
+    // Recalculate base for this level
+    let accum = fixedLevels[fixedLevels.length - 1];
+    let needed = 3000;
+    for (let i = fixedLevels.length; i < level; i++) {
+      accum += needed;
+      needed = Math.floor(needed * 1.08);
+    }
+    base = accum;
+    next = accum + needed;
+  }
+  return {level, base, next, title};
 }
 
 // ============ DASHBOARD ============
@@ -3179,8 +3449,266 @@ updateDashboard();
 updateGamingBank();
 updateDailyProgress();
 updateStreakUI();
-// Math Arena is Ryusei-only — hide tab on init (default player is Yuhi)
-(function(){ const an=document.getElementById('nav-arena'); if(an) an.style.display=currentPlayer==='ryusei'?'':'none'; })();
+// Math Arena is Ryusei-only, English Arena is Yuhi-only — toggle visibility
+(function(){
+  const an=document.getElementById('nav-arena'); if(an) an.style.display=currentPlayer==='ryusei'?'':'none';
+  const ea=document.getElementById('nav-eng-arena'); if(ea) ea.style.display=currentPlayer==='yuhi'?'':'none';
+})();
+
+// ============ ENGLISH ARENA (Yuhi) ============
+const eaStages = [
+  {id:'grammar1', name:'Grammar Forest', icon:'📝', topic:'grammar', desc:'Tenses, Subject-Verb Agreement', diff:'easy',
+   qs: [
+     () => { const items=[['She ___ her homework before dinner.','finishes','finish','finished','finishing','Simple present: She/He + verb-s!'],['They ___ already left when I arrived.','had','have','has','did','Past perfect: had + past participle!'],['He ___ to school every day.','goes','go','went','going','Present tense: He/She + verb-s!'],['The children ___ playing in the park now.','are','is','was','were','Present continuous: plural = are!'],['I wish I ___ taller.','were','was','am','is','Subjunctive mood: "I wish I were..."!'],['She ___ reading when the phone rang.','was','is','were','are','Past continuous: She + was + verb-ing!'],['By next year, he ___ graduated.','will have','will has','has','had','Future perfect: will have + past participle!'],['Neither Tom ___ Jerry enjoys vegetables.','nor','or','and','but','Neither...nor is the correct pair!']]; const item=items[rand(0,items.length-1)]; return {q:`Fill in: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'📝 '+item[5], diff:'easy'}; }
+   ]},
+  {id:'grammar2', name:'Grammar Castle', icon:'🏰', topic:'grammar', desc:'Passive Voice, Conditionals, Reported Speech', diff:'medium',
+   qs: [
+     () => { const items=[['The letter ___ written by the principal.','was','is','has','were','Passive voice: was + past participle!'],['If it rains, we ___ stay indoors.','will','would','shall','can','Type 1 conditional: If + present, will + base form!'],['She said she ___ feeling well.','was not','is not','has not','does not','Reported speech: present → past!'],['The students ___ told to line up.','were','was','is','has','Passive plural: were + past participle!'],['If I had studied, I ___ passed.','would have','will have','should','could','Type 3 conditional: would have + past participle!'],['He asked me where I ___.','lived','live','living','lives','Reported speech: backshift the tense!'],['The match ___ postponed due to rain.','was','is','has','have','Passive voice: was + past participle!'],['Unless you hurry, you ___ miss the bus.','will','would','should','can','Unless = If not. Use will for likely outcomes!']]; const item=items[rand(0,items.length-1)]; return {q:`Fill in: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🏰 '+item[5], diff:'medium'}; }
+   ]},
+  {id:'grammar3', name:'Grammar Dragon', icon:'🐉', topic:'grammar', desc:'Advanced Grammar Challenges', diff:'hard',
+   qs: [
+     () => { const items=[['Each of the students ___ required to submit the form.','is','are','were','have','Each = singular → is!'],['Not only did she sing, ___ she also danced.','but','and','or','yet','Not only...but also is the correct pair!'],['The number of students ___ increased.','has','have','is','are','"The number of" = singular → has!'],['Had I known, I ___ helped.','would have','will have','should','could','Inverted conditional: Had I known = If I had known!'],['It is essential that he ___ on time.','be','is','was','were','Subjunctive after "essential that": use base form!'],['Hardly had he sat down ___ the bell rang.','when','than','then','that','Hardly...when is the correct pair!'],['___ the weather been better, we would have gone.','Had','If','Should','Were','Inverted conditional: Had = If ... had!'],['She speaks English as ___ she were a native.','if','though','when','like','As if + were for unreal comparison!']]; const item=items[rand(0,items.length-1)]; return {q:`Fill in: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'🐉 '+item[5], diff:'hard'}; }
+   ]},
+  {id:'vocab1', name:'Vocab Village', icon:'📖', topic:'vocab', desc:'Synonyms & Word Meanings', diff:'easy',
+   qs: [
+     () => { const words=[['enormous','huge','tiny','slow','calm'],['ancient','very old','new','fast','bright'],['courageous','brave','afraid','lazy','quiet'],['peculiar','strange','normal','big','happy'],['furious','very angry','calm','sad','sleepy'],['diligent','hardworking','lazy','tall','kind'],['magnificent','splendid','ugly','small','quiet'],['dreadful','terrible','wonderful','big','fast'],['abundant','plentiful','scarce','thin','heavy'],['jubilant','overjoyed','miserable','quiet','slow']]; const w=words[rand(0,words.length-1)]; return {q:`What does "${w[0]}" mean?`, opts:[w[1],w[2],w[3],w[4]], ans:0, exp:'📖 Context clues help figure out word meanings!', diff:'easy'}; }
+   ]},
+  {id:'vocab2', name:'Vocab Mountain', icon:'🗻', topic:'vocab', desc:'Phrasal Verbs & Idioms', diff:'medium',
+   qs: [
+     () => { const phrases=[['look up to','admire','search','visit','ignore'],['put off','postpone','wear','throw','start'],['come across','find by chance','run','build','forget'],['break down','stop working','improve','sleep','dance'],['give in','surrender','donate','start','laugh'],['turn down','reject','increase','open','praise'],['carry on','continue','lift','drop','sleep'],['make up','invent / reconcile','destroy','rush','sleep'],['run out of','use all of something','escape','chase','find'],['look forward to','anticipate with pleasure','fear','search','ignore']]; const p=phrases[rand(0,phrases.length-1)]; return {q:`"${p[0]}" means:`, opts:[p[1],p[2],p[3],p[4]], ans:0, exp:'🗻 Phrasal verbs have special meanings — learn them in context!', diff:'medium'}; }
+   ]},
+  {id:'vocab3', name:'Vocab Summit', icon:'⛰️', topic:'vocab', desc:'Advanced Vocabulary & Antonyms', diff:'hard',
+   qs: [
+     () => { const ants=[['benevolent','malevolent','kind','generous','brave'],['transparent','opaque','clear','clean','thin'],['temporary','permanent','short','quick','small'],['optimistic','pessimistic','happy','careful','brave'],['expand','contract','grow','build','move'],['accept','reject','take','welcome','begin'],['innocent','guilty','pure','young','simple'],['advance','retreat','go','push','rise']]; const a=ants[rand(0,ants.length-1)]; return {q:`What is the ANTONYM of "${a[0]}"?`, opts:[a[1],a[2],a[3],a[4]], ans:0, exp:'⛰️ Antonym = opposite meaning!', diff:'hard'}; }
+   ]},
+  {id:'comp1', name:'Comprehension Camp', icon:'🏕️', topic:'comprehension', desc:'Short Passage Reading', diff:'easy',
+   qs: [
+     () => { const passages=[
+       {p:"Tom woke up late. He grabbed his bag and ran out the door without eating breakfast. When he arrived at school, the gate was already closed.",
+        q:"Why did Tom skip breakfast?", opts:["He was running late","He was not hungry","His mother forgot","He felt sick"]},
+       {p:"The old man sat on the bench, feeding pigeons. He smiled as they gathered around his feet. A little girl watched from a distance, too shy to come closer.",
+        q:"What was the old man doing?", opts:["Feeding pigeons","Reading a book","Talking to the girl","Sleeping"]},
+       {p:"Sara practised piano every day for three months. At the concert, her fingers danced across the keys. The audience clapped loudly when she finished.",
+        q:"What does this tell us about Sara?", opts:["Hard work leads to success","She is naturally talented","Piano is easy","The audience was small"]},
+       {p:"Dark clouds gathered overhead. The wind picked up, scattering leaves across the playground. Children rushed inside as the first drops began to fall.",
+        q:"What was about to happen?", opts:["It was going to rain heavily","The sun was coming out","School was starting","It was getting dark at night"]},
+     ]; const c=passages[rand(0,passages.length-1)]; return {q:c.q, opts:c.opts, ans:0, exp:'🏕️ Read carefully — the clues are in the passage!', diff:'easy', passage:c.p}; }
+   ]},
+  {id:'comp2', name:'Comprehension Castle', icon:'🏰', topic:'comprehension', desc:'Inference & Main Idea', diff:'medium',
+   qs: [
+     () => { const passages=[
+       {p:"Mrs Chen frowned as she read the email. She picked up the phone and dialled quickly, tapping her pen impatiently on the desk while waiting for an answer.",
+        q:"How was Mrs Chen feeling?", opts:["Worried or upset","Happy and relaxed","Bored","Sleepy"]},
+       {p:"The sign outside read 'No Entry — Construction Zone'. Workers in yellow vests moved back and forth behind the fence. The sounds of drilling echoed down the street.",
+        q:"What is happening in this area?", opts:["A building is being constructed","A party is being held","Traffic is being redirected","A market is open"]},
+       {p:"Ali scored the winning goal in the last minute. His teammates lifted him onto their shoulders. The crowd went wild, chanting his name.",
+        q:"Which word best describes the crowd?", opts:["Ecstatic","Angry","Bored","Confused"]},
+       {p:"Grandmother carefully wrapped the old photo album in tissue paper and placed it in the wooden chest. 'These are memories,' she whispered, 'and memories must be protected.'",
+        q:"Why did Grandmother wrap the album carefully?", opts:["The photos were precious to her","She wanted to throw it away","The album was new","She was packing to move"]},
+     ]; const c=passages[rand(0,passages.length-1)]; return {q:c.q, opts:c.opts, ans:0, exp:'🏰 Use inference — read between the lines!', diff:'medium', passage:c.p}; }
+   ]},
+  {id:'boss', name:'📚 English Master', icon:'👑', topic:'mixed', desc:'Mixed Challenge — Grammar, Vocab & Comprehension', diff:'hard', boss:true,
+   qs: [
+     () => { const all = [...eaStages[0].qs, ...eaStages[1].qs, ...eaStages[2].qs, ...eaStages[3].qs, ...eaStages[4].qs, ...eaStages[5].qs, ...eaStages[6].qs, ...eaStages[7].qs]; return all[rand(0,all.length-1)](); }
+   ]},
+];
+
+let eaBattle = { stage:null, qIdx:0, correct:0, combo:0, bestCombo:0, questions:[], answered:false };
+
+function eaShowStages() {
+  document.getElementById('ea-stage-area').style.display = '';
+  document.getElementById('ea-battle-area').style.display = 'none';
+  document.getElementById('ea-result-area').style.display = 'none';
+  if (!state.yuhi.engArena) state.yuhi.engArena = {wins:0, streak:0, bestCombo:0, stageStars:{}};
+  const ea = state.yuhi.engArena;
+  document.getElementById('ea-wins').textContent = ea.wins;
+  document.getElementById('ea-streak').textContent = ea.streak;
+  document.getElementById('ea-best-combo').textContent = ea.bestCombo;
+  const totalStars = Object.values(ea.stageStars).reduce((s,v) => s+v, 0);
+  const maxStars = eaStages.length * 3;
+  document.getElementById('ea-mastery').textContent = Math.round(totalStars/maxStars*100) + '%';
+
+  let html = '';
+  eaStages.forEach((s, i) => {
+    const stars = ea.stageStars[s.id] || 0;
+    const starStr = '⭐'.repeat(stars) + '☆'.repeat(3-stars);
+    const locked = s.boss && totalStars < (eaStages.length-1)*1;
+    html += `<div class="ma-stage-card ${locked?'locked':''}" onclick="${locked?'':'eaStartBattle('+i+')'}">
+      <div class="mas-icon">${s.icon}</div>
+      <div class="mas-name">${s.name}</div>
+      <div class="mas-desc">${s.desc}</div>
+      <div class="mas-stars">${starStr}</div>
+      ${locked?'<div class="mas-lock">🔒 Win more stages!</div>':''}
+    </div>`;
+  });
+  document.getElementById('ea-stages').innerHTML = html;
+}
+
+function eaStartBattle(stageIdx) {
+  const stage = eaStages[stageIdx];
+  eaBattle = {stage, qIdx:0, correct:0, combo:0, bestCombo:0, questions:[], answered:false};
+  // Generate 5 questions from stage generators
+  const completed = state.yuhi.completedQs.english || [];
+  for (let i = 0; i < 20; i++) {
+    const q = stage.qs[rand(0, stage.qs.length-1)]();
+    if (!eaBattle.questions.some(x => x.q === q.q) && !completed.includes(q.q)) {
+      eaBattle.questions.push(q);
+    }
+    if (eaBattle.questions.length >= 5) break;
+  }
+  if (eaBattle.questions.length < 5) {
+    for (let i = eaBattle.questions.length; i < 5; i++) {
+      eaBattle.questions.push(stage.qs[rand(0, stage.qs.length-1)]());
+    }
+  }
+  document.getElementById('ea-stage-area').style.display = 'none';
+  document.getElementById('ea-battle-area').style.display = '';
+  document.getElementById('ea-result-area').style.display = 'none';
+  document.getElementById('ea-stage-icon').textContent = stage.icon;
+  document.getElementById('ea-stage-title').textContent = stage.name;
+  document.getElementById('ea-hint-box').style.display = 'none';
+  document.getElementById('ea-feedback').style.display = 'none';
+  eaRenderQuestion();
+}
+
+function eaRenderQuestion() {
+  const q = eaBattle.questions[eaBattle.qIdx];
+  eaBattle.answered = false;
+  document.getElementById('ea-q-num').textContent = `Q${eaBattle.qIdx+1} / ${eaBattle.questions.length}`;
+  document.getElementById('ea-q-text').textContent = q.q;
+  document.getElementById('ea-hint-box').style.display = 'none';
+  document.getElementById('ea-feedback').style.display = 'none';
+  document.getElementById('ea-progress-bar').style.width = (eaBattle.correct/5*100)+'%';
+  document.getElementById('ea-progress-text').textContent = `${eaBattle.correct} / 5 correct`;
+  // Passage
+  const passageBox = document.getElementById('ea-passage-box');
+  if (q.passage) { passageBox.style.display = 'block'; passageBox.textContent = q.passage; }
+  else { passageBox.style.display = 'none'; }
+  // Options
+  const correctText = q.opts[q.ans];
+  const shuffled = [...q.opts].sort(() => Math.random()-0.5);
+  const newAns = shuffled.indexOf(correctText);
+  eaBattle.currentQ = {...q, opts:shuffled, ans:newAns};
+  const answersEl = document.getElementById('ea-answers');
+  answersEl.innerHTML = '';
+  shuffled.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'ma-ans-btn';
+    btn.textContent = String.fromCharCode(65+i) + '. ' + opt;
+    btn.onclick = () => eaSelectAnswer(i);
+    answersEl.appendChild(btn);
+  });
+  // Combo display
+  if (eaBattle.combo >= 2) {
+    document.getElementById('ea-combo-display').textContent = `${eaBattle.combo}x COMBO!`;
+    document.getElementById('ea-combo-display').style.animation = 'pulse .5s';
+  } else {
+    document.getElementById('ea-combo-display').textContent = '';
+  }
+}
+
+function eaSelectAnswer(idx) {
+  if (eaBattle.answered) return;
+  eaBattle.answered = true;
+  const q = eaBattle.currentQ;
+  const btns = document.getElementById('ea-answers').querySelectorAll('.ma-ans-btn');
+  btns.forEach(b => b.style.pointerEvents = 'none');
+  const fb = document.getElementById('ea-feedback');
+
+  if (idx === q.ans) {
+    btns[idx].classList.add('correct');
+    eaBattle.correct++;
+    eaBattle.combo++;
+    if (eaBattle.combo > eaBattle.bestCombo) eaBattle.bestCombo = eaBattle.combo;
+    const xp = q.diff==='hard'?20:q.diff==='medium'?12:8;
+    const coins = q.diff==='hard'?6:q.diff==='medium'?4:2;
+    state.yuhi.xp += xp;
+    state.yuhi.coins += coins;
+    fb.style.display = 'block';
+    fb.style.background = 'rgba(46,213,115,.15)';
+    fb.style.color = '#2ed573';
+    fb.innerHTML = `✅ Correct! +${xp} XP, +${coins} coins<br><span style="font-size:.85em;color:#aaa">${q.exp}</span>`;
+    // Track in completedQs
+    const cq = state.yuhi.completedQs.english;
+    if (cq && !cq.includes(q.q)) cq.push(q.q);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.ans].classList.add('correct');
+    eaBattle.combo = 0;
+    state.yuhi.xp += 2;
+    fb.style.display = 'block';
+    fb.style.background = 'rgba(255,71,87,.15)';
+    fb.style.color = '#ff4757';
+    fb.innerHTML = `❌ Not quite! +2 XP<br>Correct: ${q.opts[q.ans]}<br><span style="font-size:.85em;color:#aaa">${q.exp}</span>`;
+    const cq = state.yuhi.completedQs.english;
+    if (cq && !cq.includes(q.q)) cq.push(q.q);
+  }
+  document.getElementById('ea-progress-bar').style.width = (eaBattle.correct/5*100)+'%';
+  document.getElementById('ea-progress-text').textContent = `${eaBattle.correct} / 5 correct`;
+  save(); updatePlayerCards();
+  // Auto-advance after 2 seconds
+  setTimeout(() => {
+    eaBattle.qIdx++;
+    if (eaBattle.qIdx >= eaBattle.questions.length) eaFinish();
+    else eaRenderQuestion();
+  }, 2000);
+}
+
+function eaUsePowerUp(type) {
+  if (eaBattle.answered) return;
+  const costs = {'5050':10, 'hint':20};
+  if (state.yuhi.coins < costs[type]) return;
+  state.yuhi.coins -= costs[type];
+  save(); updatePlayerCards();
+  const q = eaBattle.currentQ;
+  if (type === '5050') {
+    const btns = document.getElementById('ea-answers').querySelectorAll('.ma-ans-btn');
+    let removed = 0;
+    btns.forEach((b, i) => { if (i !== q.ans && removed < 2) { b.style.opacity='0.3'; b.style.pointerEvents='none'; removed++; } });
+  } else if (type === 'hint') {
+    document.getElementById('ea-hint-box').style.display = 'block';
+    document.getElementById('ea-hint-box').textContent = '💡 ' + q.exp;
+  }
+}
+
+function eaFinish() {
+  if (!state.yuhi.engArena) state.yuhi.engArena = {wins:0, streak:0, bestCombo:0, stageStars:{}};
+  const ea = state.yuhi.engArena;
+  const won = eaBattle.correct >= 3;
+  let stars = 0;
+  if (won) { stars = 1; ea.wins++; ea.streak++; }
+  else { ea.streak = 0; }
+  if (eaBattle.correct >= 4) stars = 2;
+  if (eaBattle.correct >= 5) stars = 3;
+  if (eaBattle.bestCombo > ea.bestCombo) ea.bestCombo = eaBattle.bestCombo;
+  const prevStars = ea.stageStars[eaBattle.stage.id] || 0;
+  if (stars > prevStars) ea.stageStars[eaBattle.stage.id] = stars;
+
+  let xpReward = won ? 10 : 2;
+  let coinReward = won ? 5 : 1;
+  if (stars >= 2) { xpReward += 5; coinReward += 3; }
+  if (stars >= 3) { xpReward += 10; coinReward += 5; }
+  if (eaBattle.stage.boss && won) { xpReward += 10; coinReward += 7; }
+  state.yuhi.xp += xpReward;
+  state.yuhi.coins += coinReward;
+
+  document.getElementById('ea-battle-area').style.display = 'none';
+  document.getElementById('ea-result-area').style.display = '';
+  document.getElementById('ea-result-title').textContent = won ? '📚 VICTORY!' : '📖 Keep Studying!';
+  document.getElementById('ea-result-title').style.color = won ? '#2ed573' : '#ffa502';
+  document.getElementById('ea-result-stars').textContent = '⭐'.repeat(stars) + '☆'.repeat(3-stars);
+  document.getElementById('ea-result-msg').textContent = `${eaBattle.correct}/5 correct | Best Combo: ${eaBattle.bestCombo}x`;
+  document.getElementById('ea-result-rewards').innerHTML =
+    `<span class="reward-chip" style="color:#4facfe">+${xpReward} XP</span>
+     <span class="reward-chip" style="color:#ffd200">+${coinReward} Coins</span>`;
+  save(); updatePlayerCards();
+}
+
+function eaNextRound() {
+  const idx = eaStages.indexOf(eaBattle.stage);
+  const next = (idx + 1) % eaStages.length;
+  eaStartBattle(next);
+}
 
 // ============ ORAL QUEST SYSTEM ============
 const oralScenarios = [
