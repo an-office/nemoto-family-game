@@ -537,7 +537,26 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
 
   <div class="players">
     <div class="p-card yuhi">
-      <div class="avatar">&#128218;</div>
+      <div class="avatar" style="font-size:2.2em;line-height:1">
+        <svg width="48" height="48" viewBox="0 0 48 48" style="vertical-align:middle">
+          <circle cx="24" cy="26" r="18" fill="#FFD700"/>
+          <circle cx="24" cy="26" r="16" fill="#FFED4A"/>
+          <ellipse cx="18" cy="22" rx="3.5" ry="4" fill="white"/>
+          <ellipse cx="30" cy="22" rx="3.5" ry="4" fill="white"/>
+          <circle cx="18" cy="23" r="2.2" fill="#333"/>
+          <circle cx="30" cy="23" r="2.2" fill="#333"/>
+          <circle cx="17" cy="22" r="0.8" fill="white"/>
+          <circle cx="29" cy="22" r="0.8" fill="white"/>
+          <ellipse cx="14" cy="28" rx="4" ry="2.5" fill="#FF6B6B" opacity=".5"/>
+          <ellipse cx="34" cy="28" rx="4" ry="2.5" fill="#FF6B6B" opacity=".5"/>
+          <path d="M20 29 Q24 33 28 29" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <polygon points="8,8 14,18 4,16" fill="#FFD700"/>
+          <polygon points="10,6 14,18 4,16" fill="#333"/>
+          <polygon points="40,8 34,18 44,16" fill="#FFD700"/>
+          <polygon points="38,6 34,18 44,16" fill="#333"/>
+          <text x="24" y="40" text-anchor="middle" font-size="7" fill="#333">⚡</text>
+        </svg>
+      </div>
       <div class="name">Yuhi</div>
       <div class="grade">P6 - PSLE Year!</div>
       <div class="xp-bar"><div class="xp-fill" id="xp-bar-yuhi" style="width:0%"></div></div>
@@ -568,7 +587,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
   <div class="card" style="text-align:center;margin:12px 0;padding:12px;border:2px solid rgba(255,165,2,.3);background:rgba(255,165,2,.05)">
     <div style="font-size:.75em;color:#aaa;margin-bottom:6px">Who is playing now?</div>
     <div style="display:flex;gap:10px;justify-content:center">
-      <button id="dash-switch-yuhi" onclick="switchPlayerDash('yuhi')" style="flex:1;max-width:160px;padding:12px 20px;border-radius:12px;border:2px solid #ffd200;background:rgba(255,210,0,.15);color:#ffd200;font-size:1.1em;font-weight:700;cursor:pointer;transition:all .2s">📘 Yuhi (P6)</button>
+      <button id="dash-switch-yuhi" onclick="switchPlayerDash('yuhi')" style="flex:1;max-width:160px;padding:12px 20px;border-radius:12px;border:2px solid #ffd200;background:rgba(255,210,0,.15);color:#ffd200;font-size:1.1em;font-weight:700;cursor:pointer;transition:all .2s">⚡ Yuhi (P6)</button>
       <button id="dash-switch-ryusei" onclick="switchPlayerDash('ryusei')" style="flex:1;max-width:160px;padding:12px 20px;border-radius:12px;border:2px solid #2ed573;background:rgba(46,213,115,.15);color:#2ed573;font-size:1.1em;font-weight:700;cursor:pointer;transition:all .2s">⚽ Ryusei (P4)</button>
     </div>
   </div>
@@ -1254,6 +1273,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div class="sub" id="sched-sub">Study + Activities + Family! (from Google Calendar)</div>
   </div>
 
+  <div id="sched-week-nav" style="display:flex;align-items:center;justify-content:center;gap:12px;margin:10px 0 6px;flex-wrap:wrap"></div>
   <div class="tab-row" id="sched-tabs"></div>
 
   <div id="sched-content"></div>
@@ -3354,18 +3374,125 @@ const CALENDAR_EVENTS = [
   {date:'2026-04-05',start:'09:00',end:'10:50',title:'Brainfit',who:'yuhi',type:'activity'},
   {date:'2026-04-05',start:'11:00',end:'12:30',title:'Pup SKC Kendo',who:'both',type:'activity'},
   {date:'2026-04-05',start:'13:00',end:'14:30',title:'Kids Kendo Class',who:'both',type:'activity'},
+  // ── Week of 4/6 ──
+  // Mon 4/6
+  {date:'2026-04-06',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-06',start:'14:00',end:'17:30',title:'CCA',who:'ryusei',type:'activity'},
+  {date:'2026-04-06',start:'17:15',end:'19:15',title:'Writers at Work',who:'yuhi',type:'activity'},
+  // Tue 4/7
+  {date:'2026-04-07',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-07',start:'14:00',end:'17:30',title:'CCA',who:'yuhi',type:'activity'},
+  {date:'2026-04-07',start:'17:30',end:'19:00',title:'Kids Kendo Class',who:'both',type:'activity'},
+  // Wed 4/8
+  {date:'2026-04-08',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-08',start:'16:00',end:'19:00',title:'Berries',who:'yuhi',type:'activity'},
+  {date:'2026-04-08',start:'17:00',end:'18:45',title:'TLL Science',who:'ryusei',type:'activity'},
+  // Thu 4/9
+  {date:'2026-04-09',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-09',start:'14:30',end:'17:00',title:'Berries',who:'ryusei',type:'activity'},
+  {date:'2026-04-09',start:'15:00',end:'16:00',title:'Writers at Work',who:'yuhi',type:'activity'},
+  // Fri 4/10
+  {date:'2026-04-10',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  // Sat 4/11
+  {date:'2026-04-11',start:'08:00',end:'09:00',title:'Keppel Golf',who:'both',type:'activity'},
+  {date:'2026-04-11',start:'10:00',end:'11:00',title:'SICC GAT Class',who:'both',type:'activity'},
+  {date:'2026-04-11',start:'14:00',end:'16:00',title:'Learning Lab Math',who:'yuhi',type:'activity'},
+  {date:'2026-04-11',start:'14:00',end:'15:45',title:'Math TLL',who:'ryusei',type:'activity'},
+  {date:'2026-04-11',start:'16:00',end:'18:00',title:'TLL Science',who:'yuhi',type:'activity'},
+  // Sun 4/12
+  {date:'2026-04-12',start:'09:00',end:'11:00',title:'SKC Kendo',who:'both',type:'activity'},
+  {date:'2026-04-12',start:'09:00',end:'10:50',title:'Brainfit',who:'yuhi',type:'activity'},
+  {date:'2026-04-12',start:'13:00',end:'14:30',title:'Kids Kendo Class',who:'both',type:'activity'},
+  // ── Week of 4/13 ──
+  // Mon 4/13
+  {date:'2026-04-13',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-13',start:'14:00',end:'17:30',title:'CCA',who:'ryusei',type:'activity'},
+  {date:'2026-04-13',start:'17:15',end:'19:15',title:'Writers at Work',who:'yuhi',type:'activity'},
+  // Tue 4/14
+  {date:'2026-04-14',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-14',start:'14:00',end:'17:30',title:'CCA',who:'yuhi',type:'activity'},
+  {date:'2026-04-14',start:'17:30',end:'19:00',title:'Kids Kendo Class',who:'both',type:'activity'},
+  // Wed 4/15
+  {date:'2026-04-15',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-15',start:'16:00',end:'19:00',title:'Berries',who:'yuhi',type:'activity'},
+  {date:'2026-04-15',start:'17:00',end:'18:45',title:'TLL Science',who:'ryusei',type:'activity'},
+  // Thu 4/16
+  {date:'2026-04-16',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-16',start:'14:30',end:'17:00',title:'Berries',who:'ryusei',type:'activity'},
+  {date:'2026-04-16',start:'15:00',end:'16:00',title:'Writers at Work',who:'yuhi',type:'activity'},
+  // Fri 4/17
+  {date:'2026-04-17',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  // Sat 4/18
+  {date:'2026-04-18',start:'08:00',end:'09:00',title:'Keppel Golf',who:'both',type:'activity'},
+  {date:'2026-04-18',start:'10:00',end:'11:00',title:'SICC GAT Class',who:'both',type:'activity'},
+  {date:'2026-04-18',start:'14:00',end:'16:00',title:'Learning Lab Math',who:'yuhi',type:'activity'},
+  {date:'2026-04-18',start:'14:00',end:'15:45',title:'Math TLL',who:'ryusei',type:'activity'},
+  {date:'2026-04-18',start:'16:00',end:'18:00',title:'TLL Science',who:'yuhi',type:'activity'},
+  // Sun 4/19
+  {date:'2026-04-19',start:'09:00',end:'11:00',title:'SKC Kendo',who:'both',type:'activity'},
+  {date:'2026-04-19',start:'09:00',end:'10:50',title:'Brainfit',who:'yuhi',type:'activity'},
+  {date:'2026-04-19',start:'13:00',end:'14:30',title:'Kids Kendo Class',who:'both',type:'activity'},
+  // ── Week of 4/20 ──
+  // Mon 4/20
+  {date:'2026-04-20',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-20',start:'14:00',end:'17:30',title:'CCA',who:'ryusei',type:'activity'},
+  {date:'2026-04-20',start:'17:15',end:'19:15',title:'Writers at Work',who:'yuhi',type:'activity'},
+  // Tue 4/21
+  {date:'2026-04-21',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-21',start:'14:00',end:'17:30',title:'CCA',who:'yuhi',type:'activity'},
+  {date:'2026-04-21',start:'17:30',end:'19:00',title:'Kids Kendo Class',who:'both',type:'activity'},
+  // Wed 4/22
+  {date:'2026-04-22',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-22',start:'16:00',end:'19:00',title:'Berries',who:'yuhi',type:'activity'},
+  {date:'2026-04-22',start:'17:00',end:'18:45',title:'TLL Science',who:'ryusei',type:'activity'},
+  // Thu 4/23
+  {date:'2026-04-23',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-23',start:'14:30',end:'17:00',title:'Berries',who:'ryusei',type:'activity'},
+  {date:'2026-04-23',start:'15:00',end:'16:00',title:'Writers at Work',who:'yuhi',type:'activity'},
+  // Fri 4/24
+  {date:'2026-04-24',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  // Sat 4/25
+  {date:'2026-04-25',start:'08:00',end:'09:00',title:'Keppel Golf',who:'both',type:'activity'},
+  {date:'2026-04-25',start:'10:00',end:'11:00',title:'SICC GAT Class',who:'both',type:'activity'},
+  {date:'2026-04-25',start:'14:00',end:'16:00',title:'Learning Lab Math',who:'yuhi',type:'activity'},
+  {date:'2026-04-25',start:'14:00',end:'15:45',title:'Math TLL',who:'ryusei',type:'activity'},
+  {date:'2026-04-25',start:'16:00',end:'18:00',title:'TLL Science',who:'yuhi',type:'activity'},
+  // Sun 4/26
+  {date:'2026-04-26',start:'09:00',end:'11:00',title:'SKC Kendo',who:'both',type:'activity'},
+  {date:'2026-04-26',start:'09:00',end:'10:50',title:'Brainfit',who:'yuhi',type:'activity'},
+  {date:'2026-04-26',start:'13:00',end:'14:30',title:'Kids Kendo Class',who:'both',type:'activity'},
+  // ── Week of 4/27 ──
+  // Mon 4/27
+  {date:'2026-04-27',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-27',start:'14:00',end:'17:30',title:'CCA',who:'ryusei',type:'activity'},
+  {date:'2026-04-27',start:'17:15',end:'19:15',title:'Writers at Work',who:'yuhi',type:'activity'},
+  // Tue 4/28
+  {date:'2026-04-28',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-28',start:'14:00',end:'17:30',title:'CCA',who:'yuhi',type:'activity'},
+  {date:'2026-04-28',start:'17:30',end:'19:00',title:'Kids Kendo Class',who:'both',type:'activity'},
+  // Wed 4/29
+  {date:'2026-04-29',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-29',start:'16:00',end:'19:00',title:'Berries',who:'yuhi',type:'activity'},
+  {date:'2026-04-29',start:'17:00',end:'18:45',title:'TLL Science',who:'ryusei',type:'activity'},
+  // Thu 4/30
+  {date:'2026-04-30',start:'07:00',end:'14:00',title:'School',who:'both',type:'school'},
+  {date:'2026-04-30',start:'14:30',end:'17:00',title:'Berries',who:'ryusei',type:'activity'},
+  {date:'2026-04-30',start:'15:00',end:'16:00',title:'Writers at Work',who:'yuhi',type:'activity'},
 ];
 // Last calendar sync timestamp
-const CALENDAR_LAST_SYNC = '2026-03-29T16:00:00+08:00';
+const CALENDAR_LAST_SYNC = '2026-03-29T18:00:00+08:00';
 
 const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const DAY_NAMES_JP = ['日','月','火','水','木','金','土'];
 
-function getWeekDates() {
+let schedWeekOffset = 0; // 0=current week, +1=next week, etc.
+
+function getWeekDates(offset) {
+  const off = offset || 0;
   const today = new Date();
   const dow = today.getDay(); // 0=Sun
   const mon = new Date(today);
-  mon.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1)); // Start from Monday
+  mon.setDate(today.getDate() - (dow === 0 ? 6 : dow - 1) + off * 7);
   const dates = [];
   for (let i = 0; i < 7; i++) {
     const d = new Date(mon);
@@ -3551,20 +3678,35 @@ function buildDaySchedule(dateStr, events) {
 }
 
 function renderWeeklyPlan() {
-  const dates = getWeekDates();
+  const dates = getWeekDates(schedWeekOffset);
   const today = fmtDate(new Date());
   const tabsEl = document.getElementById('sched-tabs');
   const contentEl = document.getElementById('sched-content');
   if (!tabsEl || !contentEl) return;
 
-  // Build tabs
+  // Week navigation arrows
+  const weekStart = dates[0], weekEnd = dates[6];
+  const weekLabel = `${weekStart.getMonth()+1}/${weekStart.getDate()} - ${weekEnd.getMonth()+1}/${weekEnd.getDate()}`;
+  const navEl = document.getElementById('sched-week-nav');
+  if (navEl) {
+    navEl.innerHTML = `
+      <button onclick="schedChangeWeek(-1)" style="background:none;border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:1em">&larr; 前週</button>
+      <span style="font-weight:700;font-size:1.05em;color:#ffd200">${weekLabel}${schedWeekOffset===0?' (今週)':''}</span>
+      <button onclick="schedChangeWeek(1)" style="background:none;border:1px solid rgba(255,255,255,.2);color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:1em">翌週 &rarr;</button>
+      ${schedWeekOffset!==0?`<button onclick="schedChangeWeek(0,true)" style="background:rgba(255,210,0,.15);border:1px solid rgba(255,210,0,.3);color:#ffd200;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:.9em;margin-left:8px">今週に戻る</button>`:''}
+    `;
+  }
+
+  // Build tabs — default to today if current week, otherwise Monday
+  let defaultIdx = 0;
   let tabsHtml = '';
   dates.forEach((d, i) => {
     const ds = fmtDate(d);
     const isToday = ds === today;
+    if (isToday) defaultIdx = i;
     const dow = d.getDay();
     const label = DAY_NAMES_JP[dow] + ' ' + (d.getMonth()+1) + '/' + d.getDate();
-    tabsHtml += `<button class="tab-btn${isToday?' active':''}" onclick="showWeekDay(${i})">${isToday?'TODAY ':''}<span>${label}</span></button>`;
+    tabsHtml += `<button class="tab-btn${(schedWeekOffset===0&&isToday)||(schedWeekOffset!==0&&i===0)?' active':''}" onclick="showWeekDay(${i})">${isToday?'TODAY ':''}<span>${label}</span></button>`;
   });
   tabsEl.innerHTML = tabsHtml;
 
@@ -3578,7 +3720,8 @@ function renderWeeklyPlan() {
     const blocks = buildDaySchedule(ds, dayEvents);
     const isWeekday = dow >= 1 && dow <= 5;
 
-    html += `<div class="tab-content${isToday?' active':''}" id="sched-day-${i}">`;
+    const isDefault = (schedWeekOffset===0 && isToday) || (schedWeekOffset!==0 && i===0);
+    html += `<div class="tab-content${isDefault?' active':''}" id="sched-day-${i}">`;
     html += `<div style="background:rgba(${isWeekday?'69,183,209':'247,151,30'},.08);border:1px solid rgba(${isWeekday?'69,183,209':'247,151,30'},.2);border-radius:12px;padding:14px;margin-bottom:16px;text-align:center">`;
     html += `<div style="font-size:1.1em;font-weight:800;color:${isWeekday?'#45b7d1':'#f7971e'}">${DAY_NAMES[dow]} ${d.getMonth()+1}/${d.getDate()} ${isToday?'(TODAY!)':''}</div>`;
 
@@ -3613,6 +3756,15 @@ function showWeekDay(idx) {
   const el = document.getElementById('sched-day-'+idx);
   if (el) el.classList.add('active');
   document.querySelectorAll('#pg-schedule .tab-btn').forEach((b,i) => b.classList.toggle('active', i===idx));
+}
+
+function schedChangeWeek(delta, reset) {
+  if (reset) schedWeekOffset = 0;
+  else schedWeekOffset += delta;
+  // Limit: don't go more than 1 week back or 5 weeks ahead
+  if (schedWeekOffset < -1) schedWeekOffset = -1;
+  if (schedWeekOffset > 5) schedWeekOffset = 5;
+  renderWeeklyPlan();
 }
 
 // Show "last synced" info
@@ -3950,12 +4102,14 @@ function eaSelectAnswer(idx) {
   document.getElementById('ea-progress-bar').style.width = (eaBattle.correct/5*100)+'%';
   document.getElementById('ea-progress-text').textContent = `${eaBattle.correct} / 5 correct`;
   save(); updatePlayerCards();
-  // Auto-advance after 2 seconds
-  setTimeout(() => {
-    eaBattle.qIdx++;
-    if (eaBattle.qIdx >= eaBattle.questions.length) eaFinish();
-    else eaRenderQuestion();
-  }, 2000);
+  // Show "Next" button — wait for user to confirm understanding
+  fb.innerHTML += `<br><button onclick="eaNextQuestion()" style="margin-top:10px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">理解したら次へ ➜</button>`;
+}
+
+function eaNextQuestion() {
+  eaBattle.qIdx++;
+  if (eaBattle.qIdx >= eaBattle.questions.length) eaFinish();
+  else eaRenderQuestion();
 }
 
 function eaUsePowerUp(type) {
@@ -4371,11 +4525,14 @@ function caSelectAnswer(idx) {
   document.getElementById('ca-progress-bar').style.width = (caBattle.correct/5*100)+'%';
   document.getElementById('ca-progress-text').textContent = `${caBattle.correct} / 5 correct`;
   save(); updatePlayerCards();
-  setTimeout(() => {
-    caBattle.qIdx++;
-    if (caBattle.qIdx >= caBattle.questions.length) caFinish();
-    else caRenderQuestion();
-  }, 2000);
+  // Show "Next" button — wait for user to confirm understanding
+  fb.innerHTML += `<br><button onclick="caNextQuestion()" style="margin-top:10px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">理解したら次へ ➜</button>`;
+}
+
+function caNextQuestion() {
+  caBattle.qIdx++;
+  if (caBattle.qIdx >= caBattle.questions.length) caFinish();
+  else caRenderQuestion();
 }
 
 function caUsePowerUp(type) {
@@ -4795,11 +4952,14 @@ function saSelectAnswer(idx) {
   document.getElementById('sa-progress-bar').style.width = (saBattle.correct/5*100)+'%';
   document.getElementById('sa-progress-text').textContent = `${saBattle.correct} / 5 correct`;
   save(); updatePlayerCards();
-  setTimeout(() => {
-    saBattle.qIdx++;
-    if (saBattle.qIdx >= saBattle.questions.length) saFinish();
-    else saRenderQuestion();
-  }, 2000);
+  // Show "Next" button — wait for user to confirm understanding
+  fb.innerHTML += `<br><button onclick="saNextQuestion()" style="margin-top:10px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">理解したら次へ ➜</button>`;
+}
+
+function saNextQuestion() {
+  saBattle.qIdx++;
+  if (saBattle.qIdx >= saBattle.questions.length) saFinish();
+  else saRenderQuestion();
 }
 
 function saUsePowerUp(type) {
@@ -5647,63 +5807,63 @@ const maStages = [
 
 const maQuestions = {
   slime: [
-    {q:'7 × 8 = ?', opts:['56','54','48','63'], ans:0, hint:'Step 1: 7 × 7 = 49. Step 2: Add one more group of 7 → 49 + 7 = 56.', diff:'easy'},
-    {q:'9 × 6 = ?', opts:['54','56','63','48'], ans:0, hint:'Step 1: 9 × 10 = 90 (easy!). Step 2: Take away one group of 6 → 90 − 6 = 54.', diff:'easy'},
-    {q:'144 ÷ 12 = ?', opts:['12','14','11','13'], ans:0, hint:'Think: 12 × ? = 144. You know 12 × 10 = 120. And 12 × 2 = 24. So 12 × 12 = 120 + 24 = 144.', diff:'easy'},
-    {q:'456 + 378 = ?', opts:['834','824','844','814'], ans:0, hint:'Step 1: Add the hundreds → 400 + 300 = 700. Step 2: Add the rest → 56 + 78 = 134. Step 3: Total = 700 + 134 = 834.', diff:'easy'},
-    {q:'1000 − 367 = ?', opts:['633','637','643','623'], ans:0, hint:'Step 1: Round 367 up to 400 → 1000 − 400 = 600. Step 2: You subtracted 33 too many, so add back 33 → 600 + 33 = 633.', diff:'easy'},
-    {q:'25 × 4 = ?', opts:['100','90','110','95'], ans:0, hint:'25 is one quarter of 100. Four quarters make one whole → 25 × 4 = 100.', diff:'easy'},
-    {q:'23 × 4 = ?', opts:['92','82','96','84'], ans:0, hint:'Split 23 into 20 and 3. Step 1: 20 × 4 = 80. Step 2: 3 × 4 = 12. Step 3: Add them → 80 + 12 = 92.', diff:'easy'},
-    {q:'756 ÷ 6 = ?', opts:['126','136','116','146'], ans:0, hint:'Step 1: 6 × 100 = 600. Step 2: 756 − 600 = 156 left over. Step 3: 6 × 26 = 156. Step 4: Total = 100 + 26 = 126.', diff:'medium'},
-    {q:'What is 1000 more than 6543?', opts:['7543','7643','6643','7443'], ans:0, hint:'Adding 1000 only changes the thousands digit. The thousands digit in 6543 is 6. Add 1 to make it 7 → Answer: 7543.', diff:'easy'},
-    {q:'36 × 5 = ?', opts:['180','175','185','170'], ans:0, hint:'Multiply by 10 first, then halve it. Step 1: 36 × 10 = 360. Step 2: Half of 360 = 180.', diff:'easy'},
-    {q:'840 ÷ 7 = ?', opts:['120','130','110','140'], ans:0, hint:'Step 1: 7 × 100 = 700. Step 2: 840 − 700 = 140 left over. Step 3: 7 × 20 = 140. Step 4: Total = 100 + 20 = 120.', diff:'medium'},
-    {q:'15 × 15 = ?', opts:['225','215','235','205'], ans:0, hint:'Split it up. Step 1: 15 × 10 = 150. Step 2: 15 × 5 = 75. Step 3: Add them → 150 + 75 = 225.', diff:'medium'},
-    {q:'What is 99 × 5?', opts:['495','500','490','505'], ans:0, hint:'Round 99 up to 100 first. Step 1: 100 × 5 = 500. Step 2: You multiplied by 1 too many, so subtract one 5 → 500 − 5 = 495.', diff:'medium'},
-    {q:'Round 4678 to nearest 100', opts:['4700','4600','4680','5000'], ans:0, hint:'Look at the TENS digit, which is 7. Rule: if the tens digit is 5 or more, round UP the hundreds. 7 is more than 5, so 4678 rounds up to 4700.', diff:'easy'},
-    {q:'What is 250 × 8?', opts:['2000','1800','2200','1600'], ans:0, hint:'Step 1: 250 × 4 = 1000 (four 250s make 1000). Step 2: Double it for 250 × 8 → 1000 × 2 = 2000.', diff:'medium'},
+    {q:'7 × 8 = ?', opts:['56','54','48','63'], ans:0, hint:'Try thinking of a times table you know well, then add one more group!', diff:'easy'},
+    {q:'9 × 6 = ?', opts:['54','56','63','48'], ans:0, hint:'Try multiplying by 10 first, then subtract one group!', diff:'easy'},
+    {q:'144 ÷ 12 = ?', opts:['12','14','11','13'], ans:0, hint:'Think: 12 times WHAT equals 144? Start with 12 × 10 and work from there!', diff:'easy'},
+    {q:'456 + 378 = ?', opts:['834','824','844','814'], ans:0, hint:'Break it into parts: add the hundreds first, then add the tens and ones separately!', diff:'easy'},
+    {q:'1000 − 367 = ?', opts:['633','637','643','623'], ans:0, hint:'Round 367 up to a friendly number, subtract from 1000, then adjust!', diff:'easy'},
+    {q:'25 × 4 = ?', opts:['100','90','110','95'], ans:0, hint:'Think about coins! How many 25-cent coins make a dollar?', diff:'easy'},
+    {q:'23 × 4 = ?', opts:['92','82','96','84'], ans:0, hint:'Split 23 into tens and ones, multiply each part by 4, then add them together!', diff:'easy'},
+    {q:'756 ÷ 6 = ?', opts:['126','136','116','146'], ans:0, hint:'Think about how many groups fit. Start with how many hundreds, then work on the remainder!', diff:'medium'},
+    {q:'What is 1000 more than 6543?', opts:['7543','7643','6643','7443'], ans:0, hint:'Adding 1000 only changes one digit. Which place value does it affect?', diff:'easy'},
+    {q:'36 × 5 = ?', opts:['180','175','185','170'], ans:0, hint:'Trick for multiplying by 5: multiply by 10 first, then take half!', diff:'easy'},
+    {q:'840 ÷ 7 = ?', opts:['120','130','110','140'], ans:0, hint:'Start by figuring out how many hundreds fit, then divide the leftover part!', diff:'medium'},
+    {q:'15 × 15 = ?', opts:['225','215','235','205'], ans:0, hint:'Split one of the 15s into 10 + 5, then multiply each part and add!', diff:'medium'},
+    {q:'What is 99 × 5?', opts:['495','500','490','505'], ans:0, hint:'Round 99 up to 100 to make it easier, then adjust by subtracting a little!', diff:'medium'},
+    {q:'Round 4678 to nearest 100', opts:['4700','4600','4680','5000'], ans:0, hint:'Look at the tens digit. If it is 5 or more, round the hundreds UP. If less than 5, round DOWN!', diff:'easy'},
+    {q:'What is 250 × 8?', opts:['2000','1800','2200','1600'], ans:0, hint:'Try multiplying by 4 first (a number you might know), then double it!', diff:'medium'},
   ],
   fraction: [
-    {q:'1/2 + 1/4 = ?', opts:['3/4','2/4','1/3','2/6'], ans:0, hint:'To add fractions, make the bottom numbers (denominators) the same. Step 1: Change 1/2 to 2/4. Step 2: 2/4 + 1/4 = 3/4.', diff:'easy'},
-    {q:'3/4 − 1/2 = ?', opts:['1/4','2/4','1/2','1/3'], ans:0, hint:'Make the denominators the same first. Step 1: Change 1/2 to 2/4. Step 2: 3/4 − 2/4 = 1/4.', diff:'easy'},
-    {q:'What is 2/5 of 40?', opts:['16','20','15','24'], ans:0, hint:'To find a fraction of a number: Step 1: Divide by the bottom number → 40 ÷ 5 = 8. Step 2: Multiply by the top number → 8 × 2 = 16.', diff:'medium'},
-    {q:'What is 3/4 of 24?', opts:['18','16','20','12'], ans:0, hint:'Step 1: Divide by the bottom number → 24 ÷ 4 = 6. Step 2: Multiply by the top number → 6 × 3 = 18.', diff:'medium'},
-    {q:'Which is bigger: 3/4 or 2/3?', opts:['3/4','2/3','Same','Cannot tell'], ans:0, hint:'Make the denominators the same. Step 1: 3/4 = 9/12. Step 2: 2/3 = 8/12. Step 3: Compare → 9/12 is bigger than 8/12, so 3/4 is bigger.', diff:'medium'},
-    {q:'1/3 + 1/6 = ?', opts:['1/2','2/6','1/3','2/9'], ans:0, hint:'Step 1: Change 1/3 into sixths → 1/3 = 2/6. Step 2: Now add → 2/6 + 1/6 = 3/6. Step 3: Simplify → 3/6 = 1/2.', diff:'medium'},
-    {q:'Arrange smallest first: 1/2, 1/4, 3/4', opts:['1/4, 1/2, 3/4','1/2, 1/4, 3/4','3/4, 1/2, 1/4','1/4, 3/4, 1/2'], ans:0, hint:'Think of them as pizza slices. 1/4 is the smallest slice. 1/2 is a medium slice. 3/4 is the biggest slice. Order from smallest: 1/4, 1/2, 3/4.', diff:'easy'},
-    {q:'What fraction = 0.5?', opts:['1/2','1/3','1/4','1/5'], ans:0, hint:'0.5 means five tenths = 5/10. Simplify by dividing top and bottom by 5 → 1/2. So 0.5 = 1/2.', diff:'easy'},
-    {q:'Ali ate 1/4 of a pizza. Ben ate 1/3. How much left?', opts:['5/12','1/2','7/12','1/4'], ans:0, hint:'Step 1: Find how much was eaten → 1/4 + 1/3. Step 2: Make equal denominators → 3/12 + 4/12 = 7/12 eaten. Step 3: Amount left = 1 − 7/12 = 12/12 − 7/12 = 5/12.', diff:'hard'},
-    {q:'Tank is 1/3 full. Add 8L → 5/6 full. Capacity?', opts:['16 L','24 L','12 L','20 L'], ans:0, hint:'Step 1: Find what fraction was added → 5/6 − 1/3. Step 2: Change 1/3 to sixths → 2/6. Step 3: 5/6 − 2/6 = 3/6 = 1/2. Step 4: So 1/2 of the tank equals 8 litres. Step 5: Full tank = 8 × 2 = 16 litres.', diff:'hard'},
-    {q:'What is 1/5 of 45?', opts:['9','10','8','5'], ans:0, hint:'To find 1/5 of a number, divide by 5. Step: 45 ÷ 5 = 9.', diff:'easy'},
-    {q:'2/3 + 1/6 = ?', opts:['5/6','3/6','4/6','3/9'], ans:0, hint:'Step 1: Change 2/3 to sixths → 2/3 = 4/6. Step 2: Now add → 4/6 + 1/6 = 5/6.', diff:'medium'},
-    {q:'Which fraction equals 4/6?', opts:['2/3','3/4','4/8','1/2'], ans:0, hint:'To simplify a fraction, divide both the top and bottom by the same number. Step 1: Both 4 and 6 can be divided by 2. Step 2: 4 ÷ 2 = 2, and 6 ÷ 2 = 3. Answer: 2/3.', diff:'medium'},
+    {q:'1/2 + 1/4 = ?', opts:['3/4','2/4','1/3','2/6'], ans:0, hint:'Make the denominators the same first! Can you change 1/2 into fourths?', diff:'easy'},
+    {q:'3/4 − 1/2 = ?', opts:['1/4','2/4','1/2','1/3'], ans:0, hint:'Make the denominators match first. Convert 1/2 into fourths, then subtract!', diff:'easy'},
+    {q:'What is 2/5 of 40?', opts:['16','20','15','24'], ans:0, hint:'First find 1/5 of 40 by dividing, then multiply by the top number!', diff:'medium'},
+    {q:'What is 3/4 of 24?', opts:['18','16','20','12'], ans:0, hint:'Divide by the denominator first to find one part, then multiply by the numerator!', diff:'medium'},
+    {q:'Which is bigger: 3/4 or 2/3?', opts:['3/4','2/3','Same','Cannot tell'], ans:0, hint:'Convert both fractions to the same denominator, then compare the numerators!', diff:'medium'},
+    {q:'1/3 + 1/6 = ?', opts:['1/2','2/6','1/3','2/9'], ans:0, hint:'Convert to the same denominator first. Can you change thirds into sixths? Then add and simplify!', diff:'medium'},
+    {q:'Arrange smallest first: 1/2, 1/4, 3/4', opts:['1/4, 1/2, 3/4','1/2, 1/4, 3/4','3/4, 1/2, 1/4','1/4, 3/4, 1/2'], ans:0, hint:'Picture pizza slices! Which fraction is the tiniest piece? Which is the biggest?', diff:'easy'},
+    {q:'What fraction = 0.5?', opts:['1/2','1/3','1/4','1/5'], ans:0, hint:'0.5 means five tenths. Write it as 5/10, then simplify by dividing top and bottom!', diff:'easy'},
+    {q:'Ali ate 1/4 of a pizza. Ben ate 1/3. How much left?', opts:['5/12','1/2','7/12','1/4'], ans:0, hint:'First add the two fractions they ate (use a common denominator), then subtract from 1 whole!', diff:'hard'},
+    {q:'Tank is 1/3 full. Add 8L → 5/6 full. Capacity?', opts:['16 L','24 L','12 L','20 L'], ans:0, hint:'Find what fraction of the tank the 8 litres filled (subtract the two fractions). Then figure out the whole!', diff:'hard'},
+    {q:'What is 1/5 of 45?', opts:['9','10','8','5'], ans:0, hint:'To find 1/5 of a number, just divide it by 5!', diff:'easy'},
+    {q:'2/3 + 1/6 = ?', opts:['5/6','3/6','4/6','3/9'], ans:0, hint:'Convert 2/3 into sixths so the denominators match, then add the numerators!', diff:'medium'},
+    {q:'Which fraction equals 4/6?', opts:['2/3','3/4','4/8','1/2'], ans:0, hint:'Simplify by dividing top and bottom by the same number. What number goes into both 4 and 6?', diff:'medium'},
   ],
   word: [
-    {q:'3 books cost $8 each. Pay $50. Change?', opts:['$26','$24','$28','$22'], ans:0, hint:'Step 1: Find the total cost → 3 × $8 = $24. Step 2: Find the change → $50 − $24 = $26.', diff:'easy'},
-    {q:'Baker bakes 156 muffins. Packs equally in 12 boxes. Sells 9. How many left?', opts:['39','36','42','48'], ans:0, hint:'Step 1: Find muffins per box → 156 ÷ 12 = 13. Step 2: Find boxes remaining → 12 − 9 = 3 boxes unsold. Step 3: Muffins left → 3 × 13 = 39.', diff:'medium'},
-    {q:'Movie starts 2:45pm, lasts 1h30m. End time?', opts:['4:15 pm','4:30 pm','3:45 pm','4:00 pm'], ans:0, hint:'Step 1: Add 1 hour → 2:45 pm + 1 hour = 3:45 pm. Step 2: Add 30 minutes → 3:45 pm + 30 minutes = 4:15 pm.', diff:'medium'},
-    {q:'Rope is 5m 40cm. Cut into 6 equal pieces. Each?', opts:['90 cm','85 cm','95 cm','80 cm'], ans:0, hint:'Step 1: Convert to the same unit → 5 metres 40 centimetres = 540 centimetres. Step 2: Divide equally → 540 ÷ 6 = 90 centimetres.', diff:'medium'},
-    {q:'Samy has 48 stickers. Gives 1/4. How many left?', opts:['36','24','12','40'], ans:0, hint:'Step 1: Find how many were given away → 1/4 of 48 = 48 ÷ 4 = 12. Step 2: Find what is left → 48 − 12 = 36.', diff:'easy'},
-    {q:'How many minutes in 2h 15m?', opts:['135','130','125','145'], ans:0, hint:'Step 1: Convert hours to minutes → 2 hours × 60 = 120 minutes. Step 2: Add the extra minutes → 120 + 15 = 135 minutes.', diff:'easy'},
-    {q:'Sarah has $45. Buys 3 pens ($4) + 2 books ($7). Change?', opts:['$19','$17','$21','$15'], ans:0, hint:'Step 1: Cost of pens → 3 × $4 = $12. Step 2: Cost of books → 2 × $7 = $14. Step 3: Total spent → $12 + $14 = $26. Step 4: Change → $45 − $26 = $19.', diff:'medium'},
-    {q:'2 kg 300 g in grams = ?', opts:['2300 g','2030 g','230 g','23000 g'], ans:0, hint:'Remember: 1 kilogram = 1000 grams. Step 1: 2 kilograms = 2 × 1000 = 2000 grams. Step 2: Add the extra 300 grams → 2000 + 300 = 2300 grams.', diff:'easy'},
-    {q:'How many metres in 3.5 km?', opts:['3500','350','35000','3050'], ans:0, hint:'Remember: 1 kilometre = 1000 metres. Step 1: 3 kilometres = 3000 metres. Step 2: 0.5 kilometres = 500 metres. Step 3: Total = 3000 + 500 = 3500 metres.', diff:'medium'},
-    {q:'Bus leaves at 8:50am. Journey 45 min. Arrival?', opts:['9:35 am','9:25 am','9:45 am','9:30 am'], ans:0, hint:'Step 1: Add 10 minutes to reach 9:00 am. Step 2: You have used 10 minutes, so 45 − 10 = 35 minutes still to go. Step 3: 9:00 am + 35 minutes = 9:35 am.', diff:'medium'},
-    {q:'Shop sells erasers in packs of 6. Need 50. Min packs?', opts:['9','8','10','7'], ans:0, hint:'Step 1: Divide 50 by 6 → 50 ÷ 6 = 8 remainder 2. Step 2: 8 packs gives only 48 erasers (not enough!). Step 3: You need one more pack → 9 packs gives 54 erasers (enough).', diff:'hard'},
-    {q:'Tom has 3× as many cards as Jerry. Together 120. Tom has?', opts:['90','80','60','100'], ans:0, hint:'Use the model method. Step 1: Let Jerry = 1 unit, then Tom = 3 units. Step 2: Together = 1 + 3 = 4 units = 120. Step 3: 1 unit = 120 ÷ 4 = 30. Step 4: Tom has 3 units = 3 × 30 = 90.', diff:'hard'},
+    {q:'3 books cost $8 each. Pay $50. Change?', opts:['$26','$24','$28','$22'], ans:0, hint:'First find the total cost of all books, then subtract from what you paid!', diff:'easy'},
+    {q:'Baker bakes 156 muffins. Packs equally in 12 boxes. Sells 9. How many left?', opts:['39','36','42','48'], ans:0, hint:'Find how many muffins per box first, then figure out how many unsold boxes remain!', diff:'medium'},
+    {q:'Movie starts 2:45pm, lasts 1h30m. End time?', opts:['4:15 pm','4:30 pm','3:45 pm','4:00 pm'], ans:0, hint:'Add the hours first, then add the minutes separately!', diff:'medium'},
+    {q:'Rope is 5m 40cm. Cut into 6 equal pieces. Each?', opts:['90 cm','85 cm','95 cm','80 cm'], ans:0, hint:'Convert everything to centimetres first, then divide equally!', diff:'medium'},
+    {q:'Samy has 48 stickers. Gives 1/4. How many left?', opts:['36','24','12','40'], ans:0, hint:'Find 1/4 of the total first (divide by 4), then subtract that from the total!', diff:'easy'},
+    {q:'How many minutes in 2h 15m?', opts:['135','130','125','145'], ans:0, hint:'Remember: 1 hour = 60 minutes. Convert the hours first, then add the extra minutes!', diff:'easy'},
+    {q:'Sarah has $45. Buys 3 pens ($4) + 2 books ($7). Change?', opts:['$19','$17','$21','$15'], ans:0, hint:'Find the cost of pens and books separately, add them up, then subtract from the total!', diff:'medium'},
+    {q:'2 kg 300 g in grams = ?', opts:['2300 g','2030 g','230 g','23000 g'], ans:0, hint:'Remember: 1 kg = 1000 g. Convert the kilograms to grams first, then add the extra grams!', diff:'easy'},
+    {q:'How many metres in 3.5 km?', opts:['3500','350','35000','3050'], ans:0, hint:'Remember: 1 km = 1000 m. Split 3.5 into the whole part and the decimal part, then convert each!', diff:'medium'},
+    {q:'Bus leaves at 8:50am. Journey 45 min. Arrival?', opts:['9:35 am','9:25 am','9:45 am','9:30 am'], ans:0, hint:'Add minutes to reach the next full hour first, then add the remaining minutes!', diff:'medium'},
+    {q:'Shop sells erasers in packs of 6. Need 50. Min packs?', opts:['9','8','10','7'], ans:0, hint:'Divide 50 by 6. If there is a remainder, you need to round UP to the next pack!', diff:'hard'},
+    {q:'Tom has 3× as many cards as Jerry. Together 120. Tom has?', opts:['90','80','60','100'], ans:0, hint:'Use the model method! If Jerry is 1 unit and Tom is 3 units, how many units total? Divide to find 1 unit!', diff:'hard'},
   ],
   geometry: [
-    {q:'Rectangle: length 9cm, width 4cm. Area?', opts:['36 cm²','26 cm²','13 cm²','32 cm²'], ans:0, hint:'Area of a rectangle = length × width. Calculate: 9 × 4 = 36 square centimetres.', diff:'easy'},
-    {q:'Square side 8cm. Perimeter?', opts:['32 cm','24 cm','64 cm','16 cm'], ans:0, hint:'A square has 4 equal sides. Perimeter = 4 × side length = 4 × 8 = 32 centimetres.', diff:'easy'},
-    {q:'How many faces does a cube have?', opts:['6','4','8','12'], ans:0, hint:'A cube has 6 flat faces: Top, Bottom, Front, Back, Left side, and Right side. Count them up — that makes 6 faces total.', diff:'easy'},
-    {q:'Lines of symmetry in a square?', opts:['4','2','1','8'], ans:0, hint:'A line of symmetry divides a shape into two matching halves. A square has: 1 vertical line down the middle, 1 horizontal line across the middle, and 2 diagonal lines. Total = 4 lines of symmetry.', diff:'medium'},
-    {q:'Triangle angles: 60° and 80°. Third angle?', opts:['40°','50°','60°','30°'], ans:0, hint:'Rule: All three angles in any triangle always add up to 180°. Step 1: Add the two known angles → 60° + 80° = 140°. Step 2: Find the missing angle → 180° − 140° = 40°.', diff:'medium'},
-    {q:'Same perimeter as rect (10×6). Square area?', opts:['64 cm²','48 cm²','36 cm²','56 cm²'], ans:0, hint:'Step 1: Find the rectangle perimeter → 2 × (10 + 6) = 2 × 16 = 32 centimetres. Step 2: The square has the same perimeter = 32 centimetres. Step 3: A square has 4 equal sides → side length = 32 ÷ 4 = 8 centimetres. Step 4: Area of square = 8 × 8 = 64 square centimetres.', diff:'hard'},
-    {q:'Rectangle: area 48cm², width 6cm. Length?', opts:['8 cm','6 cm','10 cm','12 cm'], ans:0, hint:'Area = length × width. To find the length: length = area ÷ width = 48 ÷ 6 = 8 centimetres.', diff:'medium'},
-    {q:'How many right angles in a rectangle?', opts:['4','2','3','1'], ans:0, hint:'Every corner of a rectangle is a right angle (90°). A rectangle has 4 corners, so it has 4 right angles.', diff:'easy'},
-    {q:'Which has more sides: pentagon or hexagon?', opts:['Hexagon (6)','Pentagon (5)','Same','Cannot tell'], ans:0, hint:'Remember the prefixes: "Penta" means 5 (pentagon = 5 sides). "Hexa" means 6 (hexagon = 6 sides). So a hexagon has more sides than a pentagon.', diff:'easy'},
-    {q:'Perimeter of rect: length 12, width 5?', opts:['34 cm','60 cm','17 cm','24 cm'], ans:0, hint:'Perimeter of a rectangle = 2 × (length + width). Step 1: Add length and width → 12 + 5 = 17. Step 2: Multiply by 2 → 2 × 17 = 34 centimetres.', diff:'medium'},
-    {q:'Square area 49 cm². Side length?', opts:['7 cm','8 cm','6 cm','9 cm'], ans:0, hint:'Area of a square = side × side. You need to find which number multiplied by itself equals 49. Try 7 × 7 = 49. Yes! So the side length = 7 centimetres.', diff:'medium'},
+    {q:'Rectangle: length 9cm, width 4cm. Area?', opts:['36 cm²','26 cm²','13 cm²','32 cm²'], ans:0, hint:'Area of a rectangle = length times width. Multiply the two sides!', diff:'easy'},
+    {q:'Square side 8cm. Perimeter?', opts:['32 cm','24 cm','64 cm','16 cm'], ans:0, hint:'A square has 4 equal sides. Perimeter = 4 times the side length!', diff:'easy'},
+    {q:'How many faces does a cube have?', opts:['6','4','8','12'], ans:0, hint:'Think of a dice or a box. Count all the flat sides: top, bottom, front, back, left, right!', diff:'easy'},
+    {q:'Lines of symmetry in a square?', opts:['4','2','1','8'], ans:0, hint:'Think about all the ways you can fold a square so both halves match perfectly -- vertical, horizontal, and diagonals!', diff:'medium'},
+    {q:'Triangle angles: 60° and 80°. Third angle?', opts:['40°','50°','60°','30°'], ans:0, hint:'All angles in a triangle add up to 180 degrees. Add the two you know, then subtract from 180!', diff:'medium'},
+    {q:'Same perimeter as rect (10×6). Square area?', opts:['64 cm²','48 cm²','36 cm²','56 cm²'], ans:0, hint:'First find the rectangle perimeter. Then divide by 4 to get the square side length. Finally, square it for area!', diff:'hard'},
+    {q:'Rectangle: area 48cm², width 6cm. Length?', opts:['8 cm','6 cm','10 cm','12 cm'], ans:0, hint:'Area = length times width. To find the missing side, divide the area by the known side!', diff:'medium'},
+    {q:'How many right angles in a rectangle?', opts:['4','2','3','1'], ans:0, hint:'Every corner of a rectangle is a right angle (90 degrees). How many corners does a rectangle have?', diff:'easy'},
+    {q:'Which has more sides: pentagon or hexagon?', opts:['Hexagon (6)','Pentagon (5)','Same','Cannot tell'], ans:0, hint:'Remember the prefixes: "penta" means 5 and "hexa" means 6. Which number is bigger?', diff:'easy'},
+    {q:'Perimeter of rect: length 12, width 5?', opts:['34 cm','60 cm','17 cm','24 cm'], ans:0, hint:'Perimeter = 2 times (length + width). Add the two sides first, then double it!', diff:'medium'},
+    {q:'Square area 49 cm². Side length?', opts:['7 cm','8 cm','6 cm','9 cm'], ans:0, hint:'Area of a square = side times side. Which number multiplied by itself gives you the area?', diff:'medium'},
   ],
   boss: [] // filled dynamically from all stages
 };
@@ -5877,7 +6037,14 @@ function renderArenaStages() {
 
 function maStartBattle(stageId) {
   const stage = maStages.find(s => s.id === stageId);
-  const pool = [...maQuestions[stageId]].sort(() => Math.random() - 0.5);
+  // Filter out completed questions
+  const completed = (state[maCurrentPlayer].completedQs && state[maCurrentPlayer].completedQs.math) || [];
+  let available = maQuestions[stageId].filter(q => !completed.includes(q.q));
+  // If too few available, reset completed for this stage
+  if (available.length < 3) {
+    available = [...maQuestions[stageId]];
+  }
+  const pool = [...available].sort(() => Math.random() - 0.5);
   const picks = pool.slice(0, 3).map(q => {
     const correctText = q.opts[q.ans];
     const shuffled = [...q.opts].sort(() => Math.random() - 0.5);
@@ -5948,6 +6115,10 @@ function maAnswer(idx) {
   const q = b.questions[b.current];
   const btns = document.querySelectorAll('.ma-ans-btn');
   btns.forEach(btn => btn.classList.add('disabled'));
+
+  // Track question in completedQs so it won't repeat
+  const cqMath = state[maCurrentPlayer].completedQs.math;
+  if (cqMath && q.q && !cqMath.includes(q.q)) cqMath.push(q.q);
 
   const arenaBox = document.getElementById('ma-arena-box');
 
@@ -6043,17 +6214,21 @@ function maAnswer(idx) {
   document.getElementById('ma-enemy-hp').className = 'mf-hp-fill enemy' + (enemyPct < 30 ? ' low' : '');
   document.getElementById('ma-enemy-hp-text').textContent = Math.max(0, Math.round(b.enemyHp)) + ' / ' + b.enemyMaxHp;
 
-  // Next round after delay
-  setTimeout(() => {
-    if (b.enemyHp <= 0) {
-      maEndBattle(true);
-    } else if (b.current >= b.questions.length - 1) {
-      maEndBattle(b.enemyHp < b.enemyMaxHp);
-    } else {
-      b.current++;
-      maRenderBattle();
-    }
-  }, 1200);
+  // Show "Next" button — wait for user to confirm understanding
+  const maFbArea = document.getElementById('ma-combo-display');
+  maFbArea.innerHTML += `<br><button onclick="maNextRound()" style="margin-top:8px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">理解したら次へ ➜</button>`;
+}
+
+function maNextRound() {
+  const b = maBattle;
+  if (b.enemyHp <= 0) {
+    maEndBattle(true);
+  } else if (b.current >= b.questions.length - 1) {
+    maEndBattle(b.enemyHp < b.enemyMaxHp);
+  } else {
+    b.current++;
+    maRenderBattle();
+  }
 }
 
 function maShowDmgFloat(dmg, crit) {
@@ -6401,8 +6576,14 @@ function chalAnswer(idx) {
   const fbEl = document.getElementById('chal-feedback');
   fbEl.style.display = 'block';
   fbEl.className = 'q-feedback show ' + (correct ? 'correct' : 'wrong');
-  fbEl.innerHTML = correct ? '<h4>✅ Correct! +1 point</h4>' : (idx===-1?'<h4>⏰ Time\'s up!</h4>':`<h4>❌ Wrong!</h4><p>Answer: ${q.opts[q.ans]}</p>`);
-  setTimeout(() => { d.currentQ++; if (d.currentQ >= qs.length) chalPlayerDone(); else chalShowQuestion(); }, 1200);
+  fbEl.innerHTML = (correct ? '<h4>✅ Correct! +1 point</h4>' : (idx===-1?'<h4>⏰ Time\'s up!</h4>':`<h4>❌ Wrong!</h4><p>Answer: ${q.opts[q.ans]}</p>`))
+    + `<button onclick="chalNextQ()" style="margin-top:10px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">理解したら次へ ➜</button>`;
+}
+
+function chalNextQ() {
+  chalData.currentQ++;
+  if (chalData.currentQ >= chalGetQuestions().length) chalPlayerDone();
+  else chalShowQuestion();
 }
 
 function chalPlayerDone() {
@@ -6564,12 +6745,17 @@ function coopAnswer(idx) {
   document.getElementById('coop-boss-hp-fill').style.width = Math.max(0,b.bossHp/b.bossMaxHp*100)+'%';
   document.getElementById('coop-boss-hp-text').textContent = `${Math.max(0,Math.round(b.bossHp))} / ${b.bossMaxHp}`;
   save(); updatePlayerCards();
-  setTimeout(() => {
-    if (b.bossHp<=0) coopEndBattle(true);
-    else if (b.yuHp<=0||b.ryHp<=0) coopEndBattle(false);
-    else if (b.current>=b.questions.length-1) coopEndBattle(false);
-    else { b.current++; coopRenderBattle(); }
-  }, 1500);
+  // Show "Next" button — wait for user to confirm understanding
+  const coopCombo = document.getElementById('coop-combo-display');
+  coopCombo.innerHTML += `<br><button onclick="coopNextRound()" style="margin-top:8px;padding:10px 28px;font-size:1em;font-weight:700;border:none;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(102,126,234,.4)">理解したら次へ ➜</button>`;
+}
+
+function coopNextRound() {
+  const b = coopBattle;
+  if (b.bossHp<=0) coopEndBattle(true);
+  else if (b.yuHp<=0||b.ryHp<=0) coopEndBattle(false);
+  else if (b.current>=b.questions.length-1) coopEndBattle(false);
+  else { b.current++; coopRenderBattle(); }
 }
 
 function coopEndBattle(won) {
