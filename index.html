@@ -7517,6 +7517,8 @@ function initTasks() {
 }
 
 function showTaskMorningCheer(player) {
+  // Don't show if the full-screen celebration overlay is already visible
+  if (document.getElementById('morning-celeb-overlay')) return;
   var now = new Date();
   var hour = now.getHours();
   if (hour >= 7) return; // only before 7 AM
