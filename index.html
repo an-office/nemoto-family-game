@@ -6489,63 +6489,112 @@ const maStages = [
 
 const maQuestions = {
   slime: [
-    {q:'7 × 8 = ?', opts:['56','54','48','63'], ans:0, hint:'Try thinking of a times table you know well, then add one more group!', diff:'easy'},
-    {q:'9 × 6 = ?', opts:['54','56','63','48'], ans:0, hint:'Try multiplying by 10 first, then subtract one group!', diff:'easy'},
-    {q:'144 ÷ 12 = ?', opts:['12','14','11','13'], ans:0, hint:'Think: 12 times WHAT equals 144? Start with 12 × 10 and work from there!', diff:'easy'},
-    {q:'456 + 378 = ?', opts:['834','824','844','814'], ans:0, hint:'Break it into parts: add the hundreds first, then add the tens and ones separately!', diff:'easy'},
-    {q:'1000 − 367 = ?', opts:['633','637','643','623'], ans:0, hint:'Round 367 up to a friendly number, subtract from 1000, then adjust!', diff:'easy'},
-    {q:'25 × 4 = ?', opts:['100','90','110','95'], ans:0, hint:'Think about coins! How many 25-cent coins make a dollar?', diff:'easy'},
-    {q:'23 × 4 = ?', opts:['92','82','96','84'], ans:0, hint:'Split 23 into tens and ones, multiply each part by 4, then add them together!', diff:'easy'},
-    {q:'756 ÷ 6 = ?', opts:['126','136','116','146'], ans:0, hint:'Think about how many groups fit. Start with how many hundreds, then work on the remainder!', diff:'medium'},
-    {q:'What is 1000 more than 6543?', opts:['7543','7643','6643','7443'], ans:0, hint:'Adding 1000 only changes one digit. Which place value does it affect?', diff:'easy'},
-    {q:'36 × 5 = ?', opts:['180','175','185','170'], ans:0, hint:'Trick for multiplying by 5: multiply by 10 first, then take half!', diff:'easy'},
-    {q:'840 ÷ 7 = ?', opts:['120','130','110','140'], ans:0, hint:'Start by figuring out how many hundreds fit, then divide the leftover part!', diff:'medium'},
-    {q:'15 × 15 = ?', opts:['225','215','235','205'], ans:0, hint:'Split one of the 15s into 10 + 5, then multiply each part and add!', diff:'medium'},
-    {q:'What is 99 × 5?', opts:['495','500','490','505'], ans:0, hint:'Round 99 up to 100 to make it easier, then adjust by subtracting a little!', diff:'medium'},
-    {q:'Round 4678 to nearest 100', opts:['4700','4600','4680','5000'], ans:0, hint:'Look at the tens digit. If it is 5 or more, round the hundreds UP. If less than 5, round DOWN!', diff:'easy'},
-    {q:'What is 250 × 8?', opts:['2000','1800','2200','1600'], ans:0, hint:'Try multiplying by 4 first (a number you might know), then double it!', diff:'medium'},
+    {q:'What is the value of 8 × 7 + 15 ÷ 3?', opts:['61','23','71','59'], ans:0, hint:'Follow order of operations (BODMAS): do × and ÷ first (8×7=56, 15÷3=5), then add!', diff:'easy'},
+    {q:'What is 156 × 4 − 124?', opts:['500','520','480','624'], ans:0, hint:'Multiply first (156×4=624), then subtract 124 from the result!', diff:'easy'},
+    {q:'What is 2400 ÷ 8 + 75?', opts:['375','300','350','400'], ans:0, hint:'Divide first (2400÷8=300), then add 75!', diff:'easy'},
+    {q:'What is 45 + 63 × 2 − 18?', opts:['153','198','171','216'], ans:0, hint:'BODMAS: multiply 63×2=126 first, then do 45+126−18 from left to right!', diff:'easy'},
+    {q:'Round 8465 to the nearest 1000.', opts:['8000','9000','8500','8400'], ans:0, hint:'Look at the hundreds digit (4). Since 4 < 5, round DOWN to 8000!', diff:'easy'},
+    {q:'What is the value of 120 ÷ (4 × 3)?', opts:['10','90','30','40'], ans:0, hint:'Work out the brackets first: 4×3=12. Then divide: 120÷12=10!', diff:'easy'},
+    {q:'Find the value of 999 + 99 + 9.', opts:['1107','1097','1117','1007'], ans:0, hint:'Add step by step: 999+99=1098, then 1098+9=1107. Or round up to 1000+100+10 and subtract 3!', diff:'easy'},
+    {q:'What is 50 × 30 ÷ 5?', opts:['300','150','500','250'], ans:0, hint:'Work left to right: 50×30=1500, then 1500÷5=300!', diff:'easy'},
+    {q:'What is 7 × 8 − 6 × 4?', opts:['32','80','20','56'], ans:0, hint:'Do both multiplications first: 7×8=56 and 6×4=24. Then subtract: 56−24=32!', diff:'medium'},
+    {q:'What is the next number: 2, 6, 18, 54, ?', opts:['162','108','72','216'], ans:0, hint:'Find the pattern: each number is ×3 the previous! 54 × 3 = ?', diff:'medium'},
+    {q:'What is 1000 − 46 × 5?', opts:['770','4770','230','954'], ans:0, hint:'BODMAS: multiply first (46×5=230), then subtract from 1000!', diff:'medium'},
+    {q:'Find the missing number: 7, 14, 28, __, 112', opts:['56','42','70','84'], ans:0, hint:'The pattern is ×2 each time. 28 × 2 = ?', diff:'medium'},
+    {q:'What is 3 × (240 ÷ 6) + 15?', opts:['135','120','375','255'], ans:0, hint:'Brackets first: 240÷6=40. Then 3×40=120. Finally 120+15=135!', diff:'medium'},
+    {q:'What is the ones digit of 7 × 7 × 7?', opts:['3','7','1','9'], ans:0, hint:'7×7=49 (ones digit 9), then 49×7=343 (ones digit 3)!', diff:'medium'},
+    {q:'What is 25 × 16?', opts:['400','375','425','350'], ans:0, hint:'Break it up: 25×16 = 25×4×4 = 100×4 = 400!', diff:'medium'},
+    {q:'Which is greater: 4 × 125 or 3 × 165?', opts:['500 (4×125)','495 (3×165)','They are equal','Cannot tell'], ans:0, hint:'Calculate both: 4×125=500 and 3×165=495. Compare!', diff:'medium'},
+    {q:'What is (84 + 36) × (84 − 36)?', opts:['5760','120','48','2880'], ans:0, hint:'Brackets first: 84+36=120 and 84−36=48. Then 120×48. Use 120×50−120×2!', diff:'hard'},
+    {q:'A number divided by 8 gives quotient 45 and remainder 3. What is the number?', opts:['363','360','368','356'], ans:0, hint:'Number = divisor × quotient + remainder = 8×45+3!', diff:'hard'},
+    {q:'What is the remainder when 2023 is divided by 7?', opts:['0','1','5','6'], ans:0, hint:'Divide: 2023÷7 = 289 with remainder 0 (since 289×7=2023)!', diff:'hard'},
+    {q:'What is 999 × 5 + 5?', opts:['5000','4995','5005','4990'], ans:0, hint:'999×5+5 = 5×(999+1) = 5×1000 = 5000!', diff:'hard'},
+    {q:'How many even numbers are between 1 and 100 (inclusive)?', opts:['50','49','51','48'], ans:0, hint:'Even numbers: 2, 4, 6, ... 100. Count them: 100÷2 = 50!', diff:'easy'},
+    {q:'What is 48 ÷ 8 + 36 ÷ 6?', opts:['12','14','10','8'], ans:0, hint:'Do divisions first: 48÷8=6 and 36÷6=6. Then add: 6+6=12!', diff:'easy'},
+    {q:'Find the value of 15 × 15 − 14 × 14.', opts:['29','1','30','31'], ans:0, hint:'15²=225, 14²=196. 225−196=29. Or use the shortcut: (15+14)×(15−14)=29×1=29!', diff:'hard'},
+    {q:'What are the first 3 common multiples of 4 and 6?', opts:['12, 24, 36','4, 6, 12','24, 36, 48','12, 18, 24'], ans:0, hint:'List multiples of each. 4: 4,8,12,16,20,24... 6: 6,12,18,24... Common ones: 12, 24, 36!', diff:'medium'},
+    {q:'What is the sum of all factors of 12?', opts:['28','24','16','12'], ans:0, hint:'Factors of 12: 1, 2, 3, 4, 6, 12. Add them all: 1+2+3+4+6+12=28!', diff:'hard'},
   ],
   fraction: [
-    {q:'1/2 + 1/4 = ?', opts:['3/4','2/4','1/3','2/6'], ans:0, hint:'Make the denominators the same first! Can you change 1/2 into fourths?', diff:'easy'},
-    {q:'3/4 − 1/2 = ?', opts:['1/4','2/4','1/2','1/3'], ans:0, hint:'Make the denominators match first. Convert 1/2 into fourths, then subtract!', diff:'easy'},
-    {q:'What is 2/5 of 40?', opts:['16','20','15','24'], ans:0, hint:'First find 1/5 of 40 by dividing, then multiply by the top number!', diff:'medium'},
-    {q:'What is 3/4 of 24?', opts:['18','16','20','12'], ans:0, hint:'Divide by the denominator first to find one part, then multiply by the numerator!', diff:'medium'},
-    {q:'Which is bigger: 3/4 or 2/3?', opts:['3/4','2/3','Same','Cannot tell'], ans:0, hint:'Convert both fractions to the same denominator, then compare the numerators!', diff:'medium'},
-    {q:'1/3 + 1/6 = ?', opts:['1/2','2/6','1/3','2/9'], ans:0, hint:'Convert to the same denominator first. Can you change thirds into sixths? Then add and simplify!', diff:'medium'},
-    {q:'Arrange smallest first: 1/2, 1/4, 3/4', opts:['1/4, 1/2, 3/4','1/2, 1/4, 3/4','3/4, 1/2, 1/4','1/4, 3/4, 1/2'], ans:0, hint:'Picture pizza slices! Which fraction is the tiniest piece? Which is the biggest?', diff:'easy'},
-    {q:'What fraction = 0.5?', opts:['1/2','1/3','1/4','1/5'], ans:0, hint:'0.5 means five tenths. Write it as 5/10, then simplify by dividing top and bottom!', diff:'easy'},
-    {q:'Ali ate 1/4 of a pizza. Ben ate 1/3. How much left?', opts:['5/12','1/2','7/12','1/4'], ans:0, hint:'First add the two fractions they ate (use a common denominator), then subtract from 1 whole!', diff:'hard'},
-    {q:'Tank is 1/3 full. Add 8L → 5/6 full. Capacity?', opts:['16 L','24 L','12 L','20 L'], ans:0, hint:'Find what fraction of the tank the 8 litres filled (subtract the two fractions). Then figure out the whole!', diff:'hard'},
-    {q:'What is 1/5 of 45?', opts:['9','10','8','5'], ans:0, hint:'To find 1/5 of a number, just divide it by 5!', diff:'easy'},
-    {q:'2/3 + 1/6 = ?', opts:['5/6','3/6','4/6','3/9'], ans:0, hint:'Convert 2/3 into sixths so the denominators match, then add the numerators!', diff:'medium'},
-    {q:'Which fraction equals 4/6?', opts:['2/3','3/4','4/8','1/2'], ans:0, hint:'Simplify by dividing top and bottom by the same number. What number goes into both 4 and 6?', diff:'medium'},
+    {q:'Jane ate 2/5 of a cake. Her brother ate 1/2 of what was left. What fraction remains?', opts:['3/10','1/5','1/2','2/5'], ans:0, hint:'After Jane: 1−2/5=3/5 left. Brother eats 1/2 of 3/5 = 3/10. Remaining = 3/5−3/10 = 3/10!', diff:'hard'},
+    {q:'3/4 of the pupils are girls. 1/3 of the girls wear glasses. What fraction of all pupils are girls with glasses?', opts:['1/4','1/3','3/12','1/2'], ans:0, hint:'Fraction = 3/4 × 1/3 = 3/12 = 1/4. Multiply the two fractions!', diff:'medium'},
+    {q:'Which is greater: 5/8 or 7/12?', opts:['5/8','7/12','They are equal','Cannot tell'], ans:0, hint:'Find a common denominator (24): 5/8=15/24, 7/12=14/24. Compare numerators!', diff:'medium'},
+    {q:'Simplify: 18/24', opts:['3/4','2/3','6/8','9/12'], ans:0, hint:'Find the GCF of 18 and 24 (it is 6). Divide both by 6: 18÷6=3, 24÷6=4!', diff:'easy'},
+    {q:'What is 2/3 + 3/4?', opts:['17/12','5/7','5/12','6/7'], ans:0, hint:'Common denominator is 12: 2/3=8/12, 3/4=9/12. Add: 8/12+9/12=17/12!', diff:'medium'},
+    {q:'Tom spent 1/4 of his money on food and 2/5 on transport. What fraction is left?', opts:['7/20','3/9','1/3','1/2'], ans:0, hint:'Add spent: 1/4+2/5. LCD=20: 5/20+8/20=13/20. Left: 1−13/20=7/20!', diff:'medium'},
+    {q:'What is 3 1/2 − 1 3/4?', opts:['1 3/4','2 1/4','1 1/2','2 3/4'], ans:0, hint:'Convert to improper: 7/2−7/4. LCD=4: 14/4−7/4=7/4=1 3/4!', diff:'medium'},
+    {q:'A tank is 2/5 full. After adding 12 litres, it is 4/5 full. What is the capacity?', opts:['30 L','24 L','36 L','20 L'], ans:0, hint:'12 litres = 4/5−2/5 = 2/5 of the tank. So 1/5 = 6L, full tank = 30L!', diff:'hard'},
+    {q:'What is 5/6 of 48?', opts:['40','42','36','45'], ans:0, hint:'Find 1/6 of 48 first (48÷6=8), then multiply by 5: 8×5=40!', diff:'easy'},
+    {q:'Arrange from smallest to largest: 2/3, 3/5, 7/10', opts:['3/5, 2/3, 7/10','2/3, 3/5, 7/10','7/10, 2/3, 3/5','3/5, 7/10, 2/3'], ans:0, hint:'Convert to LCD=30: 2/3=20/30, 3/5=18/30, 7/10=21/30. Order: 18, 20, 21!', diff:'medium'},
+    {q:'What is 4/7 × 21?', opts:['12','16','14','18'], ans:0, hint:'4/7 × 21 = 4 × (21÷7) = 4 × 3 = 12. Simplify before multiplying!', diff:'easy'},
+    {q:'Ali has 60 marbles. 2/5 are blue and 1/4 are red. How many are neither?', opts:['21','24','15','36'], ans:0, hint:'Blue: 2/5×60=24. Red: 1/4×60=15. Neither: 60−24−15=21!', diff:'medium'},
+    {q:'What is 7/8 − 2/3?', opts:['5/24','5/11','1/5','3/8'], ans:0, hint:'LCD=24: 7/8=21/24, 2/3=16/24. Subtract: 21/24−16/24=5/24!', diff:'medium'},
+    {q:'A rope is 3/4 m long. It is cut into pieces each 1/8 m. How many pieces?', opts:['6','4','8','3'], ans:0, hint:'Divide: 3/4 ÷ 1/8 = 3/4 × 8/1 = 24/4 = 6 pieces!', diff:'medium'},
+    {q:'Siti read 2/7 of a book on Monday and 3/7 on Tuesday. What fraction is left?', opts:['2/7','1/7','3/7','5/7'], ans:0, hint:'Total read: 2/7+3/7=5/7. Left: 1−5/7=2/7!', diff:'easy'},
+    {q:'What is 1 1/3 + 2 1/6?', opts:['3 1/2','3 2/9','3 1/3','4 1/6'], ans:0, hint:'Convert to improper: 4/3+13/6. LCD=6: 8/6+13/6=21/6=3 3/6=3 1/2!', diff:'medium'},
+    {q:'A jug holds 2 litres. It is 3/8 full. How many ml of water is in it?', opts:['750 ml','600 ml','375 ml','800 ml'], ans:0, hint:'2 litres = 2000 ml. 3/8 of 2000 = 3×250 = 750 ml!', diff:'medium'},
+    {q:'Mrs Tan had $240. She spent 1/3 on groceries and 1/4 of the remainder on books. How much did she spend on books?', opts:['$40','$60','$80','$50'], ans:0, hint:'Groceries: 1/3×240=$80. Remainder: $160. Books: 1/4×160=$40!', diff:'hard'},
+    {q:'What is 5/6 ÷ 2/3?', opts:['5/4','5/9','10/18','2/3'], ans:0, hint:'Dividing fractions: flip the second and multiply! 5/6 × 3/2 = 15/12 = 5/4!', diff:'hard'},
+    {q:'3/5 of a number is 45. What is the number?', opts:['75','60','27','135'], ans:0, hint:'If 3/5 = 45, then 1/5 = 15. The whole number = 5 × 15 = 75!', diff:'medium'},
+    {q:'What fraction of 1 hour is 40 minutes?', opts:['2/3','1/2','3/4','4/5'], ans:0, hint:'1 hour = 60 min. Fraction = 40/60 = 2/3 (divide both by 20)!', diff:'easy'},
+    {q:'Amy gave 1/6 of her stickers to Ben and 1/3 to Cindy. She had 120 left. How many did she start with?', opts:['240','180','360','200'], ans:0, hint:'Gave away: 1/6+1/3=1/6+2/6=3/6=1/2. Left=1/2. So 1/2=120, total=240!', diff:'hard'},
+    {q:'Express 0.75 as a fraction in simplest form.', opts:['3/4','7/5','75/10','15/20'], ans:0, hint:'0.75 = 75/100. Simplify by dividing both by 25: 75÷25=3, 100÷25=4. Answer: 3/4!', diff:'easy'},
+    {q:'What is 2/9 + 1/3 + 1/6?', opts:['13/18','4/18','1/2','7/18'], ans:0, hint:'LCD=18: 2/9=4/18, 1/3=6/18, 1/6=3/18. Add: 4+6+3=13/18!', diff:'hard'},
+    {q:'A class has 36 pupils. 5/9 are boys. How many girls are there?', opts:['16','20','18','24'], ans:0, hint:'Boys: 5/9×36=20. Girls: 36−20=16!', diff:'easy'},
   ],
   word: [
-    {q:'3 books cost $8 each. Pay $50. Change?', opts:['$26','$24','$28','$22'], ans:0, hint:'First find the total cost of all books, then subtract from what you paid!', diff:'easy'},
-    {q:'Baker bakes 156 muffins. Packs equally in 12 boxes. Sells 9. How many left?', opts:['39','36','42','48'], ans:0, hint:'Find how many muffins per box first, then figure out how many unsold boxes remain!', diff:'medium'},
-    {q:'Movie starts 2:45pm, lasts 1h30m. End time?', opts:['4:15 pm','4:30 pm','3:45 pm','4:00 pm'], ans:0, hint:'Add the hours first, then add the minutes separately!', diff:'medium'},
-    {q:'Rope is 5m 40cm. Cut into 6 equal pieces. Each?', opts:['90 cm','85 cm','95 cm','80 cm'], ans:0, hint:'Convert everything to centimetres first, then divide equally!', diff:'medium'},
-    {q:'Samy has 48 stickers. Gives 1/4. How many left?', opts:['36','24','12','40'], ans:0, hint:'Find 1/4 of the total first (divide by 4), then subtract that from the total!', diff:'easy'},
-    {q:'How many minutes in 2h 15m?', opts:['135','130','125','145'], ans:0, hint:'Remember: 1 hour = 60 minutes. Convert the hours first, then add the extra minutes!', diff:'easy'},
-    {q:'Sarah has $45. Buys 3 pens ($4) + 2 books ($7). Change?', opts:['$19','$17','$21','$15'], ans:0, hint:'Find the cost of pens and books separately, add them up, then subtract from the total!', diff:'medium'},
-    {q:'2 kg 300 g in grams = ?', opts:['2300 g','2030 g','230 g','23000 g'], ans:0, hint:'Remember: 1 kg = 1000 g. Convert the kilograms to grams first, then add the extra grams!', diff:'easy'},
-    {q:'How many metres in 3.5 km?', opts:['3500','350','35000','3050'], ans:0, hint:'Remember: 1 km = 1000 m. Split 3.5 into the whole part and the decimal part, then convert each!', diff:'medium'},
-    {q:'Bus leaves at 8:50am. Journey 45 min. Arrival?', opts:['9:35 am','9:25 am','9:45 am','9:30 am'], ans:0, hint:'Add minutes to reach the next full hour first, then add the remaining minutes!', diff:'medium'},
-    {q:'Shop sells erasers in packs of 6. Need 50. Min packs?', opts:['9','8','10','7'], ans:0, hint:'Divide 50 by 6. If there is a remainder, you need to round UP to the next pack!', diff:'hard'},
-    {q:'Tom has 3× as many cards as Jerry. Together 120. Tom has?', opts:['90','80','60','100'], ans:0, hint:'Use the model method! If Jerry is 1 unit and Tom is 3 units, how many units total? Divide to find 1 unit!', diff:'hard'},
+    {q:'A shopkeeper bought 150 apples at 3 for $2. He sold them at 5 for $4. Find his profit.', opts:['$20','$10','$30','$40'], ans:0, hint:'Cost: 150÷3×$2=$100. Revenue: 150÷5×$4=$120. Profit=Revenue−Cost=$20!', diff:'hard'},
+    {q:'Mei Lin is 12 years old. Her mother is 3 times as old. In how many years will her mother be twice her age?', opts:['12','24','6','18'], ans:0, hint:'Now: Mei=12, Mum=36. In x years: 36+x=2(12+x). 36+x=24+2x. x=12!', diff:'hard'},
+    {q:'Ali and Ben share 240 stickers in the ratio 3:5. How many does Ben get?', opts:['150','90','120','160'], ans:0, hint:'Total parts: 3+5=8. One part: 240÷8=30. Ben gets 5 parts: 5×30=150!', diff:'medium'},
+    {q:'A car travels at 60 km/h for 2 hours, then 80 km/h for 1.5 hours. Total distance?', opts:['240 km','200 km','280 km','220 km'], ans:0, hint:'Distance = Speed × Time. Part 1: 60×2=120 km. Part 2: 80×1.5=120 km. Total=240 km!', diff:'medium'},
+    {q:'Mrs Lee bought 8 similar books and had $14 left. If she bought 5, she would have $35 left. Cost of 1 book?', opts:['$7','$6','$8','$5'], ans:0, hint:'Difference: 8−5=3 books cost $35−$14=$21 more. 1 book=$21÷3=$7!', diff:'medium'},
+    {q:'A box has 12 rows of 8 stickers. 25 stickers are given away. How many are left?', opts:['71','96','75','67'], ans:0, hint:'Total: 12×8=96. Left: 96−25=71!', diff:'easy'},
+    {q:'Train A leaves at 8:15 am, arrives at 10:40 am. How long is the journey?', opts:['2 h 25 min','2 h 15 min','2 h 35 min','2 h 40 min'], ans:0, hint:'From 8:15 to 10:15 = 2 hours. From 10:15 to 10:40 = 25 minutes. Total: 2 h 25 min!', diff:'easy'},
+    {q:'Peter had $500. He spent 20% on a shirt and 15% of the remainder on lunch. How much did he spend on lunch?', opts:['$60','$75','$80','$100'], ans:0, hint:'Shirt: 20%×$500=$100. Remainder: $400. Lunch: 15%×$400=$60!', diff:'hard'},
+    {q:'The perimeter of a square is the same as a rectangle 14 cm by 10 cm. Find the area of the square.', opts:['144 cm²','48 cm²','196 cm²','100 cm²'], ans:0, hint:'Rect perimeter: 2×(14+10)=48 cm. Square side: 48÷4=12 cm. Area: 12×12=144 cm²!', diff:'medium'},
+    {q:'Ravi can paint a wall in 6 hours. Kumar can paint it in 3 hours. Working together, how long?', opts:['2 hours','4 hours','3 hours','1 hour'], ans:0, hint:'Ravi paints 1/6 per hour, Kumar 1/3 per hour. Together: 1/6+1/3=1/6+2/6=3/6=1/2 per hour. Time=2 hours!', diff:'hard'},
+    {q:'A bag has red and blue marbles in ratio 2:3. There are 18 blue marbles. How many marbles in total?', opts:['30','12','36','24'], ans:0, hint:'If 3 parts=18, then 1 part=6. Total parts=2+3=5. Total marbles=5×6=30!', diff:'easy'},
+    {q:'Siti saved $15 in January. Each month she saved $5 more than the previous month. How much in 6 months?', opts:['$165','$90','$120','$150'], ans:0, hint:'Monthly savings: $15, $20, $25, $30, $35, $40. Add them all: 15+20+25+30+35+40=$165!', diff:'medium'},
+    {q:'A tank can be filled by Tap A in 4 hours or Tap B in 6 hours. Both taps open. Time to fill?', opts:['2 h 24 min','3 hours','5 hours','2 hours'], ans:0, hint:'A fills 1/4 per hour, B fills 1/6 per hour. Together: 3/12+2/12=5/12 per hour. Time: 12/5=2.4 hours=2 h 24 min!', diff:'hard'},
+    {q:'5 identical pens cost as much as 3 identical books. A pen costs $6. What is the cost of 1 book?', opts:['$10','$9','$15','$12'], ans:0, hint:'5 pens = 5×$6 = $30 = 3 books. 1 book = $30÷3 = $10!', diff:'easy'},
+    {q:'Ahmad had some money. He spent 1/3 on a toy and $12 on food. He had $28 left. How much did he start with?', opts:['$60','$40','$48','$72'], ans:0, hint:'After toy: 2/3 of money. Then 2/3 × total − $12 = $28. So 2/3 × total = $40. Total = $60!', diff:'hard'},
+    {q:'There are 3 times as many girls as boys in a class of 48. How many boys?', opts:['12','16','36','24'], ans:0, hint:'Boys=1 unit, Girls=3 units. Total=4 units=48. 1 unit=12. Boys=12!', diff:'easy'},
+    {q:'A shopkeeper marks up goods by 25% then gives 10% discount. Cost price is $200. Selling price?', opts:['$225','$230','$250','$200'], ans:0, hint:'Marked price: $200×1.25=$250. After 10% discount: $250×0.9=$225!', diff:'hard'},
+    {q:'A cyclist travels 15 km in 45 minutes. What is his speed in km/h?', opts:['20 km/h','15 km/h','30 km/h','25 km/h'], ans:0, hint:'45 min = 3/4 hour. Speed = Distance÷Time = 15÷(3/4) = 15×4/3 = 20 km/h!', diff:'medium'},
+    {q:'In a class of 40, 70% passed a test. How many failed?', opts:['12','28','30','8'], ans:0, hint:'Passed: 70% of 40 = 28. Failed: 40 − 28 = 12!', diff:'easy'},
+    {q:'A container holds 2.5 litres. How many 250 ml cups can be filled?', opts:['10','25','8','100'], ans:0, hint:'2.5 litres = 2500 ml. Cups: 2500 ÷ 250 = 10!', diff:'easy'},
+    {q:'Sam is 4 years older than Tom. The sum of their ages is 32. How old is Sam?', opts:['18','14','20','16'], ans:0, hint:'Let Tom=x. Sam=x+4. x+x+4=32. 2x=28. x=14. Sam=18!', diff:'medium'},
+    {q:'A store sold 450 items in 5 days. Day 1: 80, Day 2: 95, Day 3: 110, Day 4: 85. Day 5?', opts:['80','90','75','100'], ans:0, hint:'Add Days 1-4: 80+95+110+85=370. Day 5: 450−370=80!', diff:'medium'},
+    {q:'Buy 3, get 1 free. You need 20 notebooks at $4 each. What do you pay?', opts:['$60','$80','$64','$72'], ans:0, hint:'For every 4 notebooks, pay for 3. 20 notebooks = 5 groups of 4. Pay: 5×3×$4 = $60!', diff:'medium'},
+    {q:'A square garden has a perimeter of 64 m. What is its area?', opts:['256 m²','128 m²','64 m²','512 m²'], ans:0, hint:'Side = 64÷4 = 16 m. Area = 16×16 = 256 m²!', diff:'easy'},
+    {q:'Priya had $200. She spent 2/5 on Monday and 1/4 of the remainder on Tuesday. How much left?', opts:['$90','$120','$80','$60'], ans:0, hint:'Monday: 2/5×$200=$80 spent. Left: $120. Tuesday: 1/4×$120=$30 spent. Left: $90!', diff:'hard'},
   ],
   geometry: [
-    {q:'Rectangle: length 9cm, width 4cm. Area?', opts:['36 cm²','26 cm²','13 cm²','32 cm²'], ans:0, hint:'Area of a rectangle = length times width. Multiply the two sides!', diff:'easy'},
-    {q:'Square side 8cm. Perimeter?', opts:['32 cm','24 cm','64 cm','16 cm'], ans:0, hint:'A square has 4 equal sides. Perimeter = 4 times the side length!', diff:'easy'},
-    {q:'How many faces does a cube have?', opts:['6','4','8','12'], ans:0, hint:'Think of a dice or a box. Count all the flat sides: top, bottom, front, back, left, right!', diff:'easy'},
-    {q:'Lines of symmetry in a square?', opts:['4','2','1','8'], ans:0, hint:'Think about all the ways you can fold a square so both halves match perfectly -- vertical, horizontal, and diagonals!', diff:'medium'},
-    {q:'Triangle angles: 60° and 80°. Third angle?', opts:['40°','50°','60°','30°'], ans:0, hint:'All angles in a triangle add up to 180 degrees. Add the two you know, then subtract from 180!', diff:'medium'},
-    {q:'Same perimeter as rect (10×6). Square area?', opts:['64 cm²','48 cm²','36 cm²','56 cm²'], ans:0, hint:'First find the rectangle perimeter. Then divide by 4 to get the square side length. Finally, square it for area!', diff:'hard'},
-    {q:'Rectangle: area 48cm², width 6cm. Length?', opts:['8 cm','6 cm','10 cm','12 cm'], ans:0, hint:'Area = length times width. To find the missing side, divide the area by the known side!', diff:'medium'},
-    {q:'How many right angles in a rectangle?', opts:['4','2','3','1'], ans:0, hint:'Every corner of a rectangle is a right angle (90 degrees). How many corners does a rectangle have?', diff:'easy'},
-    {q:'Which has more sides: pentagon or hexagon?', opts:['Hexagon (6)','Pentagon (5)','Same','Cannot tell'], ans:0, hint:'Remember the prefixes: "penta" means 5 and "hexa" means 6. Which number is bigger?', diff:'easy'},
-    {q:'Perimeter of rect: length 12, width 5?', opts:['34 cm','60 cm','17 cm','24 cm'], ans:0, hint:'Perimeter = 2 times (length + width). Add the two sides first, then double it!', diff:'medium'},
-    {q:'Square area 49 cm². Side length?', opts:['7 cm','8 cm','6 cm','9 cm'], ans:0, hint:'Area of a square = side times side. Which number multiplied by itself gives you the area?', diff:'medium'},
+    {q:'A rectangle is 12 cm by 8 cm. A square of side 3 cm is cut from one corner. What is the remaining area?', opts:['87 cm²','96 cm²','93 cm²','81 cm²'], ans:0, hint:'Rectangle area: 12×8=96 cm². Cut square: 3×3=9 cm². Remaining: 96−9=87 cm²!', diff:'medium'},
+    {q:'A rectangular tank is 30 cm long, 20 cm wide and 25 cm tall. It is half full. Volume of water?', opts:['7500 cm³','15000 cm³','3750 cm³','10000 cm³'], ans:0, hint:'Full volume: 30×20×25=15000 cm³. Half full: 15000÷2=7500 cm³!', diff:'medium'},
+    {q:'Two angles on a straight line are in the ratio 2:3. Find the larger angle.', opts:['108°','72°','90°','120°'], ans:0, hint:'Angles on a straight line = 180°. Total parts: 2+3=5. One part: 36°. Larger: 3×36°=108°!', diff:'medium'},
+    {q:'Find the area of a triangle with base 16 cm and height 9 cm.', opts:['72 cm²','144 cm²','25 cm²','36 cm²'], ans:0, hint:'Area of triangle = 1/2 × base × height = 1/2 × 16 × 9 = 72 cm²!', diff:'easy'},
+    {q:'A cube has a total surface area of 150 cm². What is the length of one edge?', opts:['5 cm','6 cm','25 cm','10 cm'], ans:0, hint:'Cube has 6 faces. Each face: 150÷6=25 cm². Side: √25=5 cm!', diff:'hard'},
+    {q:'Angle A and Angle B are vertically opposite. Angle A is 65°. What is Angle B?', opts:['65°','115°','90°','25°'], ans:0, hint:'Vertically opposite angles are always equal! If A=65°, then B=65°!', diff:'easy'},
+    {q:'A rectangular cardboard 20 cm by 15 cm is folded into an open box by cutting 3 cm squares from corners. Volume?', opts:['378 cm³','900 cm³','270 cm³','450 cm³'], ans:0, hint:'New dimensions: length=20−6=14 cm, width=15−6=9 cm, height=3 cm. Volume: 14×9×3=378 cm³!', diff:'hard'},
+    {q:'What is the perimeter of a semicircle with diameter 14 cm? (Use π = 22/7)', opts:['36 cm','22 cm','44 cm','50 cm'], ans:0, hint:'Perimeter = half circumference + diameter = (22/7×14)/2 + 14 = 22 + 14 = 36 cm!', diff:'hard'},
+    {q:'A figure is made of a rectangle (10×6) and a triangle (base 10, height 4) on top. Total area?', opts:['80 cm²','60 cm²','100 cm²','70 cm²'], ans:0, hint:'Rectangle: 10×6=60. Triangle: 1/2×10×4=20. Total: 60+20=80 cm²!', diff:'medium'},
+    {q:'The angles of a triangle are x°, 2x° and 3x°. Find the largest angle.', opts:['90°','60°','30°','120°'], ans:0, hint:'x+2x+3x=180°. 6x=180°. x=30°. Largest: 3x=90°!', diff:'medium'},
+    {q:'A square and an equilateral triangle share one side. The perimeter of the combined shape is 50 cm. Find the side.', opts:['10 cm','12.5 cm','8 cm','15 cm'], ans:0, hint:'Square has 3 outer sides + triangle has 2 outer sides = 5 sides total. Side = 50÷5 = 10 cm!', diff:'hard'},
+    {q:'How many faces does a triangular prism have?', opts:['5','3','6','4'], ans:0, hint:'2 triangular faces (ends) + 3 rectangular faces (sides) = 5 faces!', diff:'easy'},
+    {q:'A right angle is divided into 3 equal parts. What is each angle?', opts:['30°','45°','60°','90°'], ans:0, hint:'Right angle = 90°. Divided by 3: 90°÷3 = 30°!', diff:'easy'},
+    {q:'A swimming pool is 25 m long, 10 m wide and 2 m deep. How many litres does it hold? (1 m³ = 1000 L)', opts:['500000 L','50000 L','5000 L','5000000 L'], ans:0, hint:'Volume: 25×10×2=500 m³. In litres: 500×1000=500000 L!', diff:'medium'},
+    {q:'Two complementary angles differ by 20°. Find the smaller angle.', opts:['35°','55°','45°','40°'], ans:0, hint:'Complementary angles add to 90°. If a+b=90 and b−a=20, then 2a=70, a=35°!', diff:'medium'},
+    {q:'A net is folded into a cube. Which face is opposite the top?', opts:['Bottom','Side','Back','Front'], ans:0, hint:'In any cube, the face directly underneath the top is the bottom. Opposite faces never share an edge!', diff:'easy'},
+    {q:'The perimeter of a rectangle is 42 cm. The length is 3 cm more than the width. Find the length.', opts:['12 cm','9 cm','15 cm','10 cm'], ans:0, hint:'2(l+w)=42, so l+w=21. If l=w+3, then w+3+w=21. 2w=18. w=9. l=12!', diff:'medium'},
+    {q:'A circle has a radius of 7 cm. Find its area. (Use π = 22/7)', opts:['154 cm²','44 cm²','22 cm²','308 cm²'], ans:0, hint:'Area = π × r² = 22/7 × 7 × 7 = 22 × 7 = 154 cm²!', diff:'medium'},
+    {q:'What is the volume of a cube with edge 6 cm?', opts:['216 cm³','36 cm³','72 cm³','108 cm³'], ans:0, hint:'Volume = edge × edge × edge = 6×6×6 = 216 cm³!', diff:'easy'},
+    {q:'An isosceles triangle has a perimeter of 32 cm. The base is 8 cm. What is the length of each equal side?', opts:['12 cm','8 cm','16 cm','10 cm'], ans:0, hint:'Two equal sides + base = 32. 2s + 8 = 32. 2s = 24. s = 12 cm!', diff:'easy'},
+    {q:'The area of a square is 64 cm². What is its diagonal? (Round to 1 dp)', opts:['11.3 cm','8 cm','16 cm','12.8 cm'], ans:0, hint:'Side=8 cm. Diagonal = side × √2 = 8 × 1.414 ≈ 11.3 cm!', diff:'hard'},
+    {q:'How many edges does a rectangular prism (cuboid) have?', opts:['12','8','6','10'], ans:0, hint:'A cuboid has 4 edges along length, 4 along width, 4 along height = 12 edges!', diff:'easy'},
+    {q:'A composite figure is an L-shape: a 10×8 rectangle with a 4×3 rectangle cut from one corner. What is the area?', opts:['68 cm²','80 cm²','76 cm²','56 cm²'], ans:0, hint:'Full rectangle: 10×8=80. Cut out: 4×3=12. Remaining: 80−12=68 cm²!', diff:'medium'},
+    {q:'The circumference of a circle is 44 cm. Find the radius. (Use π = 22/7)', opts:['7 cm','14 cm','22 cm','11 cm'], ans:0, hint:'C = 2πr. So 44 = 2 × 22/7 × r. 44 = 44r/7. r = 7 cm!', diff:'medium'},
+    {q:'A rectangular prism is 8 cm × 5 cm × 4 cm. What is its total surface area?', opts:['184 cm²','160 cm²','120 cm²','200 cm²'], ans:0, hint:'SA = 2(lw + lh + wh) = 2(40 + 32 + 20) = 2(92) = 184 cm²!', diff:'hard'},
   ],
   boss: [] // filled dynamically from all stages
 };
@@ -6579,7 +6628,7 @@ function _gP4(lv){
   const c = _nextMC();
   const d = Math.max(1, Math.floor(lv/25));
   // Use counter to deterministically pick type AND vary parameters
-  const types = ['mul','div','add','sub','frac','fracAdd','word1','word2','word3','word4','word5','geo1','geo2','geo3','geo4','time','mass','money'];
+  const types = ['mul','div','add','sub','frac','fracAdd','word1','word2','word3','word4','word5','geo1','geo2','geo3','geo4','time','mass','money','orderOps','pattern','model','remainder','multiStep'];
   const t = types[c % types.length];
   // Offset parameters by counter to ensure uniqueness
   const s1 = ((c * 7) % 47) + 2;
@@ -6661,6 +6710,35 @@ function _gP4(lv){
       const nm = _wpN(c), d1 = 5 + (c % 45), d2 = 5 + ((c*3) % 45);
       return {q:`${nm} saved $${d1} and $${d2}. Total savings?`, opts:_nw(d1+d2, Math.max(3,8)).map(v=>'$'+v), ans:0};
     }
+    case 'orderOps': {
+      const a = 3 + (c % 8), b = 4 + ((c*3) % 9), x = 10 + ((c*7) % 30), y = 2 + ((c*11) % 7);
+      const ans = a * b + x - y;
+      return {q:`What is ${a} × ${b} + ${x} − ${y}?`, opts:_nw(ans, Math.max(3, Math.ceil(ans*0.1))), ans:0, hint:'Follow BODMAS: do multiplication first, then add and subtract from left to right!'};
+    }
+    case 'pattern': {
+      const patterns = [2,3,4,5];
+      const mult = patterns[(c*3) % patterns.length];
+      const start = 1 + (c % 5);
+      const seq = [start, start*mult, start*mult*mult, start*mult*mult*mult];
+      const ans = start*mult*mult*mult*mult;
+      return {q:`What is the next number: ${seq.join(', ')}, ?`, opts:_nw(ans, Math.max(5, Math.ceil(ans*0.15))), ans:0, hint:`Look at the pattern: each number is multiplied by ${mult} to get the next!`};
+    }
+    case 'model': {
+      const nm1 = _wpN(c), nm2 = _wpN(c+1), mult = 2 + (c % 6), unit = 5 + ((c*3) % 30);
+      const together = unit * (mult + 1);
+      const ans = unit * mult;
+      return {q:`${nm1} has ${mult} times as many stickers as ${nm2}. Together they have ${together}. How many does ${nm1} have?`, opts:_nw(ans, Math.max(3, Math.ceil(ans*0.12))), ans:0, hint:`Model method: ${nm2}=1 unit, ${nm1}=${mult} units. Total=${mult+1} units=${together}. Find 1 unit first!`};
+    }
+    case 'remainder': {
+      const divisor = 3 + (c % 8), quotient = 5 + ((c*3) % 30), rem = 1 + ((c*7) % (divisor-1));
+      const number = divisor * quotient + rem;
+      return {q:`What is the remainder when ${number} is divided by ${divisor}?`, opts:_nw(rem, Math.max(1, divisor-1)), ans:0, hint:`Divide ${number} by ${divisor}: ${number}÷${divisor}=${quotient} remainder ${rem}. Check: ${divisor}×${quotient}+${rem}=${number}!`};
+    }
+    case 'multiStep': {
+      const nm = _wpN(c), rows = 5 + (c % 12), perRow = 4 + ((c*3) % 10), given = 5 + ((c*7) % (rows*perRow - 10));
+      const ans = rows * perRow - given;
+      return {q:`${nm} has a box with ${rows} rows of ${perRow} stickers. ${given} are given away. How many left?`, opts:_nw(ans, Math.max(3, Math.ceil(ans*0.1))), ans:0, hint:`Total: ${rows}×${perRow}=${rows*perRow}. Left: ${rows*perRow}−${given}=${ans}!`};
+    }
   }} catch(e) {}
   // Fallback: always unique via counter
   const a = 2 + (c % 50), b = 2 + ((c*3) % 12);
@@ -6672,7 +6750,7 @@ function _gP6(lv){
   const d = Math.max(1, Math.floor(lv/25));
   const types = ['ratio1','ratio2','ratio3','pct1','pct2','pct3','pct4','frac6a','frac6b',
     'alg1','alg2','alg3','data1','data2','data3','data4','geo6a','geo6b','geo6c',
-    'wordA1','wordA2','wordA3','speed1','speed2'];
+    'wordA1','wordA2','wordA3','speed1','speed2','psleRatio','pslePct','psleModel','psleFrac','psleSpeed'];
   const t = types[c % types.length];
   try { switch(t) {
     case 'ratio1': {
@@ -6782,6 +6860,61 @@ function _gP6(lv){
       const dist = (50+(c%200)), spd = [40,50,60,80,100][(c*3)%5];
       const time = dist/spd;
       return {q:`${dist} km at ${spd} km/h. Time = ? hours`, opts:_nw(time, Math.max(0.5,1)).map(v=>String(v)), ans:0};
+    }
+    case 'psleRatio': {
+      const ra = 2 + (c % 7), rb = 2 + ((c*3) % 7);
+      const u = 3 + ((c*7) % 15);
+      const aVal = u * ra, total = u * (ra + rb);
+      return {q:`The ratio of boys to girls is ${ra}:${rb}. If there are ${aVal} boys, how many children altogether?`, opts:_nw(total, Math.max(5, Math.ceil(total*0.1))), ans:0, hint:`If ${ra} parts = ${aVal}, then 1 part = ${u}. Total parts = ${ra}+${rb} = ${ra+rb}. Total = ${ra+rb} × ${u} = ${total}!`};
+    }
+    case 'pslePct': {
+      const discPcts = [10,15,20,25,30,40][(c*3)%6];
+      const origUnit = 10 + ((c*7)%40);
+      const original = origUnit * (100/(100-discPcts));
+      const salePrice = origUnit * (100-discPcts) * (100/(100-discPcts)) * (100-discPcts)/100;
+      // Cleaner: pick original that divides evenly
+      const orig2 = (5 + (c%30)) * 10;
+      const sale2 = orig2 * (100 - discPcts) / 100;
+      return {q:`After a ${discPcts}% discount, an item costs $${sale2}. What was the original price?`, opts:_nw(orig2, Math.max(5, Math.ceil(orig2*0.1))).map(v=>'$'+v), ans:0, hint:`$${sale2} = ${100-discPcts}% of original. So original = $${sale2} ÷ ${(100-discPcts)/100} = $${orig2}!`};
+    }
+    case 'psleModel': {
+      const nm1 = _wpN(c), nm2 = _wpN(c+1);
+      const diff = 10 + (c % 40) * 2;
+      const together = 100 + ((c*3) % 200) * 2;
+      const more = (together + diff) / 2;
+      const less = (together - diff) / 2;
+      // Ensure whole numbers
+      const d2 = (5 + (c%20)) * 2;
+      const t2 = d2 + (10 + ((c*3)%30)) * 2;
+      const m2 = (t2 + d2) / 2, l2 = (t2 - d2) / 2;
+      return {q:`${nm1} has $${d2} more than ${nm2}. Together they have $${t2}. How much does ${nm1} have?`, opts:_nw(m2, Math.max(5, Math.ceil(m2*0.1))).map(v=>'$'+v), ans:0, hint:`Draw a model: ${nm2}=1 unit, ${nm1}=1 unit+$${d2}. Together: 2 units+$${d2}=$${t2}. So 2 units=$${t2-d2}. 1 unit=$${l2}. ${nm1}=$${m2}!`};
+    }
+    case 'psleFrac': {
+      // Mary spent 1/a on book, b/c of remainder on bag, had $X left
+      const aDen = [3,4,5][c%3];
+      const bNum = 1, bDen = [3,4,5][(c*3)%3];
+      const leftover = (5 + ((c*7)%15)) * aDen * bDen; // ensure divisible
+      // After spending 1/aDen: (aDen-1)/aDen left
+      // After spending bNum/bDen of remainder: (bDen-bNum)/bDen of remainder left
+      // Final = start × (aDen-1)/aDen × (bDen-bNum)/bDen = leftover
+      const start = Math.round(leftover * aDen / (aDen-1) * bDen / (bDen-bNum));
+      return {q:`Mary spent 1/${aDen} of her money on a book and 1/${bDen} of the remainder on a bag. She had $${leftover} left. How much did she start with?`, opts:_nw(start, Math.max(10, Math.ceil(start*0.1))).map(v=>'$'+v), ans:0, hint:`After book: ${aDen-1}/${aDen} left. After bag: ${bDen-1}/${bDen} of that remains. So $${leftover} = ${(aDen-1)*(bDen-1)}/${aDen*bDen} of total. Work backwards!`};
+    }
+    case 'psleSpeed': {
+      const speeds = [[60,40],[80,60],[50,30],[90,60],[70,50]];
+      const pair = speeds[(c*3)%speeds.length];
+      const s1 = pair[0], s2 = pair[1];
+      const distUnit = 10 + (c%10);
+      const dist = distUnit * (s1*s2/_gc(s1*s2,60)); // ensure clean division
+      // Use simpler approach: pick distance that divides evenly by both speeds
+      const lcm = (s1*s2)/_gc(s1,s2);
+      const d2 = (1 + (c%5)) * lcm / 10;
+      const t1 = d2/s1, t2 = d2/s2, total = t1+t2;
+      // Express as hours and minutes or decimal
+      const totalMin = Math.round(total*60);
+      const hrs = Math.floor(totalMin/60), mins = totalMin%60;
+      const timeStr = mins===0 ? `${hrs} hours` : `${hrs} h ${mins} min`;
+      return {q:`A car travels from Town A to B at ${s1} km/h and returns at ${s2} km/h. Distance is ${d2} km. Find total time.`, opts:[timeStr, `${hrs+1} hours`, `${Math.max(1,hrs-1)} h ${(mins+30)%60} min`, `${hrs} h ${(mins+15)%60} min`], ans:0, hint:`Time there: ${d2}÷${s1}=${t1} h. Time back: ${d2}÷${s2}=${t2} h. Total: ${t1}+${t2}=${total} h = ${timeStr}!`};
     }
   }} catch(e) {}
   const a = 2 + (c%50), b = 2 + ((c*3)%12);
