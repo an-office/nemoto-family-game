@@ -7507,6 +7507,10 @@ function getTodayTaskData(player) {
 function initTasks() {
   const opts = {weekday:'long', year:'numeric', month:'long', day:'numeric'};
   document.getElementById('tasks-date').textContent = new Date().toLocaleDateString('en-SG', opts);
+  // Auto-select the correct player tab based on current game player
+  currentTaskPlayer = currentPlayer || 'yuhi';
+  document.getElementById('task-tab-yuhi').classList.toggle('active', currentTaskPlayer==='yuhi');
+  document.getElementById('task-tab-ryusei').classList.toggle('active', currentTaskPlayer==='ryusei');
   renderTasksPage();
 }
 
@@ -8370,35 +8374,36 @@ function checkDeviceIdentity() {
   }
   var dateKey = checkDate.toISOString().slice(0,10);
 
-  // Check if celebration was already shown for this date
-  var celebKey = 'nemoto-bed-celeb-' + dateKey;
+  // Show celebration for the current player only (so each kid sees their own)
+  var celebPlayer = currentPlayer || 'yuhi';
+  var celebKey = 'nemoto-bed-celeb-' + dateKey + '-' + celebPlayer;
   if (localStorage.getItem(celebKey)) return;
 
-  var players = ['yuhi', 'ryusei'];
   var earlyPlayers = [];
 
-  players.forEach(function(p) {
-    if (!tasksState[p] || !tasksState[p][dateKey]) return;
-    var data = tasksState[p][dateKey];
-    if (!data.bed) return;
-    var parts = data.bed.split(':');
-    var bedMins = parseInt(parts[0]) * 60 + parseInt(parts[1]);
-    var targetMins = 20 * 60 + 30;
-    if (bedMins <= targetMins) {
-      var diff = targetMins - bedMins;
-      earlyPlayers.push({
-        name: p === 'yuhi' ? 'Yuhi' : 'Ryusei',
-        time: data.bed,
-        diff: diff,
-        coins: data.bedCoins,
-        xp: data.bedXP
-      });
+  // Check current player's bedtime
+  if (tasksState[celebPlayer] && tasksState[celebPlayer][dateKey]) {
+    var data = tasksState[celebPlayer][dateKey];
+    if (data.bed) {
+      var parts = data.bed.split(':');
+      var bedMins = parseInt(parts[0]) * 60 + parseInt(parts[1]);
+      var targetMins = 20 * 60 + 30;
+      if (bedMins <= targetMins) {
+        var diff = targetMins - bedMins;
+        earlyPlayers.push({
+          name: celebPlayer === 'yuhi' ? 'Yuhi' : 'Ryusei',
+          time: data.bed,
+          diff: diff,
+          coins: data.bedCoins,
+          xp: data.bedXP
+        });
+      }
     }
-  });
+  }
 
   if (earlyPlayers.length === 0) return;
 
-  // Mark as shown
+  // Mark as shown for this player
   localStorage.setItem(celebKey, '1');
 
   // Show celebration after a short delay so page loads first
