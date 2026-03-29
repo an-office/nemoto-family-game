@@ -6561,100 +6561,235 @@ function _nw(c,sp){
   for(let i=0;i<80&&s.size<4;i++){const v=c+(_ri(0,1)?1:-1)*_ri(1,sp);if(v>=0)s.add(v)}
   let k=1;while(s.size<4){s.add(c+k);k++}return[...s].map(String);
 }
+
+// ========= UNLIMITED MATH QUESTION GENERATOR (P4 & P6) =========
+// Uses a counter (_mathQCounter) to guarantee every question is unique.
+// The counter is embedded in parameters so the same "type" of question
+// always has different numbers.
+var _mathQCounter = parseInt(localStorage.getItem('nemoto-mathq-counter')||'0',10);
+function _nextMC(){ _mathQCounter++; localStorage.setItem('nemoto-mathq-counter',String(_mathQCounter)); return _mathQCounter; }
+
+// Names for word problems — cycles through to create variety
+var _wpNames = ['Ali','Ben','Chloe','David','Emma','Farah','Ganesh','Hui Ling','Ivan','Jenny',
+  'Kumar','Lily','Mei','Nabil','Olivia','Priya','Qian','Ravi','Siti','Tom',
+  'Uma','Vincent','Wendy','Xavier','Yuki','Zara'];
+function _wpN(c){ return _wpNames[c % _wpNames.length]; }
+
 function _gP4(lv){
-  const d=Math.max(1,Math.floor(lv/25));
-  const pool=['mul','div','add','mul','div','add'];
-  pool.push('frac');pool.push('word');pool.push('geo');
-  try{switch(pool[_ri(0,pool.length-1)]){
-    case 'mul':{const a=_ri(2,Math.min(12+d*3,50)),b=_ri(2,Math.min(9+d*2,25)),c=a*b;
-      return{q:`${a} × ${b} = ?`,opts:_nw(c,Math.max(3,Math.ceil(c*0.12))),ans:0}}
-    case 'div':{const b=_ri(2,Math.min(9+d*2,20)),c=_ri(2,Math.min(12+d*4,80));
-      return{q:`${c*b} ÷ ${b} = ?`,opts:_nw(c,Math.max(2,Math.ceil(c*0.2))),ans:0}}
-    case 'add':{const a=_ri(50+d*15,200+d*40),b=_ri(30+d*10,150+d*25);
-      if(_ri(0,1)){const s=a+b;return{q:`${a} + ${b} = ?`,opts:_nw(s,Math.max(5,Math.ceil(s*0.05))),ans:0}}
-      const x=Math.max(a,b),y=Math.min(a,b);return{q:`${x} − ${y} = ?`,opts:_nw(x-y,Math.max(5,Math.ceil((x-y)*0.1))),ans:0}}
-    case 'frac':{const fs=_ri(0,2);
-      if(fs===0){const n=_ri(2,Math.min(3+Math.floor(d/2),10)),r=_ri(3,10+d*2);return{q:`What is 1/${n} of ${r*n}?`,opts:_nw(r,Math.max(2,Math.ceil(r*0.3))),ans:0}}
-      if(fs===1){const n=_ri(2,Math.min(4+Math.floor(d/3),8)),m=_ri(2,n),base=_ri(2,5+d);return{q:`What is ${m}/${n} of ${base*n}?`,opts:_nw(base*m,Math.max(2,Math.ceil(base*m*0.25))),ans:0}}
-      const dn=_ri(3,Math.min(6+Math.floor(d/2),12)),a=_ri(1,dn-1),b=_ri(1,Math.max(1,dn-a)),nm=a+b,g=_gc(nm,dn);
-      return{q:`${a}/${dn} + ${b}/${dn} = ?`,opts:[`${nm/g}/${dn/g}`,`${nm}/${dn*2}`,`${Math.max(1,nm-1)}/${dn}`,`${nm+1}/${dn}`],ans:0}}
-    case 'word':{const ws=_ri(0,4);
-      if(ws===0){const n=_ri(2,4+Math.floor(d/5)),p=_ri(3,8+Math.floor(d/3)),tot=n*p,paid=Math.ceil(tot/10)*10+_ri(1,3)*10;
-        return{q:`${n} items at $${p} each. Pay $${paid}. Change?`,opts:_nw(paid-tot,Math.max(2,5)).map(v=>'$'+v),ans:0}}
-      if(ws===1){const dv=_ri(2,Math.min(5,2+Math.floor(d/5))),tot=_ri(3,8+d)*dv;
-        return{q:`${tot} stickers. Give 1/${dv} away. Left?`,opts:_nw(tot-tot/dv,Math.max(3,Math.ceil(tot*0.1))),ans:0}}
-      if(ws===2){const h=_ri(1,4),m=_ri(5,55);return{q:`How many minutes in ${h}h ${m}min?`,opts:_nw(h*60+m,Math.max(5,15)),ans:0}}
-      if(ws===3){const kg=_ri(1,4+Math.floor(d/4)),g=_ri(1,9)*100;return{q:`${kg} kg ${g} g = ? grams`,opts:_nw(kg*1000+g,Math.max(50,200)),ans:0}}
-      const r=_ri(2,4+Math.floor(d/5)),u=_ri(5,15+d*2);return{q:`Ali has ${r}× Ben's amount. Together ${u*(r+1)}. Ali?`,opts:_nw(u*r,Math.max(3,Math.ceil(u*r*0.15))),ans:0}}
-    case 'geo':{const gs=_ri(0,3);
-      if(gs===0){const l=_ri(4,10+d),w=_ri(3,8+Math.floor(d/2)),a=l*w;return{q:`Rectangle ${l}×${w} cm. Area?`,opts:_nw(a,Math.max(3,Math.ceil(a*0.12))).map(v=>v+' cm²'),ans:0}}
-      if(gs===1){const s=_ri(3,10+d),a=4*s;return{q:`Square side ${s} cm. Perimeter?`,opts:_nw(a,Math.max(3,Math.ceil(a*0.12))).map(v=>v+' cm'),ans:0}}
-      if(gs===2){const a1=_ri(25,75),a2=_ri(25,Math.max(26,155-a1));return{q:`Triangle: ${a1}° and ${a2}°. Third?`,opts:_nw(180-a1-a2,Math.max(5,10)).map(v=>v+'°'),ans:0}}
-      const l=_ri(5,12+d),w=_ri(3,8+Math.floor(d/2)),p=2*(l+w);return{q:`Rectangle ${l}×${w} cm. Perimeter?`,opts:_nw(p,Math.max(3,Math.ceil(p*0.1))).map(v=>v+' cm'),ans:0}}
-  }}catch(e){}
-  const a=_ri(2,9+d),b=_ri(2,9);return{q:`${a} × ${b} = ?`,opts:_nw(a*b,Math.max(3,5)),ans:0};
+  const c = _nextMC();
+  const d = Math.max(1, Math.floor(lv/25));
+  // Use counter to deterministically pick type AND vary parameters
+  const types = ['mul','div','add','sub','frac','fracAdd','word1','word2','word3','word4','word5','geo1','geo2','geo3','geo4','time','mass','money'];
+  const t = types[c % types.length];
+  // Offset parameters by counter to ensure uniqueness
+  const s1 = ((c * 7) % 47) + 2;
+  const s2 = ((c * 13) % 31) + 2;
+  const s3 = ((c * 11) % 23) + 3;
+  try { switch(t) {
+    case 'mul': {
+      const a = 2 + (c % 48), b = 2 + ((c*3) % 11);
+      const ans = a * b;
+      return {q:`${a} × ${b} = ?`, opts:_nw(ans, Math.max(3, Math.ceil(ans*0.1))), ans:0};
+    }
+    case 'div': {
+      const b = 2 + (c % 18), q2 = 2 + ((c*7) % 50), a = b * q2;
+      return {q:`${a} ÷ ${b} = ?`, opts:_nw(q2, Math.max(2, Math.ceil(q2*0.15))), ans:0};
+    }
+    case 'add': {
+      const a = 50 + (c % 450), b = 30 + ((c*3) % 370);
+      return {q:`${a} + ${b} = ?`, opts:_nw(a+b, Math.max(5, Math.ceil((a+b)*0.04))), ans:0};
+    }
+    case 'sub': {
+      const a = 100 + (c % 800), b = 10 + ((c*3) % Math.min(a-10, 500));
+      return {q:`${a} − ${b} = ?`, opts:_nw(a-b, Math.max(5, Math.ceil((a-b)*0.06))), ans:0};
+    }
+    case 'frac': {
+      const n = 2 + (c % 9), r = 3 + ((c*3) % 30);
+      return {q:`What is 1/${n} of ${r*n}?`, opts:_nw(r, Math.max(2, Math.ceil(r*0.25))), ans:0};
+    }
+    case 'fracAdd': {
+      const dn = 3 + (c % 10), a = 1 + ((c*3) % (dn-1)), b = 1 + ((c*7) % Math.max(1, dn-a));
+      const nm = a+b, g = _gc(nm, dn);
+      return {q:`${a}/${dn} + ${b}/${dn} = ?`, opts:[`${nm/g}/${dn/g}`,`${nm}/${dn*2}`,`${Math.max(1,nm-1)}/${dn}`,`${nm+1}/${dn}`], ans:0};
+    }
+    case 'word1': {
+      const nm = _wpN(c), items = 2 + (c % 8), price = 3 + ((c*3) % 18), tot = items*price;
+      const paid = Math.ceil(tot/10)*10 + 10 + ((c*7)%30);
+      return {q:`${nm} buys ${items} items at $${price} each. Pays $${paid}. Change?`, opts:_nw(paid-tot, Math.max(2,5)).map(v=>'$'+v), ans:0};
+    }
+    case 'word2': {
+      const nm = _wpN(c), dv = 2 + (c % 5), total = (3 + ((c*3)%20)) * dv;
+      return {q:`${nm} has ${total} stickers. Gives 1/${dv} away. How many left?`, opts:_nw(total - total/dv, Math.max(3, Math.ceil(total*0.08))), ans:0};
+    }
+    case 'word3': {
+      const nm = _wpN(c), r = 2 + (c % 6), u = 5 + ((c*3) % 40), together = u*(r+1);
+      return {q:`${nm} has ${r}× what ${_wpN(c+1)} has. Together $${together}. ${nm}?`, opts:_nw(u*r, Math.max(3, Math.ceil(u*r*0.12))).map(v=>'$'+v), ans:0};
+    }
+    case 'word4': {
+      const nm = _wpN(c), each = 3 + (c % 15), bags = 4 + ((c*3) % 12), sold = 1 + ((c*7) % (bags-1));
+      return {q:`${nm} has ${bags} bags of ${each} marbles. Sells ${sold} bags. Left?`, opts:_nw((bags-sold)*each, Math.max(3,10)), ans:0};
+    }
+    case 'word5': {
+      const nm = _wpN(c), start = 50 + (c % 200), gave = 5 + ((c*3) % Math.min(start-20, 100)), got = 3 + ((c*7) % 50);
+      return {q:`${nm} had ${start} cards. Gave ${gave}, got ${got}. How many now?`, opts:_nw(start-gave+got, Math.max(3,8)), ans:0};
+    }
+    case 'geo1': {
+      const l = 4 + (c % 30), w = 3 + ((c*3) % 25);
+      return {q:`Rectangle ${l} cm × ${w} cm. Area?`, opts:_nw(l*w, Math.max(3, Math.ceil(l*w*0.1))).map(v=>v+' cm²'), ans:0};
+    }
+    case 'geo2': {
+      const s = 3 + (c % 30);
+      return {q:`Square side ${s} cm. Perimeter?`, opts:_nw(4*s, Math.max(3,5)).map(v=>v+' cm'), ans:0};
+    }
+    case 'geo3': {
+      const a1 = 25 + (c % 55), a2 = 25 + ((c*3) % Math.max(1, 130-a1));
+      return {q:`Triangle angles: ${a1}° and ${a2}°. Third angle?`, opts:_nw(180-a1-a2, Math.max(5,10)).map(v=>v+'°'), ans:0};
+    }
+    case 'geo4': {
+      const l = 5 + (c % 25), w = 3 + ((c*3) % 20);
+      return {q:`Rectangle ${l} cm × ${w} cm. Perimeter?`, opts:_nw(2*(l+w), Math.max(3,5)).map(v=>v+' cm'), ans:0};
+    }
+    case 'time': {
+      const h = 1 + (c % 8), m = 5 + ((c*3) % 55);
+      return {q:`How many minutes in ${h} h ${m} min?`, opts:_nw(h*60+m, Math.max(5,15)), ans:0};
+    }
+    case 'mass': {
+      const kg = 1 + (c % 9), g = ((c*3) % 9 + 1) * 100;
+      return {q:`${kg} kg ${g} g = ? grams`, opts:_nw(kg*1000+g, Math.max(50,200)), ans:0};
+    }
+    case 'money': {
+      const nm = _wpN(c), d1 = 5 + (c % 45), d2 = 5 + ((c*3) % 45);
+      return {q:`${nm} saved $${d1} and $${d2}. Total savings?`, opts:_nw(d1+d2, Math.max(3,8)).map(v=>'$'+v), ans:0};
+    }
+  }} catch(e) {}
+  // Fallback: always unique via counter
+  const a = 2 + (c % 50), b = 2 + ((c*3) % 12);
+  return {q:`${a} × ${b} = ?`, opts:_nw(a*b, Math.max(3,5)), ans:0};
 }
+
 function _gP6(lv){
-  const d=Math.floor(lv/25);
-  const pool=['ratio','pct','frac6'];
-  if(lv>=10)pool.push('algebra');if(lv>=25)pool.push('data');if(lv>=40)pool.push('geo6');if(lv>=60)pool.push('wordAdv');
-  try{switch(pool[_ri(0,pool.length-1)]){
-    case 'ratio':{const rs=_ri(0,2);
-      if(rs===0){const ra=_ri(2,Math.min(4+d,12)),rb=_ri(1,Math.min(4+d,10)),u=_ri(2,Math.min(8+d*2,40));
-        return{q:`A:B = ${ra}:${rb}. Total ${u*(ra+rb)}. A = ?`,opts:_nw(u*ra,Math.max(3,Math.ceil(u*ra*0.15))),ans:0}}
-      if(rs===1){let a,b;do{a=_ri(2,8);b=_ri(2,8)}while(a===b||_gc(a,b)!==1);const f=_ri(2,Math.min(4+Math.floor(d/3),10));
-        return{q:`Simplify ${a*f}:${b*f}`,opts:[`${a}:${b}`,`${b}:${a}`,`${a+1}:${b}`,`${a}:${b+1}`],ans:0}}
-      const ra=_ri(2,Math.min(5+d,10)),rb=_ri(2,Math.min(5+d,10)),av=_ri(2,Math.min(10+d,30))*ra;
-      return{q:`A:B = ${ra}:${rb}. A = ${av}. B = ?`,opts:_nw(av/ra*rb,Math.max(2,Math.ceil(av/ra*rb*0.2))),ans:0}}
-    case 'pct':{const ps=_ri(0,3);
-      if(ps===0){const pc=[10,20,25,30,40,50,75][_ri(0,Math.min(6,2+Math.floor(d/5)))],fc=100/_gc(pc,100),y=fc*_ri(1,Math.min(5+d,30));
-        return{q:`What is ${pc}% of ${y}?`,opts:_nw(y*pc/100,Math.max(2,Math.ceil(y*pc/100*0.2))),ans:0}}
-      if(ps===1){const pr=_ri(2,Math.min(10+d,50))*10,dc=[10,15,20,25,30,40,50][_ri(0,Math.min(6,2+Math.floor(d/4)))],an=pr-pr*dc/100;
-        return{q:`$${pr}, ${dc}% off. Price?`,opts:_nw(an,Math.max(3,Math.ceil(an*0.1))).map(v=>'$'+v),ans:0}}
-      if(ps===2){const p2=[10,20,25,50][_ri(0,Math.min(3,1+Math.floor(d/5)))],fc=100/_gc(p2,100),ol=_ri(1,Math.min(5+d,25))*fc;
-        return{q:`Increase ${ol} by ${p2}%`,opts:_nw(ol+ol*p2/100,Math.max(5,Math.ceil(ol*0.08))),ans:0}}
-      const p3=[10,20,25,50][_ri(0,Math.min(3,1+Math.floor(d/5)))],fc=100/_gc(p3,100),an=_ri(1,Math.min(5+d,30))*fc,pt=an*p3/100;
-      return{q:`${p3}% of ? = ${pt}. The number?`,opts:_nw(an,Math.max(5,Math.ceil(an*0.15))),ans:0}}
-    case 'frac6':{const fs=_ri(0,1);
-      if(fs===0){const d1=_ri(2,Math.min(4+Math.floor(d/2),8)),d2=d1*_ri(2,3),a=_ri(1,d1-1),b=_ri(1,d2-1),nm=a*(d2/d1)+b,g=_gc(nm,d2);
-        return{q:`${a}/${d1} + ${b}/${d2} = ?`,opts:[`${nm/g}/${d2/g}`,`${a+b}/${d1+d2}`,`${nm}/${d2}`,`${Math.max(1,nm/g-1)}/${d2/g}`],ans:0}}
-      const dn=_ri(3,Math.min(6+Math.floor(d/2),12)),a=_ri(Math.ceil(dn/2),dn-1),b=_ri(1,a-1),nm=a-b,g=_gc(nm,dn);
-      return{q:`${a}/${dn} − ${b}/${dn} = ?`,opts:[`${nm/g}/${dn/g}`,`${nm}/${dn*2}`,`${Math.min(nm+1,dn)}/${dn}`,`${Math.max(1,nm-1)}/${dn}`],ans:0}}
-    case 'algebra':{const as=_ri(0,2);
-      if(as===0){const a=_ri(2,Math.min(5+d,15)),an=_ri(2,Math.min(10+d*2,50)),b=_ri(1,Math.min(20+d*3,100));
-        return{q:`${a}n + ${b} = ${a*an+b}. n = ?`,opts:_nw(an,Math.max(2,Math.ceil(an*0.25))),ans:0}}
-      if(as===1){const a=_ri(2,Math.min(4+Math.floor(d/2),10)),an=_ri(2,Math.min(8+d,30)),b=_ri(2,Math.min(10+d*2,50));
-        return{q:`${a}(x + ${b}) = ${a*(an+b)}. x = ?`,opts:_nw(an,Math.max(2,Math.ceil(an*0.3))),ans:0}}
-      const a=_ri(3,Math.min(6+d,15)),c=_ri(1,a-1),an=_ri(2,Math.min(10+d,40)),bv=_ri(1,Math.min(20+d*3,80)),dv=bv+(a-c)*an;
-      return{q:`${a}x + ${bv} = ${c}x + ${dv}. x = ?`,opts:_nw(an,Math.max(2,Math.ceil(an*0.25))),ans:0}}
-    case 'data':{const ds=_ri(0,3);
-      if(ds===0){const n=_ri(3,Math.min(5+Math.floor(d/5),8)),vals=[];let sum=0;for(let i=0;i<n;i++){const v=_ri(10,Math.min(40+d*3,100));vals.push(v);sum+=v}const avg=Math.round(sum/n);
-        return{q:`Average of ${vals.join(', ')}?`,opts:_nw(avg,Math.max(3,Math.ceil(avg*0.15))),ans:0}}
-      if(ds===1){const n=_ri(4,Math.min(5+Math.floor(d/5),8)),avg=_ri(10,Math.min(30+d*3,80)),tot=avg*n;
-        return{q:`Average of ${n} numbers = ${avg}. Total?`,opts:_nw(tot,Math.max(10,Math.ceil(tot*0.1))),ans:0}}
-      if(ds===2){const n=_ri(4,Math.min(6+Math.floor(d/5),8)),vals=[];let sum=0;for(let i=0;i<n-1;i++){const v=_ri(5,Math.min(30+d*2,60));vals.push(v);sum+=v}const avg=_ri(Math.ceil(sum/(n-1)),Math.ceil(sum/(n-1))+10),last=avg*n-sum;
-        return{q:`${n} scores: ${vals.join(', ')}, ?. Average=${avg}. Missing?`,opts:_nw(last,Math.max(3,Math.ceil(last*0.2))),ans:0}}
-      const pcts=[25,30,35,40,45,50],a=pcts[_ri(0,pcts.length-1)],b=pcts[_ri(0,pcts.length-1)],c=100-a-b,tot=_ri(2,Math.min(5+d,20))*20,partA=tot*a/100;
-      if(c>0&&c<100)return{q:`Pie chart: ${a}% Maths, ${b}% Sci, ${c}% Eng. ${tot} pupils. Maths?`,opts:_nw(partA,Math.max(3,Math.ceil(partA*0.15))),ans:0};
-      return{q:`${a}% of ${tot} students chose Maths. How many?`,opts:_nw(partA,Math.max(3,Math.ceil(partA*0.15))),ans:0}}
-    case 'geo6':{const gs=_ri(0,2);
-      if(gs===0){const s=_ri(2,Math.min(5+d,15)),an=s*s*s;return{q:`Cube side ${s} cm. Volume?`,opts:_nw(an,Math.max(5,Math.ceil(an*0.12))).map(v=>v+' cm³'),ans:0}}
-      if(gs===1){const l=_ri(3,Math.min(8+d,20)),w=_ri(2,Math.min(6+Math.floor(d/2),15)),h=_ri(2,Math.min(5+Math.floor(d/3),12)),an=l*w*h;
-        return{q:`Box ${l}×${w}×${h} cm. Volume?`,opts:_nw(an,Math.max(10,Math.ceil(an*0.1))).map(v=>v+' cm³'),ans:0}}
-      const bL=_ri(8,12+d),bW=_ri(6,10+Math.floor(d/2)),sL=_ri(2,Math.floor(bL/2)),sW=_ri(2,Math.floor(bW/2)),an=bL*bW-sL*sW;
-      return{q:`L-shape: ${bL}×${bW} minus ${sL}×${sW} cut. Area?`,opts:_nw(an,Math.max(5,Math.ceil(an*0.1))).map(v=>v+' cm²'),ans:0}}
-    case 'wordAdv':{const ws=_ri(0,2);
-      if(ws===0){const r=_ri(2,Math.min(5+d,10)),u=_ri(5,Math.min(20+d*3,80));
-        return{q:`Ali has ${r}× Ben's amount. Together $${u*(r+1)}. Ali?`,opts:_nw(u*r,Math.max(5,Math.ceil(u*r*0.12))).map(v=>'$'+v),ans:0}}
-      if(ws===1){const each=_ri(3,Math.min(8+d,20)),bags=_ri(4,Math.min(8+Math.floor(d/3),15)),sold=_ri(1,bags-1),left=(bags-sold)*each;
-        return{q:`${bags} bags of ${each} marbles. Sell ${sold} bags. Left?`,opts:_nw(left,Math.max(3,Math.ceil(left*0.15))),ans:0}}
-      const n=_ri(3,Math.min(5+Math.floor(d/5),8)),avg=_ri(10,Math.min(30+d*3,80));
-      return{q:`Average of ${n} numbers = ${avg}. Total?`,opts:_nw(n*avg,Math.max(5,Math.ceil(n*avg*0.1))),ans:0}}
-  }}catch(e){}
-  const a=_ri(2,9+d),b=_ri(2,9);return{q:`${a} × ${b} = ?`,opts:_nw(a*b,Math.max(3,5)),ans:0};
+  const c = _nextMC();
+  const d = Math.max(1, Math.floor(lv/25));
+  const types = ['ratio1','ratio2','ratio3','pct1','pct2','pct3','pct4','frac6a','frac6b',
+    'alg1','alg2','alg3','data1','data2','data3','data4','geo6a','geo6b','geo6c',
+    'wordA1','wordA2','wordA3','speed1','speed2'];
+  const t = types[c % types.length];
+  try { switch(t) {
+    case 'ratio1': {
+      const ra = 2 + (c % 10), rb = 1 + ((c*3) % 9), u = 2 + ((c*7) % 30);
+      return {q:`A:B = ${ra}:${rb}. Total ${u*(ra+rb)}. A = ?`, opts:_nw(u*ra, Math.max(3, Math.ceil(u*ra*0.12))), ans:0};
+    }
+    case 'ratio2': {
+      let a = 2 + (c % 7), b = 2 + ((c*3) % 7);
+      if (a===b) b++;
+      const g = _gc(a,b); a/=g; b/=g;
+      const f = 2 + ((c*7) % 9);
+      return {q:`Simplify ${a*f}:${b*f}`, opts:[`${a}:${b}`,`${b}:${a}`,`${a+1}:${b}`,`${a}:${b+1}`], ans:0};
+    }
+    case 'ratio3': {
+      const ra = 2 + (c % 8), rb = 2 + ((c*3) % 8), av = (2 + ((c*7) % 20)) * ra;
+      return {q:`A:B = ${ra}:${rb}. A = ${av}. B = ?`, opts:_nw(Math.round(av/ra*rb), Math.max(2, Math.ceil(av/ra*rb*0.15))), ans:0};
+    }
+    case 'pct1': {
+      const pc = [10,15,20,25,30,40,50,60,75][c % 9], y = (2 + ((c*3)%40)) * (100/_gc(pc,100));
+      return {q:`What is ${pc}% of ${y}?`, opts:_nw(y*pc/100, Math.max(2, Math.ceil(y*pc/100*0.15))), ans:0};
+    }
+    case 'pct2': {
+      const pr = (2 + (c%40)) * 10, dc = [10,15,20,25,30,40,50][(c*3)%7], an = pr - pr*dc/100;
+      return {q:`$${pr}, ${dc}% off. Sale price?`, opts:_nw(an, Math.max(3, Math.ceil(an*0.08))).map(v=>'$'+v), ans:0};
+    }
+    case 'pct3': {
+      const p2 = [10,20,25,50][(c*3)%4], ol = (2 + ((c*7)%30)) * (100/_gc(p2,100));
+      return {q:`Increase ${ol} by ${p2}%. New value?`, opts:_nw(ol+ol*p2/100, Math.max(5, Math.ceil(ol*0.06))), ans:0};
+    }
+    case 'pct4': {
+      const p3 = [10,20,25,50][(c*3)%4], an = (2 + ((c*7)%30)) * (100/_gc(p3,100)), pt = an*p3/100;
+      return {q:`${p3}% of ? = ${pt}. The number?`, opts:_nw(an, Math.max(5, Math.ceil(an*0.12))), ans:0};
+    }
+    case 'frac6a': {
+      const d1 = 2 + (c%7), d2 = d1 * (2 + ((c*3)%2)), a = 1 + ((c*7)%(d1-1||1)), b = 1 + ((c*11)%(d2-1||1));
+      const nm = a*(d2/d1)+b, g = _gc(nm,d2);
+      return {q:`${a}/${d1} + ${b}/${d2} = ?`, opts:[`${nm/g}/${d2/g}`,`${a+b}/${d1+d2}`,`${nm}/${d2}`,`${Math.max(1,nm/g-1)}/${d2/g}`], ans:0};
+    }
+    case 'frac6b': {
+      const dn = 3 + (c%10), a = Math.ceil(dn/2) + ((c*3)%(Math.max(1,Math.floor(dn/2)))), b = 1 + ((c*7)%(Math.max(1,a-1)));
+      const nm = a-b, g = _gc(Math.max(1,nm),dn);
+      if (nm>0) return {q:`${a}/${dn} − ${b}/${dn} = ?`, opts:[`${nm/g}/${dn/g}`,`${nm}/${dn*2}`,`${Math.min(nm+1,dn)}/${dn}`,`${Math.max(1,nm-1)}/${dn}`], ans:0};
+      return {q:`${a+1}/${dn} − ${b}/${dn} = ?`, opts:[`1/${dn}`,`2/${dn}`,`${a+1}/${dn}`,`0`], ans:0};
+    }
+    case 'alg1': {
+      const a = 2 + (c%13), an = 2 + ((c*3)%40), b = 1 + ((c*7)%80);
+      return {q:`${a}n + ${b} = ${a*an+b}. n = ?`, opts:_nw(an, Math.max(2, Math.ceil(an*0.2))), ans:0};
+    }
+    case 'alg2': {
+      const a = 2 + (c%8), an = 2 + ((c*3)%25), b = 2 + ((c*7)%40);
+      return {q:`${a}(x + ${b}) = ${a*(an+b)}. x = ?`, opts:_nw(an, Math.max(2, Math.ceil(an*0.2))), ans:0};
+    }
+    case 'alg3': {
+      const a = 3 + (c%10), cc = 1+(c%Math.max(1,a-1)), an = 2+((c*3)%30), bv = 1+((c*7)%60);
+      return {q:`${a}x + ${bv} = ${cc}x + ${bv+(a-cc)*an}. x = ?`, opts:_nw(an, Math.max(2, Math.ceil(an*0.2))), ans:0};
+    }
+    case 'data1': {
+      const n = 3 + (c%5), vals = []; let sum = 0;
+      for (let i=0;i<n;i++){const v=10+((c*(i+2)*7)%80);vals.push(v);sum+=v;}
+      return {q:`Average of ${vals.join(', ')}?`, opts:_nw(Math.round(sum/n), Math.max(3,8)), ans:0};
+    }
+    case 'data2': {
+      const n = 4 + (c%4), avg = 10 + ((c*3)%60);
+      return {q:`Average of ${n} numbers = ${avg}. Total?`, opts:_nw(n*avg, Math.max(10,20)), ans:0};
+    }
+    case 'data3': {
+      const n = 4 + (c%4), vals = []; let sum = 0;
+      for (let i=0;i<n-1;i++){const v=5+((c*(i+2)*7)%50);vals.push(v);sum+=v;}
+      const avg = Math.ceil(sum/(n-1)) + 1 + ((c*3)%8), last = avg*n - sum;
+      return {q:`${n} scores: ${vals.join(', ')}, ?. Average=${avg}. Missing?`, opts:_nw(last, Math.max(3,8)), ans:0};
+    }
+    case 'data4': {
+      const pcts = [20,25,30,35,40,45,50], a = pcts[c%7], b = pcts[(c*3)%7], cc = 100-a-b;
+      const tot = (2+((c*7)%15))*20, partA = tot*a/100;
+      if (cc>0&&cc<100) return {q:`Pie chart: ${a}% Maths, ${b}% Sci, ${cc}% Eng. ${tot} pupils. Maths?`, opts:_nw(partA, Math.max(3,8)), ans:0};
+      return {q:`${a}% of ${tot} students chose Maths. How many?`, opts:_nw(partA, Math.max(3,8)), ans:0};
+    }
+    case 'geo6a': {
+      const s = 2 + (c%18);
+      return {q:`Cube side ${s} cm. Volume?`, opts:_nw(s*s*s, Math.max(5, Math.ceil(s*s*s*0.08))).map(v=>v+' cm³'), ans:0};
+    }
+    case 'geo6b': {
+      const l = 3+(c%18), w = 2+((c*3)%14), h = 2+((c*7)%10);
+      return {q:`Box ${l}×${w}×${h} cm. Volume?`, opts:_nw(l*w*h, Math.max(10, Math.ceil(l*w*h*0.08))).map(v=>v+' cm³'), ans:0};
+    }
+    case 'geo6c': {
+      const bL = 8+(c%15), bW = 6+((c*3)%10), sL = 2+((c*7)%Math.max(1,Math.floor(bL/2)-1)), sW = 2+((c*11)%Math.max(1,Math.floor(bW/2)-1));
+      return {q:`L-shape: ${bL}×${bW} minus ${sL}×${sW} cut. Area?`, opts:_nw(bL*bW-sL*sW, Math.max(5,10)).map(v=>v+' cm²'), ans:0};
+    }
+    case 'wordA1': {
+      const nm = _wpN(c), r = 2+(c%8), u = 5+((c*3)%60);
+      return {q:`${nm} has ${r}× ${_wpN(c+1)}'s amount. Together $${u*(r+1)}. ${nm}?`, opts:_nw(u*r, Math.max(5,10)).map(v=>'$'+v), ans:0};
+    }
+    case 'wordA2': {
+      const nm = _wpN(c), each = 3+(c%18), bags = 4+((c*3)%12), sold = 1+((c*7)%(bags-1));
+      return {q:`${nm} has ${bags} bags of ${each} marbles. Sells ${sold} bags. Left?`, opts:_nw((bags-sold)*each, Math.max(3,10)), ans:0};
+    }
+    case 'wordA3': {
+      const nm = _wpN(c), n = 3+(c%5), avg = 10+((c*3)%60);
+      return {q:`${nm}'s ${n} test scores average ${avg}. Total marks?`, opts:_nw(n*avg, Math.max(5,15)), ans:0};
+    }
+    case 'speed1': {
+      const spd = 40+(c%60), hrs = 2+((c*3)%6);
+      return {q:`Car travels ${spd} km/h for ${hrs} hours. Distance?`, opts:_nw(spd*hrs, Math.max(10,20)).map(v=>v+' km'), ans:0};
+    }
+    case 'speed2': {
+      const dist = (50+(c%200)), spd = [40,50,60,80,100][(c*3)%5];
+      const time = dist/spd;
+      return {q:`${dist} km at ${spd} km/h. Time = ? hours`, opts:_nw(time, Math.max(0.5,1)).map(v=>String(v)), ans:0};
+    }
+  }} catch(e) {}
+  const a = 2 + (c%50), b = 2 + ((c*3)%12);
+  return {q:`${a} × ${b} = ?`, opts:_nw(a*b, Math.max(3,5)), ans:0};
 }
-function genChalP4(lv){return[_gP4(lv),_gP4(lv),_gP4(lv)]}
-function genChalP6(lv){return[_gP6(lv),_gP6(lv),_gP6(lv)]}
+
+function genChalP4(lv){return[_gP4(lv),_gP4(lv),_gP4(lv),_gP4(lv),_gP4(lv)]}
+function genChalP6(lv){return[_gP6(lv),_gP6(lv),_gP6(lv),_gP6(lv),_gP6(lv)]}
 const chalTiers=['Beginner','Intermediate','Advanced','Expert','Master','Legend','Grandmaster'];
 function chalTier(lv){return chalTiers[Math.min(Math.floor(lv/150),chalTiers.length-1)]}
 
@@ -6719,42 +6854,18 @@ function renderArenaStages() {
 
 function maStartBattle(stageId) {
   const stage = maStages.find(s => s.id === stageId);
-  let completed = (state[maCurrentPlayer].completedQs && state[maCurrentPlayer].completedQs.math) || [];
-  // If completedQs is very large, reset to avoid running out of questions
-  if (completed.length > 200) {
-    state[maCurrentPlayer].completedQs.math = [];
-    completed = [];
-    save();
-  }
-  // Always generate fresh procedural questions first, then fill from static pool
+  // Generate 5 guaranteed-unique questions using counter-based generator
+  // Every call to _gP4/_gP6 increments a persistent counter, so questions NEVER repeat
   const genFn = maCurrentPlayer === 'yuhi' ? _gP6 : _gP4;
   const arenaLvl = (arenaState && arenaState.level) || 1;
   let available = [];
-  // Generate procedural questions — try hard to get 15 unique ones
-  for (let i = 0; i < 200 && available.length < 15; i++) {
-    const gq = genFn(arenaLvl + Math.floor(i / 30) * 5);
-    if (gq && gq.q && !available.some(a => a.q === gq.q) && !completed.includes(gq.q)) {
-      gq.hint = gq.hint || 'Think carefully and try your best!';
-      gq.diff = gq.diff || 'medium';
-      available.push(gq);
-    }
+  for (let i = 0; i < 5; i++) {
+    const gq = genFn(arenaLvl);
+    gq.hint = gq.hint || 'Think carefully and try your best!';
+    gq.diff = gq.diff || 'medium';
+    available.push(gq);
   }
-  // Add unused static questions as extra variety
-  const staticAvail = (maQuestions[stageId]||[]).filter(q => !completed.includes(q.q) && !available.some(a => a.q === q.q));
-  available = available.concat(staticAvail);
-  // If still not enough, generate without completedQs filter (better than crashing)
-  if (available.length < 5) {
-    for (let i = 0; i < 100 && available.length < 10; i++) {
-      const gq = genFn(arenaLvl + _ri(0,20));
-      if (gq && gq.q && !available.some(a => a.q === gq.q)) {
-        gq.hint = gq.hint || 'Think carefully and try your best!';
-        gq.diff = gq.diff || 'medium';
-        available.push(gq);
-      }
-    }
-  }
-  const pool = [...available].sort(() => Math.random() - 0.5);
-  const picks = pool.slice(0, 5).map(q => {
+  const picks = available.map(q => {
     const correctText = q.opts[q.ans];
     const shuffled = [...q.opts].sort(() => Math.random() - 0.5);
     return { ...q, opts: shuffled, ans: shuffled.indexOf(correctText) };
