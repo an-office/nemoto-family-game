@@ -602,7 +602,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div class="icon">&#127918;</div>
     <div class="info">
       <h4>Gaming Time = Shop Only! 🛒</h4>
-      <p>Earn coins from quizzes & tasks → Buy gaming time in the Reward Shop! Max 10 min/day.</p>
+      <p>Earn coins from quizzes &amp; tasks → Buy gaming time in the Reward Shop! Max 5 min/day from Shop + 5 min from Tasks = 10 min/day total.</p>
     </div>
     <div style="text-align:center">
       <div style="font-size:.7em;color:#aaa">GAMING BANK</div>
@@ -653,7 +653,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       </div>
     </div>
     <div style="text-align:center;color:#999;font-size:.8em">
-      🛒 Gaming time is purchased with coins in the Reward Shop. <strong style="color:#ff6b6b">Max 10 min/day</strong> (saves up!)<br>
+      🛒 Shop: max <strong style="color:#ff6b6b">5 min/day</strong> | Tasks: max <strong style="color:#2ed573">5 min/day</strong> | Total: <strong style="color:#ffd200">10 min/day</strong> (banked minutes carry over!)<br>
       <span style="color:#ffd200">Banked minutes carry over! Earn coins from quizzes, tasks & activities.</span>
     </div>
   </div>
@@ -1688,17 +1688,16 @@ try { state = JSON.parse(localStorage.getItem('nemoto-study-v2')) || defaultStat
 });
 
 // Seed baseline points — applies once per seed version per device
-// Uses Math.max so player progress is NEVER reduced — only raised to minimum
 (function applySeedBaseline() {
-  const SEED_KEY = 'nemoto-seed-20260330b';
+  const SEED_KEY = 'nemoto-seed-20260330c';
   if (!localStorage.getItem(SEED_KEY)) {
     // Yuhi minimums
     state.yuhi.xp        = Math.max(state.yuhi.xp        || 0, 5200);
     state.yuhi.coins     = Math.max(state.yuhi.coins     || 0, 926);
     state.yuhi.gameBank  = Math.max(state.yuhi.gameBank  || 0, 17);
-    // Ryusei — match Yuhi's XP (at least 7000 for Level 10)
-    var yuhiXpNow = state.yuhi.xp || 5200;
-    state.ryusei.xp      = Math.max(state.ryusei.xp || 0, yuhiXpNow, 7000);
+    // Ryusei — just a little above Yuhi (same Level 10, slightly more XP)
+    var yuhiBase = Math.max(state.yuhi.xp || 5200, 5200);
+    state.ryusei.xp      = yuhiBase + 500; // ~5700 XP = Lv.10, just ahead of Yuhi
     state.ryusei.coins   = Math.max(state.ryusei.coins   || 0, 1635);
     state.ryusei.gameBank = Math.max(state.ryusei.gameBank || 0, 7);
     localStorage.setItem(SEED_KEY, '1');
@@ -2853,8 +2852,8 @@ function generateChineseQ(player) {
 
 // ============ SHOP ITEMS ============
 const shopItems = [
-  {id:'game5', emoji:'🎮', name:'5 Min Gaming',        desc:'Quick 5 minutes of video games!',      cost:1500, gameMins:5},
-  {id:'game10',emoji:'🕹️', name:'10 Min Gaming',       desc:'10 minute gaming session!',            cost:2800, gameMins:10},
+  {id:'game2', emoji:'⏱️', name:'2 Min Gaming',        desc:'Quick 2 min — small reward for effort!',       cost:500,  gameMins:2},
+  {id:'game5', emoji:'🎮', name:'5 Min Gaming',         desc:'5 min gaming — needs a really hard day!',       cost:1400, gameMins:5},
   {id:'movie', emoji:'🎬', name:'Movie Pick',           desc:'YOU choose the family movie!',         cost:2000},
   {id:'snack', emoji:'🍭', name:'Snack of Choice',      desc:'Pick any snack from the store!',       cost:800},
   {id:'dessert',emoji:'🎂',name:'Special Dessert',      desc:'Mama makes your favorite dessert!',    cost:2500},
@@ -3602,14 +3601,14 @@ function renderShop() {
   const s = state[shopPlayer];
   const today = new Date().toDateString();
   const shopGameToday = (s.shopGameDate === today) ? (s.shopGameToday || 0) : 0;
-  const gameCapLeft = Math.max(0, 10 - shopGameToday);
+  const gameCapLeft = Math.max(0, 5 - shopGameToday);
 
   if (shopGameToday > 0) {
     const capEl = document.createElement('div');
     capEl.style.cssText = 'text-align:center;font-size:.82em;padding:8px 12px;margin-bottom:10px;background:rgba(255,255,255,.06);border-radius:10px;color:#aaa';
     capEl.textContent = gameCapLeft === 0
-      ? `🎮 Gaming today: ${shopGameToday}/10 min — Daily limit reached!`
-      : `🎮 Gaming purchased today: ${shopGameToday}/10 min  (${gameCapLeft} min left)`;
+      ? `🎮 Shop gaming today: ${shopGameToday}/5 min — Shop limit reached!`
+      : `🎮 Shop gaming today: ${shopGameToday}/5 min  (${gameCapLeft} min left)`;
     cont.appendChild(capEl);
   }
 
@@ -3634,8 +3633,8 @@ function buyItem(item) {
   if (item.gameMins) {
     const today = new Date().toDateString();
     const shopGameToday = (s.shopGameDate === today) ? (s.shopGameToday || 0) : 0;
-    if (shopGameToday + item.gameMins > 10) {
-      alert(`Daily gaming purchase limit is 10 min/day.\nAlready bought: ${shopGameToday} min — only ${10 - shopGameToday} min left today.`);
+    if (shopGameToday + item.gameMins > 5) {
+      alert('Shop gaming limit is 5 min/day. Already bought: ' + shopGameToday + ' min - only ' + (5 - shopGameToday) + ' min left today.');
       return;
     }
   }
@@ -7973,16 +7972,16 @@ function pinModalSubmit() {
 
 // ========= DAILY TASKS =========
 const yuhiTaskDefs = [
-  {id:'grammar_mcq',  name:'Grammar MCQ',                     detail:'1 page',  time:10, coins:15, xp:30,  cat:'📝 English', gameMin:0},
-  {id:'vocab_mcq',    name:'Vocab MCQ',                        detail:'1 page',  time:15, coins:20, xp:40,  cat:'📝 English', gameMin:0},
+  {id:'grammar_mcq',  name:'Grammar MCQ',                     detail:'1 page',  time:10, coins:15, xp:30,  cat:'📝 English', gameMin:1},
+  {id:'vocab_mcq',    name:'Vocab MCQ',                        detail:'1 page',  time:15, coins:20, xp:40,  cat:'📝 English', gameMin:1},
   {id:'spelling',     name:'Spelling',                         detail:'3 words', time:10, coins:15, xp:25,  cat:'📝 English', gameMin:0},
-  {id:'oral_comp',    name:'Oral / Comprehension / Composition',detail:'',       time:20, coins:30, xp:60,  cat:'📝 English', gameMin:0},
+  {id:'oral_comp',    name:'Oral / Comprehension / Composition',detail:'',       time:20, coins:30, xp:60,  cat:'📝 English', gameMin:1},
   {id:'duolingo',     name:'Duolingo',                         detail:'2 min',   time:2,  coins:10, xp:15,  cat:'📝 English', gameMin:0},
   {id:'chinese_1000', name:'Chinese 1000+ Practice',           detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
   {id:'berries',      name:'Berries 靠靠自己',                  detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
   {id:'ch_oral',      name:'Chinese Oral / Comprehension / Composition', detail:'', time:20, coins:25, xp:50, cat:'🈶 Chinese', gameMin:0},
   {id:'ch_words',     name:'Recognize Chinese Words',          detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
-  {id:'koobits',      name:'KooBits',                          detail:'10 min',  time:10, coins:20, xp:40,  cat:'🔢 Math', gameMin:0},
+  {id:'koobits',      name:'KooBits',                          detail:'10 min',  time:10, coins:20, xp:40,  cat:'🔢 Math', gameMin:1},
   {id:'tll',          name:'TLL Math / Science',               detail:'',        time:10, coins:15, xp:30,  cat:'🔬 Academic', gameMin:0},
   // 🏃 OFF-SCREEN ACTIVITIES
   {id:'kendo',        name:'Kendo Practice',       detail:'',     time:3,  coins:12, xp:20,  cat:'🏃 Off-Screen', gameMin:0},
@@ -7991,7 +7990,7 @@ const yuhiTaskDefs = [
   {id:'soccer',       name:'Soccer / Football',    detail:'15min',time:15, coins:30, xp:45,  cat:'🏃 Off-Screen', gameMin:0},
   {id:'walk',         name:'Walk Outside',         detail:'10min',time:10, coins:20, xp:30,  cat:'🏃 Off-Screen', gameMin:0},
   {id:'stretch',      name:'Stretching',           detail:'5min', time:5,  coins:15, xp:20,  cat:'🏃 Off-Screen', gameMin:0},
-  {id:'reading',      name:'Read a Book (paper)',   detail:'15min',time:15, coins:25, xp:40,  cat:'📕 Off-Screen', gameMin:0},
+  {id:'reading',      name:'Read a Book (paper)',   detail:'15min',time:15, coins:25, xp:40,  cat:'📕 Off-Screen', gameMin:1},
   {id:'drawing',      name:'Draw / Color',          detail:'10min',time:10, coins:20, xp:30,  cat:'🎨 Off-Screen', gameMin:0},
   {id:'puzzle',       name:'Puzzle / Board Game',    detail:'10min',time:10, coins:20, xp:30,  cat:'🧩 Off-Screen', gameMin:0},
   {id:'help_house',   name:'Help with Housework',   detail:'10min',time:10, coins:25, xp:35,  cat:'🏠 Off-Screen', gameMin:0},
@@ -7999,10 +7998,10 @@ const yuhiTaskDefs = [
 ];
 
 const ryuseiTaskDefs = [
-  {id:'dd_english',   name:'Daily Dose English',  detail:'',  time:15, coins:20, xp:35,  cat:'📝 English', gameMin:0},
-  {id:'dd_math',      name:'Daily Dose Math',      detail:'',  time:20, coins:25, xp:45,  cat:'🔢 Math',    gameMin:0},
-  {id:'berries_ch',   name:'Berries Chinese',      detail:'',  time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
-  {id:'learning_lab', name:'Learning Lab',         detail:'',  time:20, coins:20, xp:40,  cat:'🔬 Academic', gameMin:0},
+  {id:'dd_english',   name:'Daily Dose English',  detail:'',  time:15, coins:20, xp:35,  cat:'📝 English', gameMin:1},
+  {id:'dd_math',      name:'Daily Dose Math',      detail:'',  time:20, coins:25, xp:45,  cat:'🔢 Math',    gameMin:1},
+  {id:'berries_ch',   name:'Berries Chinese',      detail:'',  time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:1},
+  {id:'learning_lab', name:'Learning Lab',         detail:'',  time:20, coins:20, xp:40,  cat:'🔬 Academic', gameMin:1},
   // 🏃 OFF-SCREEN ACTIVITIES (physical, creative, no screen!)
   {id:'kendo',        name:'Kendo Practice',       detail:'',  time:3,  coins:12, xp:20,  cat:'🏃 Off-Screen', gameMin:0},
   {id:'golf',         name:'Golf Practice',        detail:'',  time:2,  coins:10, xp:15,  cat:'🏃 Off-Screen', gameMin:0},
@@ -8010,7 +8009,7 @@ const ryuseiTaskDefs = [
   {id:'soccer',       name:'Soccer / Football',    detail:'15min',time:15,coins:30, xp:45, cat:'🏃 Off-Screen', gameMin:0},
   {id:'walk',         name:'Walk Outside',         detail:'10min',time:10,coins:20, xp:30, cat:'🏃 Off-Screen', gameMin:0},
   {id:'stretch',      name:'Stretching',           detail:'5min',time:5, coins:15, xp:20,  cat:'🏃 Off-Screen', gameMin:0},
-  {id:'reading',      name:'Read a Book (paper)',   detail:'15min',time:15,coins:25, xp:40, cat:'📕 Off-Screen', gameMin:0},
+  {id:'reading',      name:'Read a Book (paper)',   detail:'15min',time:15,coins:25, xp:40, cat:'📕 Off-Screen', gameMin:1},
   {id:'drawing',      name:'Draw / Color',          detail:'10min',time:10,coins:20, xp:30, cat:'🎨 Off-Screen', gameMin:0},
   {id:'puzzle',       name:'Puzzle / Board Game',    detail:'10min',time:10,coins:20, xp:30, cat:'🧩 Off-Screen', gameMin:0},
   {id:'help_house',   name:'Help with Housework',   detail:'10min',time:10,coins:25, xp:35, cat:'🏠 Off-Screen', gameMin:0},
@@ -8165,7 +8164,7 @@ function renderTasksPage() {
           <div class="task-check">${done?'✅':'⬜'}</div>
           <div class="task-info">
             <div class="task-name">${task.name}${task.detail?` <span class="task-detail">(${task.detail})</span>`:''}</div>
-            <div class="task-meta">${task.time} min</div>
+            <div class="task-meta">${task.time} min${task.gameMin ? " &nbsp;&middot;&nbsp; <span style=\"color:#2ed573;font-weight:700\">🎮 +" + task.gameMin + "m</span>" : ""}</div>
           </div>
           <div class="task-reward">
             <span class="task-coins">+${task.coins}c</span>
@@ -8190,13 +8189,28 @@ function toggleDailyTask(taskId) {
     today.done.push(taskId);
     state[player].coins += task.coins;
     state[player].xp    += task.xp;
+    // Task gaming time reward (max 5 min/day from tasks)
+    if (task.gameMin > 0) {
+      const currentTaskGame = today.taskGameGiven || 0;
+      const addGame = Math.min(task.gameMin, 5 - currentTaskGame);
+      if (addGame > 0) {
+        today.taskGameGiven = currentTaskGame + addGame;
+        state[player].gameBank = (state[player].gameBank || 0) + addGame;
+      }
+    }
   } else {
     today.done.splice(idx, 1);
     state[player].coins = Math.max(0, state[player].coins - task.coins);
     state[player].xp    = Math.max(0, state[player].xp    - task.xp);
+    // Reverse task gaming time
+    if (task.gameMin > 0 && (today.taskGameGiven || 0) > 0) {
+      const removeGame = Math.min(task.gameMin, today.taskGameGiven);
+      today.taskGameGiven = Math.max(0, (today.taskGameGiven || 0) - removeGame);
+      state[player].gameBank = Math.max(0, (state[player].gameBank || 0) - removeGame);
+    }
   }
 
-  save(); saveTasks(); updatePlayerCards();
+  save(); saveTasks(); updatePlayerCards(); updateGamingBank();
   renderTasksPage();
 }
 
@@ -8414,14 +8428,22 @@ function renderTasksSummary() {
   const earnedC   = today.done.reduce((s,id) => s + (tasks.find(t=>t.id===id)?.coins||0), 0);
   const earnedXP  = today.done.reduce((s,id) => s + (tasks.find(t=>t.id===id)?.xp||0),    0);
 
+  const taskGameEarned = today.taskGameGiven || 0;
+  const taskGameMax = tasks.filter(t => t.gameMin > 0).reduce((s, t) => s + t.gameMin, 0);
+
   let msg = doneCount===total ? '🎉 ALL DONE! Incredible day!' :
             pct>=75 ? '🔥 Almost there! Just a bit more!' :
             pct>=50 ? '💪 Halfway! Keep the momentum!' :
             pct>=25 ? '⚡ Good start! Keep going!' : '📋 Ready to start?';
 
+  const gameText = taskGameEarned > 0
+    ? `<span style="color:#2ed573;font-weight:700">🎮 +${taskGameEarned}/${taskGameMax}m gaming time earned from tasks!</span>`
+    : `<span style="color:#888;font-size:.85em">🎮 Complete marked tasks to earn gaming time! (max ${taskGameMax}m/day)</span>`;
+
   document.getElementById('task-summary').innerHTML = `
     <div class="ts-bar-wrap"><div class="ts-bar" style="width:${pct}%"></div></div>
     <div class="ts-counts">${doneCount} / ${total} tasks &nbsp;·&nbsp; +${earnedC} coins &nbsp;·&nbsp; +${earnedXP} XP earned today</div>
+    <div style="margin-top:6px">${gameText}</div>
     <div class="ts-msg">${msg}</div>`;
 }
 
