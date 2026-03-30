@@ -602,7 +602,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
     <div class="icon">&#127918;</div>
     <div class="info">
       <h4>Gaming Time = Shop Only! 🛒</h4>
-      <p>Earn coins from quizzes &amp; tasks → Buy gaming time in the Reward Shop! Max 5 min/day from Shop + 5 min from Tasks = 10 min/day total.</p>
+      <p>Earn coins from quizzes & tasks → Buy gaming time in the Reward Shop! Max 10 min/day.</p>
     </div>
     <div style="text-align:center">
       <div style="font-size:.7em;color:#aaa">GAMING BANK</div>
@@ -653,7 +653,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       </div>
     </div>
     <div style="text-align:center;color:#999;font-size:.8em">
-      🛒 Shop: max <strong style="color:#ff6b6b">5 min/day</strong> | Tasks: max <strong style="color:#2ed573">5 min/day</strong> | Total: <strong style="color:#ffd200">10 min/day</strong> (banked minutes carry over!)<br>
+      🛒 Gaming time is purchased with coins in the Reward Shop. <strong style="color:#ff6b6b">Max 10 min/day</strong> (saves up!)<br>
       <span style="color:#ffd200">Banked minutes carry over! Earn coins from quizzes, tasks & activities.</span>
     </div>
   </div>
@@ -1519,6 +1519,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       <input type="time" id="task-wake-input" class="task-time-input">
       <button class="task-time-btn" id="task-wake-btn" onclick="applyTaskTime('wake')">🔒 Apply (Parent)</button>
     </div>
+    <div id="task-wake-pin-row" style="display:none;margin-top:8px;text-align:center">
+      <span style="color:#ffa502;font-size:.85em;font-weight:700">PIN: </span>
+      <input type="password" id="task-wake-pin" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="····" style="width:90px;padding:8px;font-size:1.2em;text-align:center;border:2px solid #ffa502;border-radius:8px;background:#16213e;color:#fff;letter-spacing:6px">
+      <span id="task-wake-pin-err" style="color:#ff4757;font-size:.8em;margin-left:6px;display:none">Wrong PIN</span>
+    </div>
     <div class="task-time-result" id="task-wake-result"></div>
     <div style="color:#777;font-size:.75em;margin-top:6px">Early: +15 coins +15 XP per min &nbsp;|&nbsp; Late: −15 coins −15 XP per min</div>
   </div>
@@ -1533,6 +1538,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#0f0c29,#
       <div class="task-time-target">Target: <strong>20:30</strong></div>
       <input type="time" id="task-bed-input" class="task-time-input">
       <button class="task-time-btn" id="task-bed-btn" onclick="applyTaskTime('bed')">🔒 Apply (Parent)</button>
+    </div>
+    <div id="task-bed-pin-row" style="display:none;margin-top:8px;text-align:center">
+      <span style="color:#ffa502;font-size:.85em;font-weight:700">PIN: </span>
+      <input type="password" id="task-bed-pin" maxlength="4" inputmode="numeric" pattern="[0-9]*" placeholder="····" style="width:90px;padding:8px;font-size:1.2em;text-align:center;border:2px solid #ffa502;border-radius:8px;background:#16213e;color:#fff;letter-spacing:6px">
+      <span id="task-bed-pin-err" style="color:#ff4757;font-size:.8em;margin-left:6px;display:none">Wrong PIN</span>
     </div>
     <div class="task-time-result" id="task-bed-result"></div>
     <div style="color:#777;font-size:.75em;margin-top:6px">Early: +15 coins +15 XP per min &nbsp;|&nbsp; Late: −15 coins −15 XP per min</div>
@@ -1688,16 +1698,17 @@ try { state = JSON.parse(localStorage.getItem('nemoto-study-v2')) || defaultStat
 });
 
 // Seed baseline points — applies once per seed version per device
+// Uses Math.max so player progress is NEVER reduced — only raised to minimum
 (function applySeedBaseline() {
-  const SEED_KEY = 'nemoto-seed-20260330c';
+  const SEED_KEY = 'nemoto-seed-20260330b';
   if (!localStorage.getItem(SEED_KEY)) {
     // Yuhi minimums
     state.yuhi.xp        = Math.max(state.yuhi.xp        || 0, 5200);
     state.yuhi.coins     = Math.max(state.yuhi.coins     || 0, 926);
     state.yuhi.gameBank  = Math.max(state.yuhi.gameBank  || 0, 17);
-    // Ryusei — just a little above Yuhi (same Level 10, slightly more XP)
-    var yuhiBase = Math.max(state.yuhi.xp || 5200, 5200);
-    state.ryusei.xp      = yuhiBase + 500; // ~5700 XP = Lv.10, just ahead of Yuhi
+    // Ryusei — match Yuhi's XP (at least 7000 for Level 10)
+    var yuhiXpNow = state.yuhi.xp || 5200;
+    state.ryusei.xp      = Math.max(state.ryusei.xp || 0, yuhiXpNow, 7000);
     state.ryusei.coins   = Math.max(state.ryusei.coins   || 0, 1635);
     state.ryusei.gameBank = Math.max(state.ryusei.gameBank || 0, 7);
     localStorage.setItem(SEED_KEY, '1');
@@ -2852,8 +2863,8 @@ function generateChineseQ(player) {
 
 // ============ SHOP ITEMS ============
 const shopItems = [
-  {id:'game2', emoji:'⏱️', name:'2 Min Gaming',        desc:'Quick 2 min — small reward for effort!',       cost:500,  gameMins:2},
-  {id:'game5', emoji:'🎮', name:'5 Min Gaming',         desc:'5 min gaming — needs a really hard day!',       cost:1400, gameMins:5},
+  {id:'game5', emoji:'🎮', name:'5 Min Gaming',        desc:'Quick 5 minutes of video games!',      cost:1500, gameMins:5},
+  {id:'game10',emoji:'🕹️', name:'10 Min Gaming',       desc:'10 minute gaming session!',            cost:2800, gameMins:10},
   {id:'movie', emoji:'🎬', name:'Movie Pick',           desc:'YOU choose the family movie!',         cost:2000},
   {id:'snack', emoji:'🍭', name:'Snack of Choice',      desc:'Pick any snack from the store!',       cost:800},
   {id:'dessert',emoji:'🎂',name:'Special Dessert',      desc:'Mama makes your favorite dessert!',    cost:2500},
@@ -3601,14 +3612,14 @@ function renderShop() {
   const s = state[shopPlayer];
   const today = new Date().toDateString();
   const shopGameToday = (s.shopGameDate === today) ? (s.shopGameToday || 0) : 0;
-  const gameCapLeft = Math.max(0, 5 - shopGameToday);
+  const gameCapLeft = Math.max(0, 10 - shopGameToday);
 
   if (shopGameToday > 0) {
     const capEl = document.createElement('div');
     capEl.style.cssText = 'text-align:center;font-size:.82em;padding:8px 12px;margin-bottom:10px;background:rgba(255,255,255,.06);border-radius:10px;color:#aaa';
     capEl.textContent = gameCapLeft === 0
-      ? `🎮 Shop gaming today: ${shopGameToday}/5 min — Shop limit reached!`
-      : `🎮 Shop gaming today: ${shopGameToday}/5 min  (${gameCapLeft} min left)`;
+      ? `🎮 Gaming today: ${shopGameToday}/10 min — Daily limit reached!`
+      : `🎮 Gaming purchased today: ${shopGameToday}/10 min  (${gameCapLeft} min left)`;
     cont.appendChild(capEl);
   }
 
@@ -3633,8 +3644,8 @@ function buyItem(item) {
   if (item.gameMins) {
     const today = new Date().toDateString();
     const shopGameToday = (s.shopGameDate === today) ? (s.shopGameToday || 0) : 0;
-    if (shopGameToday + item.gameMins > 5) {
-      alert('Shop gaming limit is 5 min/day. Already bought: ' + shopGameToday + ' min - only ' + (5 - shopGameToday) + ' min left today.');
+    if (shopGameToday + item.gameMins > 10) {
+      alert(`Daily gaming purchase limit is 10 min/day.\nAlready bought: ${shopGameToday} min — only ${10 - shopGameToday} min left today.`);
       return;
     }
   }
@@ -4291,28 +4302,7 @@ const eaStages = [
        {p:"The fire alarm rang suddenly. Students quickly lined up and walked out of the building. Teachers checked that everyone was safe outside on the field.",
         q:"What were the students practising?", opts:["A fire drill","A school concert","Sports day","An exam"]},
        {p:"Kevin noticed a wallet lying on the ground near the bus stop. He picked it up and found an ID card inside. He brought it to the nearest police station.",
-        q:"What does this tell us about Kevin?", opts:["He is honest and responsible","He wanted the money","He was scared","He did not care",
-       {p:"It was raining heavily when school ended. Priya had no umbrella. She stood at the school gate watching puddles form. A classmate ran over and shared her umbrella all the way to the bus stop.", q:"What kind of person was Priya's classmate?", opts:["Thoughtful and kind","Bossy","Selfish","Shy"]},
-       {p:"Wei Ming looked at his watch. It was only 3 p.m. but the sky was already dark. He heard rumbling in the distance and hurried home.", q:"What was the rumbling sound most likely from?", opts:["Thunder from an approaching storm","Traffic on the road","Construction work","An aeroplane"]},
-       {p:"Tim had been saving his pocket money for months. He finally had enough. He walked into the bookshop and bought the last book in his favourite series.", q:"How did Tim get enough money to buy the book?", opts:["He saved his pocket money","He borrowed money","He found money","His parents bought it"]},
-       {p:"The children ran to the window when they heard a loud bang. Outside, bursts of red, blue, and gold lit up the night sky.", q:"What were the children watching?", opts:["Fireworks","A lightning storm","A bonfire","A shooting star"]},
-       {p:"The nurse checked the patient's temperature and wrote it down. She gave him a glass of water and a pill. 'Rest well,' she said gently.", q:"What is the nurse's job in this passage?", opts:["To care for a sick patient","To cook for the patient","To teach the patient","To check his homework"]},
-       {p:"Sam arrived at the cinema only to see the sign: 'Sold Out.' He checked his phone and found that he had the wrong date — the film was showing tomorrow.", q:"Why could Sam not watch the film?", opts:["He had the wrong date","The cinema was closed","He forgot his ticket","He was too late"]},
-       {p:"At the playground a younger boy fell off the monkey bars and started crying. Jas climbed down, walked over, and helped him up. She then walked him back to his mother.", q:"What does Jas's action show about her?", opts:["She is caring and helpful","She was showing off","She was afraid","She wanted to play with him"]},
-       {p:"The old cat sat in its usual spot on the windowsill, watching birds on the tree outside. It flicked its tail slowly but did not move.", q:"What can we tell about the cat from the passage?", opts:["It is calm and relaxed","It is about to jump","It is hungry","It is sleeping"]},
-       {p:"Daniel forgot to bring his PE shoes to school. He had to sit on the bench during the whole lesson while his classmates played.", q:"Why did Daniel have to sit out?", opts:["He did not have the right shoes","He was punished","He was injured","He did not want to play"]},
-       {p:"Lily and her brother argued over which television programme to watch. Mum suggested they take turns — Lily could pick today, and her brother could pick tomorrow.", q:"How did Mum solve the problem?", opts:["By suggesting they take turns fairly","By turning off the television","By choosing a programme herself","By scolding them"]},
-       {p:"The baker arrived at his shop before sunrise every morning. By the time customers arrived at seven, the shelves were already full of warm bread and pastries.", q:"Why did the baker arrive so early?", opts:["To prepare the bread before the shop opened","To clean the shop","To deliver bread elsewhere","To meet his friends"]},
-       {p:"A bee landed on Nat's arm during a picnic. He stayed very still and waited calmly. After a moment, the bee flew away on its own.", q:"Why did Nat stay still?", opts:["So the bee would not sting him","He was tired","He did not notice it","He was watching the sky"]},
-       {p:"Mr Chew always greeted his students by name every morning. He remembered their birthdays and asked about their interests. His class was always lively and engaged.", q:"What made Mr Chew a good teacher?", opts:["He made students feel known and valued","He gave easy tests","He never gave homework","He let students play all day"]},
-       {p:"The hiking trail was steep and muddy after the rain. Two friends helped each other over the slippery parts and stopped to rest when needed. By afternoon they had reached the top.", q:"How did the two friends manage to reach the top?", opts:["By helping each other and resting when needed","By running the whole way","By finding a shorter path","By waiting for the mud to dry"]},
-       {p:"The puppy chewed three pairs of shoes, knocked over a vase, and dug holes in the garden. Dad sighed and said, 'Training starts tomorrow.'", q:"What is Dad most likely going to do?", opts:["Teach the puppy to behave","Return the puppy","Buy new shoes","Plant new flowers"]},
-       {p:"Mrs Nair placed a bouquet of flowers on the table in the school office. A sign next to them read: 'For our retiring principal — thank you for 25 years of service.'", q:"Why were the flowers placed there?", opts:["To honour the principal who was retiring","To decorate the office","Because the principal was sick","It was the principal's birthday"]},
-       {p:"The science fair was next week. Zara had three ideas but could not decide. She wrote them all down, listed the pros and cons of each, and finally chose the one she could test at home.", q:"How did Zara make her decision?", opts:["By carefully comparing her ideas","By asking her teacher","By choosing randomly","By picking the easiest"]},
-       {p:"A poster on the wall showed the five food groups. The teacher pointed to each section and explained how each group helped the body. Students copied the information into their notebooks.", q:"What were the students learning about?", opts:["How different foods help the body","How to draw posters","The history of food","How to cook meals"]},
-       {p:"Every evening, the family sat together at the dining table for dinner. There were no phones allowed. They talked about their day and laughed together.", q:"What rule did the family follow at dinner?", opts:["No phones allowed","No television allowed","Only healthy food","Eat in silence"]},
-       {p:"The tortoise moved slowly but did not stop. The hare ran fast but stopped to rest. When the hare woke up, the tortoise had already crossed the finish line.", q:"What lesson does this story teach?", opts:["Slow and steady wins the race","Speed is the most important thing","Rest is more important than effort","Hares always lose races"]},
-       {p:"On the last day of school, students cleaned their classroom together. They wiped the desks, swept the floor, and arranged the chairs neatly before leaving.", q:"Why did the students clean the classroom?", opts:["To leave it tidy at the end of the school year","Because the principal asked them to","Because it was dirty","To impress their parents"]}]}
+        q:"What does this tell us about Kevin?", opts:["He is honest and responsible","He wanted the money","He was scared","He did not care"]}
      ]; const c=passages[rand(0,passages.length-1)]; return {q:c.q, opts:c.opts, ans:0, exp:'🏕️ Read carefully — the clues are in the passage!', diff:'easy', passage:c.p}; }
    ]},
   {id:'comp2', name:'Comprehension Castle', icon:'🏰', topic:'comprehension', desc:'Inference & Main Idea', diff:'medium',
@@ -7993,16 +7983,16 @@ function pinModalSubmit() {
 
 // ========= DAILY TASKS =========
 const yuhiTaskDefs = [
-  {id:'grammar_mcq',  name:'Grammar MCQ',                     detail:'1 page',  time:10, coins:15, xp:30,  cat:'📝 English', gameMin:1},
-  {id:'vocab_mcq',    name:'Vocab MCQ',                        detail:'1 page',  time:15, coins:20, xp:40,  cat:'📝 English', gameMin:1},
+  {id:'grammar_mcq',  name:'Grammar MCQ',                     detail:'1 page',  time:10, coins:15, xp:30,  cat:'📝 English', gameMin:0},
+  {id:'vocab_mcq',    name:'Vocab MCQ',                        detail:'1 page',  time:15, coins:20, xp:40,  cat:'📝 English', gameMin:0},
   {id:'spelling',     name:'Spelling',                         detail:'3 words', time:10, coins:15, xp:25,  cat:'📝 English', gameMin:0},
-  {id:'oral_comp',    name:'Oral / Comprehension / Composition',detail:'',       time:20, coins:30, xp:60,  cat:'📝 English', gameMin:1},
+  {id:'oral_comp',    name:'Oral / Comprehension / Composition',detail:'',       time:20, coins:30, xp:60,  cat:'📝 English', gameMin:0},
   {id:'duolingo',     name:'Duolingo',                         detail:'2 min',   time:2,  coins:10, xp:15,  cat:'📝 English', gameMin:0},
   {id:'chinese_1000', name:'Chinese 1000+ Practice',           detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
   {id:'berries',      name:'Berries 靠靠自己',                  detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
   {id:'ch_oral',      name:'Chinese Oral / Comprehension / Composition', detail:'', time:20, coins:25, xp:50, cat:'🈶 Chinese', gameMin:0},
   {id:'ch_words',     name:'Recognize Chinese Words',          detail:'',        time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
-  {id:'koobits',      name:'KooBits',                          detail:'10 min',  time:10, coins:20, xp:40,  cat:'🔢 Math', gameMin:1},
+  {id:'koobits',      name:'KooBits',                          detail:'10 min',  time:10, coins:20, xp:40,  cat:'🔢 Math', gameMin:0},
   {id:'tll',          name:'TLL Math / Science',               detail:'',        time:10, coins:15, xp:30,  cat:'🔬 Academic', gameMin:0},
   // 🏃 OFF-SCREEN ACTIVITIES
   {id:'kendo',        name:'Kendo Practice',       detail:'',     time:3,  coins:12, xp:20,  cat:'🏃 Off-Screen', gameMin:0},
@@ -8011,7 +8001,7 @@ const yuhiTaskDefs = [
   {id:'soccer',       name:'Soccer / Football',    detail:'15min',time:15, coins:30, xp:45,  cat:'🏃 Off-Screen', gameMin:0},
   {id:'walk',         name:'Walk Outside',         detail:'10min',time:10, coins:20, xp:30,  cat:'🏃 Off-Screen', gameMin:0},
   {id:'stretch',      name:'Stretching',           detail:'5min', time:5,  coins:15, xp:20,  cat:'🏃 Off-Screen', gameMin:0},
-  {id:'reading',      name:'Read a Book (paper)',   detail:'15min',time:15, coins:25, xp:40,  cat:'📕 Off-Screen', gameMin:1},
+  {id:'reading',      name:'Read a Book (paper)',   detail:'15min',time:15, coins:25, xp:40,  cat:'📕 Off-Screen', gameMin:0},
   {id:'drawing',      name:'Draw / Color',          detail:'10min',time:10, coins:20, xp:30,  cat:'🎨 Off-Screen', gameMin:0},
   {id:'puzzle',       name:'Puzzle / Board Game',    detail:'10min',time:10, coins:20, xp:30,  cat:'🧩 Off-Screen', gameMin:0},
   {id:'help_house',   name:'Help with Housework',   detail:'10min',time:10, coins:25, xp:35,  cat:'🏠 Off-Screen', gameMin:0},
@@ -8019,10 +8009,10 @@ const yuhiTaskDefs = [
 ];
 
 const ryuseiTaskDefs = [
-  {id:'dd_english',   name:'Daily Dose English',  detail:'',  time:15, coins:20, xp:35,  cat:'📝 English', gameMin:1},
-  {id:'dd_math',      name:'Daily Dose Math',      detail:'',  time:20, coins:25, xp:45,  cat:'🔢 Math',    gameMin:1},
-  {id:'berries_ch',   name:'Berries Chinese',      detail:'',  time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:1},
-  {id:'learning_lab', name:'Learning Lab',         detail:'',  time:20, coins:20, xp:40,  cat:'🔬 Academic', gameMin:1},
+  {id:'dd_english',   name:'Daily Dose English',  detail:'',  time:15, coins:20, xp:35,  cat:'📝 English', gameMin:0},
+  {id:'dd_math',      name:'Daily Dose Math',      detail:'',  time:20, coins:25, xp:45,  cat:'🔢 Math',    gameMin:0},
+  {id:'berries_ch',   name:'Berries Chinese',      detail:'',  time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
+  {id:'learning_lab', name:'Learning Lab',         detail:'',  time:20, coins:20, xp:40,  cat:'🔬 Academic', gameMin:0},
   // 🏃 OFF-SCREEN ACTIVITIES (physical, creative, no screen!)
   {id:'kendo',        name:'Kendo Practice',       detail:'',  time:3,  coins:12, xp:20,  cat:'🏃 Off-Screen', gameMin:0},
   {id:'golf',         name:'Golf Practice',        detail:'',  time:2,  coins:10, xp:15,  cat:'🏃 Off-Screen', gameMin:0},
@@ -8030,7 +8020,7 @@ const ryuseiTaskDefs = [
   {id:'soccer',       name:'Soccer / Football',    detail:'15min',time:15,coins:30, xp:45, cat:'🏃 Off-Screen', gameMin:0},
   {id:'walk',         name:'Walk Outside',         detail:'10min',time:10,coins:20, xp:30, cat:'🏃 Off-Screen', gameMin:0},
   {id:'stretch',      name:'Stretching',           detail:'5min',time:5, coins:15, xp:20,  cat:'🏃 Off-Screen', gameMin:0},
-  {id:'reading',      name:'Read a Book (paper)',   detail:'15min',time:15,coins:25, xp:40, cat:'📕 Off-Screen', gameMin:1},
+  {id:'reading',      name:'Read a Book (paper)',   detail:'15min',time:15,coins:25, xp:40, cat:'📕 Off-Screen', gameMin:0},
   {id:'drawing',      name:'Draw / Color',          detail:'10min',time:10,coins:20, xp:30, cat:'🎨 Off-Screen', gameMin:0},
   {id:'puzzle',       name:'Puzzle / Board Game',    detail:'10min',time:10,coins:20, xp:30, cat:'🧩 Off-Screen', gameMin:0},
   {id:'help_house',   name:'Help with Housework',   detail:'10min',time:10,coins:25, xp:35, cat:'🏠 Off-Screen', gameMin:0},
@@ -8185,7 +8175,7 @@ function renderTasksPage() {
           <div class="task-check">${done?'✅':'⬜'}</div>
           <div class="task-info">
             <div class="task-name">${task.name}${task.detail?` <span class="task-detail">(${task.detail})</span>`:''}</div>
-            <div class="task-meta">${task.time} min${task.gameMin ? " &nbsp;&middot;&nbsp; <span style=\"color:#2ed573;font-weight:700\">🎮 +" + task.gameMin + "m</span>" : ""}</div>
+            <div class="task-meta">${task.time} min</div>
           </div>
           <div class="task-reward">
             <span class="task-coins">+${task.coins}c</span>
@@ -8210,28 +8200,13 @@ function toggleDailyTask(taskId) {
     today.done.push(taskId);
     state[player].coins += task.coins;
     state[player].xp    += task.xp;
-    // Task gaming time reward (max 5 min/day from tasks)
-    if (task.gameMin > 0) {
-      const currentTaskGame = today.taskGameGiven || 0;
-      const addGame = Math.min(task.gameMin, 5 - currentTaskGame);
-      if (addGame > 0) {
-        today.taskGameGiven = currentTaskGame + addGame;
-        state[player].gameBank = (state[player].gameBank || 0) + addGame;
-      }
-    }
   } else {
     today.done.splice(idx, 1);
     state[player].coins = Math.max(0, state[player].coins - task.coins);
     state[player].xp    = Math.max(0, state[player].xp    - task.xp);
-    // Reverse task gaming time
-    if (task.gameMin > 0 && (today.taskGameGiven || 0) > 0) {
-      const removeGame = Math.min(task.gameMin, today.taskGameGiven);
-      today.taskGameGiven = Math.max(0, (today.taskGameGiven || 0) - removeGame);
-      state[player].gameBank = Math.max(0, (state[player].gameBank || 0) - removeGame);
-    }
   }
 
-  save(); saveTasks(); updatePlayerCards(); updateGamingBank();
+  save(); saveTasks(); updatePlayerCards();
   renderTasksPage();
 }
 
@@ -8259,31 +8234,40 @@ function applyTaskTime(type) {
       return;
     }
 
-    // Time entered, show PIN modal
-    _pendingTimeType = type;
-    var modal = document.getElementById('pin-modal');
-    var titleEl = document.getElementById('pin-title');
-    var subEl = document.getElementById('pin-subtitle');
-    var pinInput = document.getElementById('pin-input');
-    var pinErr = document.getElementById('pin-error');
-
-    if (modal && titleEl && subEl && pinInput) {
-      titleEl.textContent = '🔒 Parent PIN Required';
-      subEl.textContent = 'Joanne or Akihiro, please enter the PIN:';
+    // Show inline PIN row (no modal!)
+    var pinRow = document.getElementById('task-' + type + '-pin-row');
+    var pinInput = document.getElementById('task-' + type + '-pin');
+    var pinErr = document.getElementById('task-' + type + '-pin-err');
+    if (pinRow && pinInput) {
+      pinRow.style.display = 'block';
       pinInput.value = '';
-      pinInput.style.display = '';
-      pinInput.type = 'password';
       if (pinErr) pinErr.style.display = 'none';
-      // Show confirm/cancel buttons
-      var btns = modal.querySelectorAll('button');
-      btns.forEach(function(b){ b.style.display = ''; });
-      modal.style.display = 'flex';
-      setTimeout(function(){ pinInput.focus(); }, 200);
+      setTimeout(function(){ pinInput.focus(); }, 100);
     }
   } catch(e) {
     console.error('applyTaskTime error:', e);
   }
 }
+
+// Inline PIN auto-submit: listen for input on wake/bed PIN fields
+['wake','bed'].forEach(function(type) {
+  document.getElementById('task-' + type + '-pin').addEventListener('input', function() {
+    var val = this.value;
+    if (val.length < 4) return;
+    var pinErr = document.getElementById('task-' + type + '-pin-err');
+    if (val !== PARENT_PIN) {
+      if (pinErr) pinErr.style.display = 'inline';
+      this.value = '';
+      this.focus();
+      return;
+    }
+    // PIN correct — hide row and apply
+    var pinRow = document.getElementById('task-' + type + '-pin-row');
+    if (pinRow) pinRow.style.display = 'none';
+    if (pinErr) pinErr.style.display = 'none';
+    _applyTaskTimeConfirmed(type);
+  });
+});
 
 function _showPinMsg(msg) {
   var modal = document.getElementById('pin-modal');
@@ -8449,22 +8433,14 @@ function renderTasksSummary() {
   const earnedC   = today.done.reduce((s,id) => s + (tasks.find(t=>t.id===id)?.coins||0), 0);
   const earnedXP  = today.done.reduce((s,id) => s + (tasks.find(t=>t.id===id)?.xp||0),    0);
 
-  const taskGameEarned = today.taskGameGiven || 0;
-  const taskGameMax = tasks.filter(t => t.gameMin > 0).reduce((s, t) => s + t.gameMin, 0);
-
   let msg = doneCount===total ? '🎉 ALL DONE! Incredible day!' :
             pct>=75 ? '🔥 Almost there! Just a bit more!' :
             pct>=50 ? '💪 Halfway! Keep the momentum!' :
             pct>=25 ? '⚡ Good start! Keep going!' : '📋 Ready to start?';
 
-  const gameText = taskGameEarned > 0
-    ? `<span style="color:#2ed573;font-weight:700">🎮 +${taskGameEarned}/${taskGameMax}m gaming time earned from tasks!</span>`
-    : `<span style="color:#888;font-size:.85em">🎮 Complete marked tasks to earn gaming time! (max ${taskGameMax}m/day)</span>`;
-
   document.getElementById('task-summary').innerHTML = `
     <div class="ts-bar-wrap"><div class="ts-bar" style="width:${pct}%"></div></div>
     <div class="ts-counts">${doneCount} / ${total} tasks &nbsp;·&nbsp; +${earnedC} coins &nbsp;·&nbsp; +${earnedXP} XP earned today</div>
-    <div style="margin-top:6px">${gameText}</div>
     <div class="ts-msg">${msg}</div>`;
 }
 
@@ -8985,6 +8961,39 @@ function checkDeviceIdentity() {
     state[player].coins = Math.max(0, state[player].coins + coins);
     state[player].xp    = Math.max(0, state[player].xp    + xp);
   });
+  save();
+  saveTasks();
+})();
+
+// ============ RECORD YUHI TIMES: 2026-03-31 ============
+(function recordYuhi20260331() {
+  var dateKey = '2026-03-31';
+  var player = 'yuhi';
+  if (!tasksState[player]) tasksState[player] = {};
+  if (!tasksState[player][dateKey]) {
+    tasksState[player][dateKey] = {done:[], wake:null, bed:null, wakeCoins:0, wakeXP:0, bedCoins:0, bedXP:0};
+  }
+  var today = tasksState[player][dateKey];
+
+  // Wake: 05:15, target 05:15 → on time = 0 pts
+  if (!today.wake) {
+    today.wake = '05:15';
+    today.wakeCoins = 0;
+    today.wakeXP = 0;
+  }
+
+  // Bed: 20:27, target 20:30 → 3 min early = +45 coins/XP
+  if (!today.bed) {
+    today.bed = '20:27';
+    var diff = (20*60+30) - (20*60+27); // 3 min early
+    var coins = Math.min(diff, 30) * 15; // 45
+    var xp = coins;
+    today.bedCoins = coins;
+    today.bedXP = xp;
+    state[player].coins = Math.max(0, state[player].coins + coins);
+    state[player].xp    = Math.max(0, state[player].xp    + xp);
+  }
+
   save();
   saveTasks();
 })();
