@@ -7962,27 +7962,8 @@ function pinModalSubmit() {
   }
 }
 
-// ========= DAILY TASKS AUTO-RESET =========
-// Tasks naturally reset because getTodayTaskKey() uses today's date.
-// Clean up old task data (keep last 7 days only) to save localStorage space.
-(function cleanOldTasks() {
-  var now = new Date();
-  ['yuhi','ryusei'].forEach(function(p) {
-    if (!tasksState[p]) return;
-    var keys = Object.keys(tasksState[p]);
-    keys.forEach(function(k) {
-      // k is a date string like '2026-03-29'
-      if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
-      var d = new Date(k + 'T00:00:00');
-      var daysDiff = Math.floor((now - d) / (1000*60*60*24));
-      if (daysDiff > 7) delete tasksState[p][k];
-    });
-  });
-  saveTasks();
-})();
-
 // ========= DAILY TASKS =========
-const yuhiTaskDefs = [
+var yuhiTaskDefs = [
   {id:'grammar_mcq',  name:'Grammar MCQ',                     detail:'1 page',  time:10, coins:15, xp:30,  cat:'📝 English', gameMin:0},
   {id:'vocab_mcq',    name:'Vocab MCQ',                        detail:'1 page',  time:15, coins:20, xp:40,  cat:'📝 English', gameMin:0},
   {id:'spelling',     name:'Spelling',                         detail:'3 words', time:10, coins:15, xp:25,  cat:'📝 English', gameMin:0},
@@ -8008,7 +7989,7 @@ const yuhiTaskDefs = [
   {id:'cook',         name:'Help Cook / Bake',       detail:'15min',time:15, coins:30, xp:45,  cat:'🏠 Off-Screen', gameMin:0},
 ];
 
-const ryuseiTaskDefs = [
+var ryuseiTaskDefs = [
   {id:'dd_english',   name:'Daily Dose English',  detail:'',  time:15, coins:20, xp:35,  cat:'📝 English', gameMin:0},
   {id:'dd_math',      name:'Daily Dose Math',      detail:'',  time:20, coins:25, xp:45,  cat:'🔢 Math',    gameMin:0},
   {id:'berries_ch',   name:'Berries Chinese',      detail:'',  time:10, coins:15, xp:25,  cat:'🈶 Chinese', gameMin:0},
@@ -8028,16 +8009,32 @@ const ryuseiTaskDefs = [
 ];
 
 // Wake targets in minutes from midnight
-const WAKE_TARGETS = {yuhi: 5*60+15, ryusei: 6*60};
-const BED_TARGET = 20*60+30;
+var WAKE_TARGETS = {yuhi: 5*60+15, ryusei: 6*60};
+var BED_TARGET = 20*60+30;
 
-let tasksState = {};
+var tasksState = {};
 try { tasksState = JSON.parse(localStorage.getItem('nemoto-tasks-v1')) || {}; } catch(e) {}
 if (!tasksState.yuhi) tasksState.yuhi = {};
 if (!tasksState.ryusei) tasksState.ryusei = {};
 function saveTasks() { localStorage.setItem('nemoto-tasks-v1', JSON.stringify(tasksState)); }
 
-let currentTaskPlayer = 'yuhi';
+// Clean up old task data (keep last 7 days only)
+(function cleanOldTasks() {
+  var now = new Date();
+  ['yuhi','ryusei'].forEach(function(p) {
+    if (!tasksState[p]) return;
+    var keys = Object.keys(tasksState[p]);
+    keys.forEach(function(k) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+      var d = new Date(k + 'T00:00:00');
+      var daysDiff = Math.floor((now - d) / (1000*60*60*24));
+      if (daysDiff > 7) delete tasksState[p][k];
+    });
+  });
+  saveTasks();
+})();
+
+var currentTaskPlayer = 'yuhi';
 
 function getTodayTaskKey() { return new Date().toISOString().slice(0,10); }
 
@@ -8210,9 +8207,9 @@ function toggleDailyTask(taskId) {
   renderTasksPage();
 }
 
-const PARENT_PIN = '2410';
+var PARENT_PIN = '2410';
 
-let _pendingTimeType = null;
+var _pendingTimeType = null;
 
 function applyTaskTime(type) {
   try {
