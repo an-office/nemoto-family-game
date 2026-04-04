@@ -2774,91 +2774,138 @@ const questions = {
   }
 };
 
-// ============ PROCEDURAL MATH GENERATOR ============
-function generateMathQ(player) {
-  const isP6 = player === 'yuhi';
-  const templates = isP6 ? [
-    // P6 templates
-    () => { const a=rand(2,9),b=rand(2,9),c=a*b; return {q:`What is ${c} ÷ ${a}?`, opts:[`${b}`,`${b+1}`,`${b-1}`,`${b+2}`], ans:0, exp:'Divide the number by the divisor!', diff:'easy'}; },
-    () => { const n=rand(2,8),d=rand(n+1,12),n2=rand(1,d-n); return {q:`What is ${n}/${d} + ${n2}/${d}?`, opts:[`${n+n2}/${d}`,`${n*n2}/${d}`,`${n+n2}/${d*2}`,`${n-n2}/${d}`], ans:0, exp:'Same denominator? Just add the numerators!', diff:'easy'}; },
-    () => { const pct=rand(1,4)*10,price=rand(2,20)*10,disc=price*pct/100; return {q:`A $${price} item has ${pct}% discount. What is the sale price?`, opts:[`$${price-disc}`,`$${price-disc+5}`,`$${price-disc-5}`,`$${disc}`], ans:0, exp:'Find the discount amount (percentage × price), then subtract from original!', diff:'medium'}; },
-    () => { const spd=rand(3,12)*10,t=rand(2,5),d=spd*t; return {q:`A car travels at ${spd} km/h for ${t} hours. How far does it go?`, opts:[`${d} km`,`${d+spd} km`,`${d-spd} km`,`${d*2} km`], ans:0, exp:'Distance = Speed × Time. Multiply speed by hours!', diff:'easy'}; },
-    () => { const d=rand(50,200)*2,spd=rand(2,8)*10,t=d/spd; return {q:`A cyclist covers ${d} km at ${spd} km/h. How many hours?`, opts:[`${t}`,`${t+1}`,`${t-1}`,`${t+2}`], ans:0, exp:'Time = Distance ÷ Speed. Divide distance by speed!', diff:'medium'}; },
-    () => { const a=rand(2,6),b=rand(a+1,9),total=rand(50,200); const pa=Math.round(total*a/(a+b)); return {q:`Divide ${total} in ratio ${a}:${b}. What is the smaller share?`, opts:[`${pa}`,`${pa+5}`,`${total-pa+5}`,`${pa-5}`], ans:0, exp:'Add ratio parts for total parts. Multiply total by smaller ratio ÷ total parts!', diff:'medium'}; },
-    () => { const s=rand(3,12),v=s*s*s; return {q:`What is the volume of a cube with side ${s} cm?`, opts:[`${v} cm³`,`${s*s} cm³`,`${v+s} cm³`,`${s*6} cm³`], ans:0, exp:'Volume of a cube = side × side × side!', diff:'easy'}; },
-    () => { const a=rand(3,15),b=rand(3,15),area=a*b; return {q:`A rectangle is ${a} cm by ${b} cm. What is its area?`, opts:[`${area} cm²`,`${2*(a+b)} cm²`,`${area+a} cm²`,`${area-b} cm²`], ans:0, exp:'Area of rectangle = length × width!', diff:'easy'}; },
-    () => { const x=rand(2,15),coeff=rand(2,9),rhs=coeff*x+rand(1,10); const c=rhs-coeff*x; return {q:`Solve: ${coeff}x + ${c} = ${rhs}`, opts:[`x = ${x}`,`x = ${x+1}`,`x = ${x-1}`,`x = ${coeff}`], ans:0, exp:'Move the constant to the other side, then divide by the coefficient!', diff:'medium'}; },
-    () => { const n=rand(5,12),avg=rand(60,95),total=n*avg; return {q:`The average of ${n} numbers is ${avg}. What is their total?`, opts:[`${total}`,`${total+avg}`,`${total-avg}`,`${n+avg}`], ans:0, exp:'Total = Average × Count. Multiply the average by how many numbers!', diff:'medium'}; },
-    () => { const base=rand(5,20),h=rand(4,15),area=base*h/2; return {q:`Triangle: base ${base} cm, height ${h} cm. Area?`, opts:[`${area} cm²`,`${base*h} cm²`,`${area+base} cm²`,`${base+h} cm²`], ans:0, exp:'Triangle area = ½ × base × height!', diff:'easy'}; },
-    () => { const pct=rand(1,3)*5+5,orig=rand(200,500); const inc=Math.round(orig*pct/100); return {q:`A population of ${orig} increases by ${pct}%. New population?`, opts:[`${orig+inc}`,`${orig+inc+10}`,`${orig-inc}`,`${orig+pct}`], ans:0, exp:'Find the increase (percentage × original), then add it to the original!', diff:'hard'}; },
-    () => { const parts=[rand(2,5),rand(2,5)]; const whole=parts[0]+parts[1]; const money=whole*rand(5,15); const share0=money*parts[0]/whole; return {q:`$${money} shared in ratio ${parts[0]}:${parts[1]}. Larger share?`, opts:[`$${Math.max(share0,money-share0)}`,`$${Math.min(share0,money-share0)}`,`$${money}`,`$${Math.round(money/2)}`], ans:0, exp:'Add ratio parts for total. Larger share = larger ratio ÷ total parts × amount!', diff:'hard'}; },
-  ] : [
-    // P4 templates
-    () => { const a=rand(10,99),b=rand(10,99),s=a+b; return {q:`What is ${a} + ${b}?`, opts:[`${s}`,`${s+1}`,`${s-1}`,`${s+10}`], ans:0, exp:'Add the two numbers together!', diff:'easy'}; },
-    () => { const a=rand(100,999),b=rand(100,a),d=a-b; return {q:`What is ${a} - ${b}?`, opts:[`${d}`,`${d+1}`,`${d-1}`,`${d+10}`], ans:0, exp:'Subtract the smaller from the bigger! Line up the digits!', diff:'easy'}; },
-    () => { const a=rand(2,12),b=rand(2,12),p=a*b; return {q:`What is ${a} × ${b}?`, opts:[`${p}`,`${p+a}`,`${p-b}`,`${p+1}`], ans:0, exp:'Use your times tables! Multiply the two numbers!', diff:'easy'}; },
-    () => { const b=rand(2,12),a=b*rand(2,12),q_val=a/b; return {q:`What is ${a} ÷ ${b}?`, opts:[`${q_val}`,`${q_val+1}`,`${q_val-1}`,`${q_val+b}`], ans:0, exp:'Think: what number times the divisor gives you this? Use long division!', diff:'medium'}; },
-    () => { const n=rand(2,5),price=rand(2,15),total=n*price; return {q:`${n} toys cost $${price} each. Total cost?`, opts:[`$${total}`,`$${total+price}`,`$${total-price}`,`$${n+price}`], ans:0, exp:'Total cost = quantity × price per item!', diff:'easy'}; },
-    () => { const side=rand(3,15),p=4*side; return {q:`Perimeter of square with side ${side} cm?`, opts:[`${p} cm`,`${side*side} cm`,`${p+side} cm`,`${2*side} cm`], ans:0, exp:'Perimeter of a square = 4 × side length!', diff:'easy'}; },
-    () => { const l=rand(5,20),w=rand(3,l),area=l*w; return {q:`Area of rectangle ${l} cm × ${w} cm?`, opts:[`${area} cm²`,`${2*(l+w)} cm²`,`${area+l} cm²`,`${l+w} cm²`], ans:0, exp:'Area of rectangle = length × width!', diff:'easy'}; },
-    () => { const hr=rand(1,5),min=rand(1,5)*15,total=hr*60+min; return {q:`How many minutes in ${hr} hours ${min} minutes?`, opts:[`${total}`,`${total+10}`,`${total-10}`,`${hr+min}`], ans:0, exp:'Multiply the hours by 60, then add the extra minutes!', diff:'medium'}; },
-    () => { const kg=rand(1,9),g=rand(1,9)*100,totalG=kg*1000+g; return {q:`Convert ${kg} kg ${g} g to grams.`, opts:[`${totalG} g`,`${kg*100+g} g`,`${totalG+100} g`,`${kg+g} g`], ans:0, exp:'1 kg = 1,000 g. Convert kg to grams first, then add the extra grams!', diff:'medium'}; },
-    () => { const n=rand(2,4),d=rand(n+1,8); const wd=[...new Set([`${n}/${d}`,`${n+1}/${d}`,`${n}/${d+1}`,`${n-1>0?n-1:n+2}/${d}`])]; while(wd.length<4) wd.push(`${rand(1,d)}/${d+rand(1,3)}`); return {q:`Which fraction equals ${n*2}/${d*2}?`, opts:[`${n}/${d}`,wd[1],wd[2],wd[3]], ans:0, exp:'Simplify by dividing both top and bottom by the same number!', diff:'medium'}; },
-  ];
-  return templates[Math.floor(Math.random()*templates.length)]();
-}
+// ============ PROCEDURAL GENERATORS ============
 function rand(min,max) { return Math.floor(Math.random()*(max-min+1))+min; }
+// Counter-based Study Quest generators — uses _nextSQ() so every question is unique
+var _sqCounter = parseInt(localStorage.getItem('nemoto-sq-counter')||'0',10);
+function _nextSQ(){ _sqCounter++; localStorage.setItem('nemoto-sq-counter',String(_sqCounter)); return _sqCounter; }
 
-// ============ PROCEDURAL SCIENCE GENERATOR ============
+function generateMathQ(player) {
+  const c = _nextSQ();
+  const isP6 = player === 'yuhi';
+  if (isP6) {
+    const types = ['div','fracAdd','pct','speed','time','ratio','cube','area','alg','avg','tri','pctInc','ratioMoney'];
+    const t = types[c % types.length];
+    switch(t) {
+      case 'div': { const a=2+(c%8),b=2+((c*3)%9),p=a*b; return {q:`What is ${p} ÷ ${a}?`, opts:[`${b}`,`${b+1}`,`${b-1}`,`${b+2}`], ans:0, exp:'Divide the number by the divisor!', diff:'easy'}; }
+      case 'fracAdd': { const n=2+(c%7),d=n+1+((c*3)%6),n2=1+((c*7)%(d-n)); return {q:`What is ${n}/${d} + ${n2}/${d}?`, opts:[`${n+n2}/${d}`,`${n*n2}/${d}`,`${n+n2}/${d*2}`,`${Math.abs(n-n2)}/${d}`], ans:0, exp:'Same denominator? Just add the numerators!', diff:'easy'}; }
+      case 'pct': { const pct=(1+(c%4))*10,price=(2+((c*3)%19))*10,disc=price*pct/100; return {q:`A $${price} item has ${pct}% discount. Sale price?`, opts:[`$${price-disc}`,`$${price-disc+5}`,`$${price-disc-5}`,`$${disc}`], ans:0, exp:'Find discount amount, then subtract from original!', diff:'medium'}; }
+      case 'speed': { const spd=(3+(c%10))*10,tm=2+((c*3)%4),d=spd*tm; return {q:`A car at ${spd} km/h for ${tm} hours. Distance?`, opts:[`${d} km`,`${d+spd} km`,`${d-spd} km`,`${d*2} km`], ans:0, exp:'Distance = Speed × Time!', diff:'easy'}; }
+      case 'time': { const d2=(50+((c*7)%150))*2,spd2=(2+((c*3)%7))*10,t2=d2/spd2; return {q:`A cyclist covers ${d2} km at ${spd2} km/h. Hours?`, opts:[`${t2}`,`${t2+1}`,`${t2-1}`,`${t2+2}`], ans:0, exp:'Time = Distance ÷ Speed!', diff:'medium'}; }
+      case 'ratio': { const a=2+(c%5),b=a+1+((c*3)%4),total=50+((c*7)%151); const pa=Math.round(total*a/(a+b)); return {q:`Divide ${total} in ratio ${a}:${b}. Smaller share?`, opts:[`${pa}`,`${pa+5}`,`${total-pa+5}`,`${pa-5}`], ans:0, exp:'Add ratio parts, multiply total by smaller ÷ total parts!', diff:'medium'}; }
+      case 'cube': { const s=3+(c%10),v=s*s*s; return {q:`Volume of cube with side ${s} cm?`, opts:[`${v} cm³`,`${s*s} cm³`,`${v+s} cm³`,`${s*6} cm³`], ans:0, exp:'Volume = side × side × side!', diff:'easy'}; }
+      case 'area': { const a=3+(c%13),b=3+((c*3)%13),ar=a*b; return {q:`Rectangle ${a} cm by ${b} cm. Area?`, opts:[`${ar} cm²`,`${2*(a+b)} cm²`,`${ar+a} cm²`,`${ar-b} cm²`], ans:0, exp:'Area = length × width!', diff:'easy'}; }
+      case 'alg': { const x=2+(c%14),coeff=2+((c*3)%8),cn=1+((c*7)%10),rhs=coeff*x+cn; return {q:`Solve: ${coeff}x + ${cn} = ${rhs}`, opts:[`x = ${x}`,`x = ${x+1}`,`x = ${x-1}`,`x = ${coeff}`], ans:0, exp:'Move constant, divide by coefficient!', diff:'medium'}; }
+      case 'avg': { const n=5+(c%8),avg=60+((c*3)%36),total=n*avg; return {q:`Average of ${n} numbers is ${avg}. Total?`, opts:[`${total}`,`${total+avg}`,`${total-avg}`,`${n+avg}`], ans:0, exp:'Total = Average × Count!', diff:'medium'}; }
+      case 'tri': { const base=5+(c%16),h=4+((c*3)%12),ar2=base*h/2; return {q:`Triangle: base ${base} cm, height ${h} cm. Area?`, opts:[`${ar2} cm²`,`${base*h} cm²`,`${ar2+base} cm²`,`${base+h} cm²`], ans:0, exp:'Triangle area = ½ × base × height!', diff:'easy'}; }
+      case 'pctInc': { const pct2=(1+(c%3))*5+5,orig=200+((c*7)%301); const inc=Math.round(orig*pct2/100); return {q:`Population ${orig} increases ${pct2}%. New?`, opts:[`${orig+inc}`,`${orig+inc+10}`,`${orig-inc}`,`${orig+pct2}`], ans:0, exp:'Find increase, add to original!', diff:'hard'}; }
+      case 'ratioMoney': { const p0=2+(c%4),p1=2+((c*3)%4),wh=p0+p1,money=wh*(5+((c*7)%11)); const s0=money*p0/wh,s1=money*p1/wh; return {q:`$${money} shared ${p0}:${p1}. Larger share?`, opts:[`$${Math.max(s0,s1)}`,`$${Math.min(s0,s1)}`,`$${money}`,`$${Math.round(money/2)}`], ans:0, exp:'Larger share = larger ratio ÷ total parts × amount!', diff:'hard'}; }
+    }
+  } else {
+    const types = ['add','sub','mul','div','word','perim','area','time','mass','frac'];
+    const t = types[c % types.length];
+    switch(t) {
+      case 'add': { const a=10+(c%90),b=10+((c*3)%90),s=a+b; return {q:`What is ${a} + ${b}?`, opts:[`${s}`,`${s+1}`,`${s-1}`,`${s+10}`], ans:0, exp:'Add the two numbers together!', diff:'easy'}; }
+      case 'sub': { const a=100+(c%900),b=100+((c*3)%Math.min(a-100,500)),d=a-b; return {q:`What is ${a} - ${b}?`, opts:[`${d}`,`${d+1}`,`${d-1}`,`${d+10}`], ans:0, exp:'Subtract the smaller from the bigger!', diff:'easy'}; }
+      case 'mul': { const a=2+(c%11),b=2+((c*3)%11),p=a*b; return {q:`What is ${a} × ${b}?`, opts:[`${p}`,`${p+a}`,`${p-b}`,`${p+1}`], ans:0, exp:'Use your times tables!', diff:'easy'}; }
+      case 'div': { const b=2+(c%11),q2=2+((c*3)%11),a=b*q2; return {q:`What is ${a} ÷ ${b}?`, opts:[`${q2}`,`${q2+1}`,`${q2-1}`,`${q2+b}`], ans:0, exp:'Think: what number times the divisor gives you this?', diff:'medium'}; }
+      case 'word': { const n=2+(c%4),price=2+((c*3)%14),total=n*price; return {q:`${n} toys cost $${price} each. Total?`, opts:[`$${total}`,`$${total+price}`,`$${total-price}`,`$${n+price}`], ans:0, exp:'Total cost = quantity × price!', diff:'easy'}; }
+      case 'perim': { const side=3+(c%13),p=4*side; return {q:`Perimeter of square side ${side} cm?`, opts:[`${p} cm`,`${side*side} cm`,`${p+side} cm`,`${2*side} cm`], ans:0, exp:'Perimeter of square = 4 × side!', diff:'easy'}; }
+      case 'area': { const l=5+(c%16),w=3+((c*3)%Math.max(1,l-2)),ar=l*w; return {q:`Area of rectangle ${l} cm × ${w} cm?`, opts:[`${ar} cm²`,`${2*(l+w)} cm²`,`${ar+l} cm²`,`${l+w} cm²`], ans:0, exp:'Area = length × width!', diff:'easy'}; }
+      case 'time': { const hr=1+(c%5),min=(1+((c*3)%4))*15,total=hr*60+min; return {q:`How many minutes in ${hr} h ${min} min?`, opts:[`${total}`,`${total+10}`,`${total-10}`,`${hr+min}`], ans:0, exp:'Hours × 60 + extra minutes!', diff:'medium'}; }
+      case 'mass': { const kg=1+(c%9),g=(1+((c*3)%9))*100,totalG=kg*1000+g; return {q:`Convert ${kg} kg ${g} g to grams.`, opts:[`${totalG} g`,`${kg*100+g} g`,`${totalG+100} g`,`${kg+g} g`], ans:0, exp:'1 kg = 1,000 g. Convert then add!', diff:'medium'}; }
+      case 'frac': { const n=2+(c%3),d=n+1+((c*3)%5); return {q:`Which fraction equals ${n*2}/${d*2}?`, opts:[`${n}/${d}`,`${n+1}/${d}`,`${n}/${d+1}`,`${n+2}/${d}`], ans:0, exp:'Simplify by dividing top and bottom by the same number!', diff:'medium'}; }
+    }
+  }
+  // Fallback
+  const a=2+(c%50),b=2+((c*3)%12); return {q:`What is ${a} × ${b}?`, opts:[`${a*b}`,`${a*b+1}`,`${a*b-1}`,`${a*b+a}`], ans:0, exp:'Multiply!', diff:'easy'};
+}
+
+// ============ PROCEDURAL SCIENCE GENERATOR (counter-based) ============
 function generateScienceQ(player) {
+  const c = _nextSQ();
   const isP6 = player === 'yuhi';
-  const p6 = [
-    () => { const items=[['Iron nail','conductor'],['Rubber band','insulator'],['Copper wire','conductor'],['Glass rod','insulator'],['Wooden ruler','insulator'],['Aluminium foil','conductor'],['Steel spoon','conductor'],['Plastic cup','insulator']]; const pick=items[rand(0,items.length-1)]; const wrong=pick[1]==='conductor'?'insulator':'conductor'; return {q:`Is a ${pick[0].toLowerCase()} a conductor or insulator of electricity?`, opts:[pick[1],wrong,'semiconductor','neither'], ans:0, exp:'🔌 Metals conduct electricity. Non-metals like rubber, plastic, wood are insulators!', diff:'easy'}; },
-    () => { const chains=[['Grass','Grasshopper','Frog','Snake','Eagle'],['Algae','Small fish','Big fish','Seal','Shark'],['Plant','Caterpillar','Bird','Cat','Eagle'],['Seaweed','Snail','Crab','Octopus','Shark']]; const c=chains[rand(0,chains.length-1)]; const pos=rand(1,3); const roles=['producer','primary consumer','secondary consumer','tertiary consumer','apex predator']; return {q:`In: ${c.join(' → ')}. The ${c[pos]} is a:`, opts:[roles[pos],roles[(pos+1)%4],roles[pos>0?pos-1:pos+2],'decomposer'], ans:0, exp:'🌿 Count from the producer! Producer→Primary→Secondary→Tertiary!', diff:'medium'}; },
-    () => { const convs=[['battery-powered fan','Chemical → Electrical → Kinetic'],['electric kettle','Electrical → Heat'],['guitar being played','Kinetic → Sound'],['photosynthesis','Light → Chemical'],['burning candle','Chemical → Light + Heat'],['solar calculator','Light → Electrical'],['rubbing hands','Kinetic → Heat']]; const c=convs[rand(0,convs.length-1)]; const wrongs=convs.filter(x=>x!==c).slice(0,3).map(x=>x[1]); return {q:`What energy conversion occurs in ${c[0]}?`, opts:[c[1],...wrongs], ans:0, exp:'⚡ Think about what energy goes IN and what comes OUT!', diff:'medium'}; },
-    () => { const organs=[['heart','pumps blood around the body'],['lungs','take in oxygen and remove CO₂'],['stomach','breaks down food with acid'],['kidneys','filter waste from blood'],['liver','processes nutrients and removes toxins'],['small intestine','absorbs nutrients from food']]; const o=organs[rand(0,organs.length-1)]; const wrongs=organs.filter(x=>x!==o).slice(0,3).map(x=>x[1]); return {q:`What is the main function of the ${o[0]}?`, opts:[`It ${o[1]}`,`It ${wrongs[0]}`,`It ${wrongs[1]}`,`It ${wrongs[2]}`], ans:0, exp:'🫀 Each organ has a specific job!', diff:'easy'}; },
-    () => { const adapt=[['Cactus','thick waxy stem','store water in desert'],['Fish','streamlined body','move easily in water'],['Owl','large eyes','see well in dark'],['Penguin','thick blubber','keep warm in cold'],['Camel','hump','store fat for energy']]; const a=adapt[rand(0,adapt.length-1)]; const wrongs=adapt.filter(x=>x!==a).slice(0,3).map(x=>'to '+x[2]); return {q:`Why does a ${a[0].toLowerCase()} have ${a[1]}?`, opts:['To '+a[2],...wrongs], ans:0, exp:'🦎 Adaptations help organisms survive!', diff:'medium'}; },
-    () => { const changes=[['Melting ice','reversible'],['Burning paper','irreversible'],['Dissolving sugar in water','reversible'],['Cooking an egg','irreversible'],['Rusting iron','irreversible'],['Evaporating water','reversible']]; const c=changes[rand(0,changes.length-1)]; const wrong=c[1]==='reversible'?'irreversible':'reversible'; return {q:`Is ${c[0].toLowerCase()} a reversible or irreversible change?`, opts:[c[1],wrong,'both','neither'], ans:0, exp:'🔄 Can you get the original substance back? If yes = reversible!', diff:'medium'}; },
+  const p6items = [
+    ['Iron nail','conductor'],['Rubber band','insulator'],['Copper wire','conductor'],['Glass rod','insulator'],['Wooden ruler','insulator'],['Aluminium foil','conductor'],['Steel spoon','conductor'],['Plastic cup','insulator'],['Silver ring','conductor'],['Ceramic plate','insulator'],['Gold chain','conductor'],['Cork stopper','insulator']
   ];
-  const p4 = [
-    () => { const items=[['leaf','Produces food'],['root','Absorbs water'],['stem','Transports water'],['flower','Reproduction']]; const pick=items[rand(0,items.length-1)]; const wrongs=items.filter(x=>x!==pick).map(x=>x[1]); return {q:`Main function of a plant's ${pick[0]}?`, opts:[pick[1],...wrongs.slice(0,3)], ans:0, exp:'🌱 Each part has a special job!', diff:'easy'}; },
-    () => { const states=[['ice cube','solid'],['steam','gas'],['orange juice','liquid'],['iron nail','solid'],['milk','liquid'],['water vapour','gas']]; const s=states[rand(0,states.length-1)]; const wrongs=['solid','liquid','gas'].filter(x=>x!==s[1]); return {q:`What state of matter is ${s[0]}?`, opts:[s[1],wrongs[0],wrongs[1],'plasma'], ans:0, exp:'🧊 Solid=fixed shape, Liquid=flows, Gas=fills container!', diff:'easy'}; },
-    () => { const mats=[['metal spoon','good'],['wooden spoon','poor'],['plastic cup','poor'],['aluminium tray','good'],['copper pot','good'],['glass bottle','poor']]; const m=mats[rand(0,mats.length-1)]; const wrong=m[1]==='good'?'poor':'good'; return {q:`A ${m[0]} is a ___ conductor of heat.`, opts:[m[1],wrong,'medium','perfect'], ans:0, exp:'🔥 Metals = good conductors. Wood, plastic = poor conductors!', diff:'easy'}; },
-    () => { const forces=[['ball slowing on grass','Friction'],['apple falling from tree','Gravity'],['magnet pulling paperclip','Magnetic force'],['stretched rubber band','Elastic force']]; const f=forces[rand(0,forces.length-1)]; const wrongs=forces.filter(x=>x!==f).slice(0,3).map(x=>x[1]); return {q:`A ${f[0]}. What force is acting?`, opts:[f[1],...wrongs], ans:0, exp:'💪 Think about what force causes that motion!', diff:'medium'}; },
-  ];
-  const templates = isP6 ? p6 : p4;
-  return templates[Math.floor(Math.random()*templates.length)]();
+  const p6chains = [['Grass','Grasshopper','Frog','Snake','Eagle'],['Algae','Small fish','Big fish','Seal','Shark'],['Plant','Caterpillar','Bird','Cat','Eagle'],['Seaweed','Snail','Crab','Octopus','Shark'],['Flowers','Butterfly','Lizard','Hawk','Eagle'],['Corn','Mouse','Snake','Owl','Fox']];
+  const p6convs = [['battery-powered fan','Chemical → Electrical → Kinetic'],['electric kettle','Electrical → Heat'],['guitar being played','Kinetic → Sound'],['photosynthesis','Light → Chemical'],['burning candle','Chemical → Light + Heat'],['solar calculator','Light → Electrical'],['rubbing hands','Kinetic → Heat'],['microphone','Sound → Electrical'],['electric motor','Electrical → Kinetic']];
+  const p6organs = [['heart','pumps blood around the body'],['lungs','take in oxygen and remove CO₂'],['stomach','breaks down food with acid'],['kidneys','filter waste from blood'],['liver','processes nutrients and removes toxins'],['small intestine','absorbs nutrients from food'],['brain','controls all body functions'],['skin','protects internal organs']];
+  const p6adapt = [['Cactus','thick waxy stem','store water in desert'],['Fish','streamlined body','move easily in water'],['Owl','large eyes','see well in dark'],['Penguin','thick blubber','keep warm in cold'],['Camel','hump','store fat for energy'],['Polar bear','white fur','camouflage in snow'],['Chameleon','colour-changing skin','hide from predators']];
+  const p6changes = [['Melting ice','reversible'],['Burning paper','irreversible'],['Dissolving sugar in water','reversible'],['Cooking an egg','irreversible'],['Rusting iron','irreversible'],['Evaporating water','reversible'],['Baking bread','irreversible'],['Freezing juice','reversible']];
+  if (isP6) {
+    const types = ['cond','chain','conv','organ','adapt','change'];
+    const t = types[c % types.length];
+    switch(t) {
+      case 'cond': { const pick=p6items[c%p6items.length]; const wrong=pick[1]==='conductor'?'insulator':'conductor'; return {q:`Is a ${pick[0].toLowerCase()} a conductor or insulator?`, opts:[pick[1],wrong,'semiconductor','neither'], ans:0, exp:'Metals conduct electricity. Non-metals are insulators!', diff:'easy'}; }
+      case 'chain': { const ch=p6chains[c%p6chains.length]; const pos=1+((c*3)%3); const roles=['producer','primary consumer','secondary consumer','tertiary consumer','apex predator']; return {q:`In: ${ch.join(' → ')}. The ${ch[pos]} is a:`, opts:[roles[pos],roles[(pos+1)%4],roles[pos>0?pos-1:pos+2],'decomposer'], ans:0, exp:'Count from the producer!', diff:'medium'}; }
+      case 'conv': { const cv=p6convs[c%p6convs.length]; const wrongs=p6convs.filter(x=>x!==cv).slice(0,3).map(x=>x[1]); return {q:`Energy conversion in ${cv[0]}?`, opts:[cv[1],...wrongs], ans:0, exp:'Think what energy goes IN and OUT!', diff:'medium'}; }
+      case 'organ': { const o=p6organs[c%p6organs.length]; const wrongs=p6organs.filter(x=>x!==o).slice(0,3).map(x=>x[1]); return {q:`Main function of the ${o[0]}?`, opts:[`It ${o[1]}`,`It ${wrongs[0]}`,`It ${wrongs[1]}`,`It ${wrongs[2]}`], ans:0, exp:'Each organ has a specific job!', diff:'easy'}; }
+      case 'adapt': { const a=p6adapt[c%p6adapt.length]; const wrongs=p6adapt.filter(x=>x!==a).slice(0,3).map(x=>'to '+x[2]); return {q:`Why does a ${a[0].toLowerCase()} have ${a[1]}?`, opts:['To '+a[2],...wrongs], ans:0, exp:'Adaptations help organisms survive!', diff:'medium'}; }
+      case 'change': { const ch2=p6changes[c%p6changes.length]; const wrong=ch2[1]==='reversible'?'irreversible':'reversible'; return {q:`Is ${ch2[0].toLowerCase()} reversible or irreversible?`, opts:[ch2[1],wrong,'both','neither'], ans:0, exp:'Can you get the original back? If yes = reversible!', diff:'medium'}; }
+    }
+  } else {
+    const p4plants = [['leaf','Produces food'],['root','Absorbs water'],['stem','Transports water'],['flower','Reproduction']];
+    const p4states = [['ice cube','solid'],['steam','gas'],['orange juice','liquid'],['iron nail','solid'],['milk','liquid'],['water vapour','gas'],['honey','liquid'],['diamond','solid']];
+    const p4mats = [['metal spoon','good'],['wooden spoon','poor'],['plastic cup','poor'],['aluminium tray','good'],['copper pot','good'],['glass bottle','poor'],['steel fork','good'],['rubber glove','poor']];
+    const p4forces = [['ball slowing on grass','Friction'],['apple falling from tree','Gravity'],['magnet pulling paperclip','Magnetic force'],['stretched rubber band','Elastic force'],['parachute slowing down','Air resistance'],['boat floating on water','Buoyancy']];
+    const types = ['plant','state','mat','force'];
+    const t = types[c % types.length];
+    switch(t) {
+      case 'plant': { const pick=p4plants[c%p4plants.length]; const wrongs=p4plants.filter(x=>x!==pick).map(x=>x[1]); return {q:`Main function of a plant's ${pick[0]}?`, opts:[pick[1],...wrongs.slice(0,3)], ans:0, exp:'Each part has a special job!', diff:'easy'}; }
+      case 'state': { const s=p4states[c%p4states.length]; const wrongs=['solid','liquid','gas'].filter(x=>x!==s[1]); return {q:`What state of matter is ${s[0]}?`, opts:[s[1],wrongs[0],wrongs[1],'plasma'], ans:0, exp:'Solid=fixed shape, Liquid=flows, Gas=fills container!', diff:'easy'}; }
+      case 'mat': { const m=p4mats[c%p4mats.length]; const wrong=m[1]==='good'?'poor':'good'; return {q:`A ${m[0]} is a ___ conductor of heat.`, opts:[m[1],wrong,'medium','perfect'], ans:0, exp:'Metals = good conductors. Wood, plastic = poor!', diff:'easy'}; }
+      case 'force': { const f=p4forces[c%p4forces.length]; const wrongs=p4forces.filter(x=>x!==f).slice(0,3).map(x=>x[1]); return {q:`A ${f[0]}. What force?`, opts:[f[1],...wrongs], ans:0, exp:'Think about what force causes that motion!', diff:'medium'}; }
+    }
+  }
+  return {q:'What is the boiling point of water?', opts:['100°C','90°C','110°C','80°C'], ans:0, exp:'Water boils at 100°C!', diff:'easy'};
 }
 
-// ============ PROCEDURAL ENGLISH GENERATOR ============
+// ============ PROCEDURAL ENGLISH GENERATOR (counter-based) ============
 function generateEnglishQ(player) {
+  const c = _nextSQ();
   const isP6 = player === 'yuhi';
-  const p6 = [
-    () => { const items=[['She ___ to the store yesterday.','went','goes','go','going','Simple past for completed actions!'],['He ___ already finished his homework.','has','have','had','is','Present perfect: has/have + past participle!'],['They ___ playing when it rained.','were','was','are','is','Past continuous: were + verb-ing!'],['If I ___ rich, I would travel.','were','am','was','be','Subjunctive: "If I were..."!'],['The cake ___ baked by Mom.','was','is','has','were','Passive voice: was + past participle!'],['Neither Tom ___ Jerry came.','nor','or','and','but','Neither...nor is the pair!'],['She asked ___ he was okay.','whether','weather','that','what','"Whether" for indirect yes/no questions!'],['Each student ___ a pen.','has','have','are','were','"Each" is singular → "has"!']]; const item=items[rand(0,items.length-1)]; return {q:`Fill in: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'📝 '+item[5], diff:rand(0,1)?'medium':'hard'}; },
-    () => { const words=[['enormous','huge','tiny','slow','calm'],['ancient','very old','new','fast','bright'],['courageous','brave','afraid','lazy','quiet'],['peculiar','strange','normal','big','happy'],['furious','very angry','calm','sad','sleepy'],['diligent','hardworking','lazy','tall','kind'],['reluctant','unwilling','eager','happy','fast'],['magnificent','splendid','ugly','small','quiet']]; const w=words[rand(0,words.length-1)]; return {q:`What does "${w[0]}" mean?`, opts:[w[1],w[2],w[3],w[4]], ans:0, exp:'📖 Build your vocabulary with advanced words!', diff:'medium'}; },
-    () => { const sents=[['Tom yawned and rubbed his eyes.','He was tired.','He was excited.','He was hungry.','He was angry.'],['Sara beamed at her test results.','She did well.','She failed.','She lost her paper.','She was confused.'],['The sky darkened and wind howled.','A storm was coming.','It was sunny.','It was morning.','Birds were singing.'],['Mr Lee slammed the door shut.','He was upset.','He was happy.','He was sleepy.','He was calm.']]; const s=sents[rand(0,sents.length-1)]; return {q:`"${s[0]}" — What can we infer?`, opts:[s[1],s[2],s[3],s[4]], ans:0, exp:'🔍 Use clues in the text to infer meaning!', diff:'medium'}; },
-  ];
-  const p4 = [
-    () => { const items=[['She ___ to school every day.','goes','go','went','going','Present tense + she = goes!'],['The dog ___ in the park.','ran','run','runs','running','Past tense of "run" = "ran"!'],['I ___ a book yesterday.','bought','buy','buys','buying','Past tense of "buy" = "bought"!'],['They ___ football on Saturdays.','play','plays','played','playing','Plural subject = base form!'],['He ___ not like broccoli.','does','do','did','is','He/She/It = "does"!'],['We ___ to the zoo last week.','went','go','goes','going','Past tense of "go" = "went"!']]; const item=items[rand(0,items.length-1)]; return {q:`Fill in: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'📝 '+item[5], diff:'easy'}; },
-    () => { const words=[['delighted','happy','sad','angry','tired'],['enormous','very big','small','quick','cold'],['famished','very hungry','full','thirsty','sleepy'],['hilarious','very funny','boring','scary','sad'],['furious','very angry','calm','kind','shy']]; const w=words[rand(0,words.length-1)]; return {q:`"${w[0]}" means:`, opts:[w[1],w[2],w[3],w[4]], ans:0, exp:'📖 Learn stronger vocabulary words!', diff:'medium'}; },
-  ];
-  const templates = isP6 ? p6 : p4;
-  return templates[Math.floor(Math.random()*templates.length)]();
+  const p6grammar = [['She ___ to the store yesterday.','went','goes','go','going','Simple past for completed actions!'],['He ___ already finished his homework.','has','have','had','is','Present perfect: has/have + past participle!'],['They ___ playing when it rained.','were','was','are','is','Past continuous: were + verb-ing!'],['If I ___ rich, I would travel.','were','am','was','be','Subjunctive: "If I were..."!'],['The cake ___ baked by Mom.','was','is','has','were','Passive voice: was + past participle!'],['Neither Tom ___ Jerry came.','nor','or','and','but','Neither...nor is the pair!'],['She asked ___ he was okay.','whether','weather','that','what','"Whether" for indirect yes/no questions!'],['Each student ___ a pen.','has','have','are','were','"Each" is singular → "has"!'],['The news ___ shocking.','was','were','are','have','News is uncountable singular!'],['Everyone ___ to leave early.','wants','want','wanting','wantes','Everyone is singular!'],['She spoke ___ than her sister.','more loudly','louder than','more loud','loudest','Comparative: more + adverb!'],['By then he ___ left.','had','has','have','was','Past perfect: had + past participle!']];
+  const p6vocab = [['enormous','huge','tiny','slow','calm'],['ancient','very old','new','fast','bright'],['courageous','brave','afraid','lazy','quiet'],['peculiar','strange','normal','big','happy'],['furious','very angry','calm','sad','sleepy'],['diligent','hardworking','lazy','tall','kind'],['reluctant','unwilling','eager','happy','fast'],['magnificent','splendid','ugly','small','quiet'],['meticulous','very careful','careless','loud','fast'],['benevolent','kind-hearted','cruel','shy','boring'],['prudent','wise and careful','reckless','loud','lazy'],['vivid','bright and clear','dull','quiet','slow']];
+  const p6infer = [['Tom yawned and rubbed his eyes.','He was tired.','He was excited.','He was hungry.','He was angry.'],['Sara beamed at her test results.','She did well.','She failed.','She lost her paper.','She was confused.'],['The sky darkened and wind howled.','A storm was coming.','It was sunny.','It was morning.','Birds were singing.'],['Mr Lee slammed the door shut.','He was upset.','He was happy.','He was sleepy.','He was calm.'],['She clutched her stomach and groaned.','She felt sick.','She was happy.','She was cold.','She was bored.'],['He whistled cheerfully as he walked.','He was in a good mood.','He was angry.','He was lost.','He was tired.']];
+  if (isP6) {
+    const types = ['grammar','vocab','infer'];
+    const t = types[c % types.length];
+    switch(t) {
+      case 'grammar': { const item=p6grammar[c%p6grammar.length]; return {q:`Fill in: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:item[5], diff:c%2?'medium':'hard'}; }
+      case 'vocab': { const w=p6vocab[c%p6vocab.length]; return {q:`What does "${w[0]}" mean?`, opts:[w[1],w[2],w[3],w[4]], ans:0, exp:'Build your vocabulary!', diff:'medium'}; }
+      case 'infer': { const s=p6infer[c%p6infer.length]; return {q:`"${s[0]}" — What can we infer?`, opts:[s[1],s[2],s[3],s[4]], ans:0, exp:'Use clues in the text to infer meaning!', diff:'medium'}; }
+    }
+  } else {
+    const p4grammar = [['She ___ to school every day.','goes','go','went','going','Present tense + she = goes!'],['The dog ___ in the park.','ran','run','runs','running','Past tense of "run" = "ran"!'],['I ___ a book yesterday.','bought','buy','buys','buying','Past tense of "buy" = "bought"!'],['They ___ football on Saturdays.','play','plays','played','playing','Plural subject = base form!'],['He ___ not like broccoli.','does','do','did','is','He/She/It = "does"!'],['We ___ to the zoo last week.','went','go','goes','going','Past tense of "go" = "went"!'],['The cat ___ on the sofa now.','is sitting','sit','sat','sits','Present continuous: is + verb-ing!'],['She ___ her homework before dinner.','finished','finish','finishing','finishes','Past tense: add -ed!']];
+    const p4vocab = [['delighted','happy','sad','angry','tired'],['enormous','very big','small','quick','cold'],['famished','very hungry','full','thirsty','sleepy'],['hilarious','very funny','boring','scary','sad'],['furious','very angry','calm','kind','shy'],['exhausted','very tired','energetic','hungry','cold'],['terrified','very scared','brave','happy','calm']];
+    const types = ['grammar','vocab'];
+    const t = types[c % types.length];
+    switch(t) {
+      case 'grammar': { const item=p4grammar[c%p4grammar.length]; return {q:`Fill in: "${item[0]}"`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:item[5], diff:'easy'}; }
+      case 'vocab': { const w=p4vocab[c%p4vocab.length]; return {q:`"${w[0]}" means:`, opts:[w[1],w[2],w[3],w[4]], ans:0, exp:'Learn stronger vocabulary words!', diff:'medium'}; }
+    }
+  }
+  return {q:'What is the past tense of "go"?', opts:['went','goed','goes','gone'], ans:0, exp:'"Go" is irregular: go → went!', diff:'easy'};
 }
 
-// ============ PROCEDURAL CHINESE GENERATOR ============
+// ============ PROCEDURAL CHINESE GENERATOR (counter-based) ============
 function generateChineseQ(player) {
+  const c = _nextSQ();
   const isP6 = player === 'yuhi';
-  const p6 = [
-    () => { const items=[['我们应该___保护环境。','积极','消极','随便','懒惰'],['他___地完成了任务。','顺利','困难','马虎','突然'],['同学们___地参加活动。','踊跃','犹豫','害怕','厌烦'],['老师___地批评了他。','严厉','温柔','开心','随便'],['她___地回答了问题。','自信','害羞','马虎','随便']]; const item=items[rand(0,items.length-1)]; return {q:`选择正确的词语：${item[0]}`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:`✏️ ${item[1]}是最合适的搭配。注意词语的感情色彩！`, diff:'medium'}; },
-    () => { const pinyins=[['图书馆','tú shū guǎn','dù shū guǎn','tú shū guān','dú shū guǎn'],['博物馆','bó wù guǎn','bō wù guǎn','bó wǔ guǎn','bó wù guān'],['运动场','yùn dòng chǎng','yún dòng chǎng','yùn dòng cháng','yùn dōng chǎng'],['计算机','jì suàn jī','jī suàn jì','jì suān jī','jì suàn jì']]; const p=pinyins[rand(0,pinyins.length-1)]; return {q:`"${p[0]}"的正确拼音是：`, opts:[p[1],p[2],p[3],p[4]], ans:0, exp:`🔤 注意声调！${p[0]} = ${p[1]}`, diff:'medium'}; },
-  ];
-  const p4 = [
-    () => { const items=[['一___书','本','只','条','张'],['一___鱼','条','只','本','个'],['一___纸','张','条','本','只'],['一___猫','只','条','本','张'],['一___花','朵','只','条','本'],['一___树','棵','条','张','只']]; const item=items[rand(0,items.length-1)]; return {q:`选择正确的量词：${item[0]}`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:`📏 量词要跟名词搭配！`, diff:'easy'}; },
-    () => { const opp=[['大','小','长','快','多'],['高','矮','胖','瘦','远'],['快','慢','大','高','重'],['热','冷','快','高','重'],['胖','瘦','高','矮','大']]; const o=opp[rand(0,opp.length-1)]; return {q:`"${o[0]}"的反义词是：`, opts:[o[1],o[2],o[3],o[4]], ans:0, exp:`↔️ ${o[0]} ↔ ${o[1]}`, diff:'easy'}; },
-  ];
-  const templates = isP6 ? p6 : p4;
-  return templates[Math.floor(Math.random()*templates.length)]();
+  const p6words = [['我们应该___保护环境。','积极','消极','随便','懒惰'],['他___地完成了任务。','顺利','困难','马虎','突然'],['同学们___地参加活动。','踊跃','犹豫','害怕','厌烦'],['老师___地批评了他。','严厉','温柔','开心','随便'],['她___地回答了问题。','自信','害羞','马虎','随便'],['他说话很___。','流利','困难','马虎','紧张'],['这个计划___得很好。','执行','失败','随便','马虎']];
+  const p6pinyins = [['图书馆','tú shū guǎn','dù shū guǎn','tú shū guān','dú shū guǎn'],['博物馆','bó wù guǎn','bō wù guǎn','bó wǔ guǎn','bó wù guān'],['运动场','yùn dòng chǎng','yún dòng chǎng','yùn dòng cháng','yùn dōng chǎng'],['计算机','jì suàn jī','jī suàn jì','jì suān jī','jì suàn jì'],['教室','jiào shì','jiāo shì','jiào sì','jiǎo shì'],['超市','chāo shì','cháo shì','chāo sì','chǎo shì']];
+  if (isP6) {
+    const types = ['word','pinyin'];
+    const t = types[c % types.length];
+    switch(t) {
+      case 'word': { const item=p6words[c%p6words.length]; return {q:`选择正确的词语：${item[0]}`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:`${item[1]}是最合适的搭配！`, diff:'medium'}; }
+      case 'pinyin': { const p=p6pinyins[c%p6pinyins.length]; return {q:`"${p[0]}"的正确拼音是：`, opts:[p[1],p[2],p[3],p[4]], ans:0, exp:`注意声调！${p[0]} = ${p[1]}`, diff:'medium'}; }
+    }
+  } else {
+    const p4items = [['一___书','本','只','条','张'],['一___鱼','条','只','本','个'],['一___纸','张','条','本','只'],['一___猫','只','条','本','张'],['一___花','朵','只','条','本'],['一___树','棵','条','张','只'],['一___笔','支','条','本','只'],['一___车','辆','只','条','本']]; const item=p4items[c%p4items.length]; return {q:`选择正确的量词：${item[0]}`, opts:[item[1],item[2],item[3],item[4]], ans:0, exp:'量词要跟名词搭配！', diff:'easy'};
+  }
+  return {q:'选择正确的量词：一___书', opts:['本','只','条','张'], ans:0, exp:'量词要跟名词搭配！', diff:'easy'};
 }
 
 // ============ SHOP ITEMS ============
@@ -3105,18 +3152,18 @@ function selectAnswer(idx) {
 
     if (reviewMode && q._wpId) reviewedCorrect(currentPlayer, q._wpId);
 
-    // XP: easy=10, medium=15, hard=25
-    const xpMap = {easy:10, medium:15, hard:25};
-    const earnedXp = xpMap[q.diff] || 10;
+    // XP: easy=5, medium=8, hard=12
+    const xpMap = {easy:5, medium:8, hard:12};
+    const earnedXp = xpMap[q.diff] || 5;
     state[currentPlayer].xp += earnedXp;
     quizXpEarned += earnedXp;
     // Coins
-    const coinMap = {easy:1, medium:2, hard:4};
-    const earnedCoins = coinMap[q.diff] || 3;
+    const coinMap = {easy:1, medium:1, hard:2};
+    const earnedCoins = coinMap[q.diff] || 1;
     state[currentPlayer].coins += earnedCoins;
     quizCoinsEarned += earnedCoins;
 
-    document.getElementById('q-fb-title').textContent = 'Correct! +' + (xpMap[q.diff]||10) + ' XP, +' + (coinMap[q.diff]||1) + ' coins';
+    document.getElementById('q-fb-title').textContent = 'Correct! +' + (xpMap[q.diff]||5) + ' XP, +' + (coinMap[q.diff]||1) + ' coins';
     document.getElementById('q-fb-text').textContent = q.exp;
     fb.className = 'q-feedback correct show';
     playSound('correct');
